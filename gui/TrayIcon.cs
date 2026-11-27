@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using StarRailUnlocker.Core;
+using HNAUnlocker.Core;
 
-namespace StarRailUnlocker
+namespace HNAUnlocker
 {
     /// <summary>Native notification area integration; the application remains WinUI 3.</summary>
     internal sealed class TrayIcon : IDisposable

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace StarRailUnlocker
+namespace HNAUnlocker
 {
     internal sealed class WindowLayout : IDisposable
     {

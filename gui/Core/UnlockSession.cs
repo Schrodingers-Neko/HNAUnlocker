@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public enum SessionState { Idle, WaitingForGame, Patching, Active, Failed, GameExited }
 

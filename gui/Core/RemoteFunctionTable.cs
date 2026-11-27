@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     /// <summary>
     /// Registers verified generated code in the target's unwind tables.

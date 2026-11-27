@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public sealed record PeSection(string Name, uint Rva, uint VirtualSize, uint Raw, uint RawSize, uint Flags);
     public sealed record PeCodeChunk(ulong Rva, byte[] Bytes, int ScanLength);

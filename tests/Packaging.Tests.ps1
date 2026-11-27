@@ -6,7 +6,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $collector = Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts\Copy-ThirdPartyNotices.ps1'
-$workspaceName = 'HSRUnlocker-PackagingTests-' + [Guid]::NewGuid().ToString('N')
+$workspaceName = 'HNAUnlocker-PackagingTests-' + [Guid]::NewGuid().ToString('N')
 $workspace = Join-Path ([IO.Path]::GetTempPath()) $workspaceName
 $results = New-Object 'System.Collections.Generic.List[object]'
 $script:caseNumber = 0

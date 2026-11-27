@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     internal enum DiagnosticStep
     {

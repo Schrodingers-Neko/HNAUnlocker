@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Win32;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     /// <summary>Find installed clients using read-only launcher and uninstall metadata.</summary>
     public static class GameInstallationDiscovery

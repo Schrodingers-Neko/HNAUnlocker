@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     /// <summary>Finds one exact mapped image without relying on an initialized loader list.</summary>
     internal static class MappedImageResolver

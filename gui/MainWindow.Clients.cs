@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using StarRailUnlocker.Core;
+using HNAUnlocker.Core;
 
-namespace StarRailUnlocker
+namespace HNAUnlocker
 {
     public sealed partial class MainWindow
     {

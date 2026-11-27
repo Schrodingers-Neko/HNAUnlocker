@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     /// <summary>Resolves the named engine entry from disk without loading or executing either image.</summary>
     public static class MobileEntryResolver

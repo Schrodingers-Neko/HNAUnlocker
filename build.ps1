@@ -12,7 +12,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $repo = $PSScriptRoot
 
-if ([string]::IsNullOrWhiteSpace($Project)) { $Project = Join-Path $repo 'gui\HSRUnlocker.csproj' }
+if ([string]::IsNullOrWhiteSpace($Project)) { $Project = Join-Path $repo 'gui\HNAUnlocker.csproj' }
 if ([string]::IsNullOrWhiteSpace($OutDir)) { $OutDir = Join-Path $repo 'artifacts\win-x64' }
 
 if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { throw 'dotnet was not found on PATH.' }

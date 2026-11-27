@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using StarRailUnlocker.Core;
+using HNAUnlocker.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.Storage.Pickers;
 
-namespace StarRailUnlocker
+namespace HNAUnlocker
 {
     /// <summary>
     /// Main window. Unlocking remains in <see cref="UnlockSession"/>; this class owns UI

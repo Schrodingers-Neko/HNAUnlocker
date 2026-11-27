@@ -72,5 +72,5 @@ Filename: "{app}\HNAUnlocker.exe"; WorkingDir: "{app}"; Flags: nowait runasorigi
 [Code]
 function IsUpdaterInstall: Boolean;
 begin
-  Result := (ExpandConstant('{param:HSRUPDATE|0}') = '1') and RuntimeCanLaunchApplication;
+  Result := (ExpandConstant('{param:HNAUPDATE|0}') = '1') and RuntimeCanLaunchApplication;
 end;

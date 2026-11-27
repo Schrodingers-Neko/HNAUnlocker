@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     // UI-thread state for the dismissible startup notice. Manual checks stay inline.
     internal sealed class UpdateNotice

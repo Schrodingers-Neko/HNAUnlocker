@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public static class L10n
     {

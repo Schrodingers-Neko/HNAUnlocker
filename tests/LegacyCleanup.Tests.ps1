@@ -8,7 +8,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 if ([string]::IsNullOrWhiteSpace($EvidenceDir)) {
-    $EvidenceDir = Join-Path ([IO.Path]::GetTempPath()) ('HSRUnlocker-LegacyFixture-' + [Guid]::NewGuid().ToString('N'))
+    $EvidenceDir = Join-Path ([IO.Path]::GetTempPath()) ('HNAUnlocker-LegacyFixture-' + [Guid]::NewGuid().ToString('N'))
 }
 $EvidenceDir = [IO.Path]::GetFullPath($EvidenceDir)
 if (Test-Path -LiteralPath $EvidenceDir) {

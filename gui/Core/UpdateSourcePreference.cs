@@ -1,4 +1,4 @@
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public enum UpdateSourcePreference
     {

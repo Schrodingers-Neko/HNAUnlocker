@@ -1,6 +1,6 @@
 using System;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     /// <summary>
     /// Resolves Application.targetFrameRate through its actual IL2CPP setter and getter.

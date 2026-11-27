@@ -102,7 +102,7 @@ function Get-LegacyRuntimeFiles {
         $leaf = [IO.Path]::GetFileName($relative)
         if ($relative.StartsWith('Assets/', [StringComparison]::OrdinalIgnoreCase) -or
             $leaf -match '^HNAUnlocker([.]|$)' -or
-            $leaf -in @('settings.json', 'hsr_config.json', 'config.json', 'App.xbf', 'MainWindow.xbf') -or
+            $leaf -in @('settings.json', 'hna_config.json', 'config.json', 'App.xbf', 'MainWindow.xbf') -or
             $relative -in @('README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md')) { throw 'Protected file in legacy runtime inventory.' }
         if (-not [string]::IsNullOrWhiteSpace($PublishDir) -and
             (Test-Path -LiteralPath (Join-Path $PublishDir $relative))) { throw 'A legacy cleanup entry belongs to the current payload.' }

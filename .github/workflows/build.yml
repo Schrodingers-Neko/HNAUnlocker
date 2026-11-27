@@ -20,14 +20,14 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore
-        run: dotnet restore .\gui\HSRUnlocker.csproj -r win-x64
+        run: dotnet restore .\gui\HNAUnlocker.csproj -r win-x64
 
       - name: Build application
-        run: dotnet build .\gui\HSRUnlocker.csproj -c Release -r win-x64 --no-restore
+        run: dotnet build .\gui\HNAUnlocker.csproj -c Release -r win-x64 --no-restore
 
       - name: Run portable tests
         # Synthetic fixtures, owned memory, and one bounded test child; no installed game, live settings, or network.
-        run: dotnet run --project .\tests\HSRUnlocker.Tests\HSRUnlocker.Tests.csproj -c Release
+        run: dotnet run --project .\tests\HNAUnlocker.Tests\HNAUnlocker.Tests.csproj -c Release
 
       - name: Test dependency notice packaging
         run: powershell -NoProfile -File .\tests\Packaging.Tests.ps1

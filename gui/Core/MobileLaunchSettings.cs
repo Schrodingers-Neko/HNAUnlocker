@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Win32;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public enum MobileGraphicsSource
     {

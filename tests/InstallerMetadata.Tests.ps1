@@ -5,7 +5,7 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 . (Join-Path $repo 'scripts\InstallerRuntime.ps1')
 $passed = 0
-$fixtureName = 'HSRUnlocker-installer-metadata-' + [Guid]::NewGuid().ToString('N')
+$fixtureName = 'HNAUnlocker-installer-metadata-' + [Guid]::NewGuid().ToString('N')
 $fixtureRoot = [IO.Path]::GetFullPath((Join-Path ([IO.Path]::GetTempPath()) $fixtureName))
 New-Item -ItemType Directory -Path $fixtureRoot | Out-Null
 $manifestPath = Join-Path $fixtureRoot 'dependencies.json'
@@ -56,7 +56,7 @@ function Reject-Legacy([string]$Name, [string[]]$Files) {
 }
 
 try {
-    $project = [xml][IO.File]::ReadAllText((Join-Path $repo 'gui\HSRUnlocker.csproj'))
+    $project = [xml][IO.File]::ReadAllText((Join-Path $repo 'gui\HNAUnlocker.csproj'))
     $minimum = $project.SelectSingleNode('/Project/PropertyGroup/TargetPlatformMinVersion').InnerText
     $setup = [IO.File]::ReadAllText((Join-Path $repo 'installer\HNAUnlocker.iss'))
     $setupMinimum = [regex]::Match($setup, '(?m)^MinVersion=(10\.0\.\d+)\r?$').Groups[1].Value

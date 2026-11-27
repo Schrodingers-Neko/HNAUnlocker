@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
-    /// <summary>Launch options for StarRail, including experimental mobile parameters.</summary>
+    /// <summary>Launch options for Honkai: Nexus Anima, including experimental mobile parameters.</summary>
     public static class GameLauncher
     {
         public static IReadOnlyList<string> MobileArguments(string executable, MobileGraphicsSource source, Action<string> log = null) =>

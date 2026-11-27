@@ -5,7 +5,7 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $helper = Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts\Prepare-ReleaseAssets.ps1'
-$workspaceName = 'HSRUnlocker-ReleaseAssetsTests-' + [Guid]::NewGuid().ToString('N')
+$workspaceName = 'HNAUnlocker-ReleaseAssetsTests-' + [Guid]::NewGuid().ToString('N')
 $workspace = [IO.Path]::GetFullPath((Join-Path ([IO.Path]::GetTempPath()) $workspaceName))
 $results = [Collections.Generic.List[object]]::new()
 $script:caseNumber = 0

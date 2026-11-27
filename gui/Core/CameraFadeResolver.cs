@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public sealed record CameraFadeFunction(ulong Rva, byte[] Code, ulong TableEntryRva, byte[] TableEntry,
         ulong UnwindRva, byte[] Unwind);

@@ -43,8 +43,8 @@ Get-Content .\SHA256SUMS.txt
 ### 构建与测试
 
 ```powershell
-dotnet build .\gui\HSRUnlocker.csproj -c Release -r win-x64
-dotnet run   --project .\tests\HSRUnlocker.Tests\HSRUnlocker.Tests.csproj -c Release
+dotnet build .\gui\HNAUnlocker.csproj -c Release -r win-x64
+dotnet run   --project .\tests\HNAUnlocker.Tests\HNAUnlocker.Tests.csproj -c Release
 powershell -NoProfile -File .\tests\Packaging.Tests.ps1
 powershell -NoProfile -File .\tests\InstallerMetadata.Tests.ps1
 pwsh -NoProfile -File .\tests\ReleaseAssets.Tests.ps1
@@ -96,8 +96,8 @@ GitHub 和 Gitee 的同一版本使用相同附件。先上传并核对安装包
 ### Build And Test
 
 ```powershell
-dotnet build .\gui\HSRUnlocker.csproj -c Release -r win-x64
-dotnet run   --project .\tests\HSRUnlocker.Tests\HSRUnlocker.Tests.csproj -c Release
+dotnet build .\gui\HNAUnlocker.csproj -c Release -r win-x64
+dotnet run   --project .\tests\HNAUnlocker.Tests\HNAUnlocker.Tests.csproj -c Release
 powershell -NoProfile -File .\tests\Packaging.Tests.ps1
 powershell -NoProfile -File .\tests\InstallerMetadata.Tests.ps1
 pwsh -NoProfile -File .\tests\ReleaseAssets.Tests.ps1

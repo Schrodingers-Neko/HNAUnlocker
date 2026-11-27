@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     internal static class UpdateInstallHelper
     {
@@ -23,13 +23,13 @@ namespace StarRailUnlocker.Core
             foreach (string argument in new[] { "-NoLogo", "-NoProfile", "-NonInteractive", "-EncodedCommand",
                 Convert.ToBase64String(Encoding.Unicode.GetBytes(Script)) })
                 start.ArgumentList.Add(argument);
-            start.Environment["HSR_UPD_PARENT_ID"] = parentId.ToString(CultureInfo.InvariantCulture);
-            start.Environment["HSR_UPD_PARENT_START"] = parentStartTicks.ToString(CultureInfo.InvariantCulture);
-            start.Environment["HSR_UPD_INSTALLER"] = staged.FilePath;
-            start.Environment["HSR_UPD_SIZE"] = staged.Package.Size.ToString(CultureInfo.InvariantCulture);
-            start.Environment["HSR_UPD_SHA256"] = staged.Package.Sha256;
-            start.Environment["HSR_UPD_ERROR"] = error;
-            start.Environment["HSR_UPD_LOGS"] = L10n.T("Updates.HelperLogs");
+            start.Environment["HNA_UPD_PARENT_ID"] = parentId.ToString(CultureInfo.InvariantCulture);
+            start.Environment["HNA_UPD_PARENT_START"] = parentStartTicks.ToString(CultureInfo.InvariantCulture);
+            start.Environment["HNA_UPD_INSTALLER"] = staged.FilePath;
+            start.Environment["HNA_UPD_SIZE"] = staged.Package.Size.ToString(CultureInfo.InvariantCulture);
+            start.Environment["HNA_UPD_SHA256"] = staged.Package.Sha256;
+            start.Environment["HNA_UPD_ERROR"] = error;
+            start.Environment["HNA_UPD_LOGS"] = L10n.T("Updates.HelperLogs");
             start.Environment["PSModulePath"] = "";
             start.Environment["PATH"] = systemDirectory + ";" + Environment.GetFolderPath(Environment.SpecialFolder.Windows);
             foreach (string key in new[] { "COR_ENABLE_PROFILING", "COR_PROFILER", "COR_PROFILER_PATH",
@@ -123,7 +123,7 @@ namespace StarRailUnlocker.Core
             }
             function Get-InstallerArguments([string] $logPath) {
                 if ($logPath.IndexOf('"') -ge 0) { throw 'Invalid update log path.' }
-                return '/SILENT /SUPPRESSMSGBOXES /NORESTART /SP- /HSRUPDATE=1 /LOG="' + $logPath + '"'
+                return '/SILENT /SUPPRESSMSGBOXES /NORESTART /SP- /HNAUPDATE=1 /LOG="' + $logPath + '"'
             }
             function Complete-UpdateCleanup([string] $directory, [string] $installerName, [bool] $succeeded,
                 [bool] $helperOwned, [bool] $installerOwned) {
@@ -163,13 +163,13 @@ namespace StarRailUnlocker.Core
             try {
                 $culture = [System.Globalization.CultureInfo]::InvariantCulture
                 $numeric = [System.Globalization.NumberStyles]::None
-                $parentId = [int]::Parse($env:HSR_UPD_PARENT_ID, $numeric, $culture)
-                $parentTicks = [long]::Parse($env:HSR_UPD_PARENT_START, $numeric, $culture)
-                $size = [long]::Parse($env:HSR_UPD_SIZE, $numeric, $culture)
-                $expectedHash = $env:HSR_UPD_SHA256
+                $parentId = [int]::Parse($env:HNA_UPD_PARENT_ID, $numeric, $culture)
+                $parentTicks = [long]::Parse($env:HNA_UPD_PARENT_START, $numeric, $culture)
+                $size = [long]::Parse($env:HNA_UPD_SIZE, $numeric, $culture)
+                $expectedHash = $env:HNA_UPD_SHA256
                 if ($parentId -le 0 -or $parentTicks -le 0 -or $size -lt 1 -or $size -gt 536870912 -or
                     $expectedHash -cnotmatch '\A[0-9a-fA-F]{64}\z') { throw 'Invalid update handoff values.' }
-                $installer = [System.IO.Path]::GetFullPath($env:HSR_UPD_INSTALLER)
+                $installer = [System.IO.Path]::GetFullPath($env:HNA_UPD_INSTALLER)
                 $directory = [System.IO.Path]::GetDirectoryName($installer)
                 $stage = [System.IO.DirectoryInfo]::new($directory)
                 $systemRoot = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::CommonApplicationData)
@@ -250,9 +250,9 @@ namespace StarRailUnlocker.Core
             }
             if ($ready -and -not $succeeded) {
                 try {
-                    $message = $env:HSR_UPD_ERROR
+                    $message = $env:HNA_UPD_ERROR
                     if ($retainedLogs.Count -gt 0) {
-                        $message += [System.Environment]::NewLine + [System.Environment]::NewLine + $env:HSR_UPD_LOGS +
+                        $message += [System.Environment]::NewLine + [System.Environment]::NewLine + $env:HNA_UPD_LOGS +
                             [System.Environment]::NewLine + [string]::Join([System.Environment]::NewLine, [string[]] $retainedLogs)
                     }
                     $null = [System.Reflection.Assembly]::Load('System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089')

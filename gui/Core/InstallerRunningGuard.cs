@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     internal sealed class InstallerRunningGuard : IDisposable
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public sealed record FovStatistics(ulong Calls, ulong Camera, float Input, float Output, float Delta, float? StoredFov = null);
 

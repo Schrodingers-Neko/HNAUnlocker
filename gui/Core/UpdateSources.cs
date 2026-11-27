@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     internal static class UpdateSources
     {

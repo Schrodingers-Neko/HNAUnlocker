@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public sealed record AntiFadeStatistics(ulong CameraCalls, ulong OtherCalls, ulong Object,
         float Input, float Output, bool Enabled);

@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public sealed class StagedUpdate : IDisposable
     {

@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml;
-using StarRailUnlocker.Core;
+using HNAUnlocker.Core;
 
-namespace StarRailUnlocker
+namespace HNAUnlocker
 {
     public partial class App : Application
     {

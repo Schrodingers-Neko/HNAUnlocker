@@ -9,7 +9,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repo = $PSScriptRoot
-$project = Join-Path $repo 'gui\HSRUnlocker.csproj'
+$project = Join-Path $repo 'gui\HNAUnlocker.csproj'
 $definition = Join-Path $repo 'installer\HNAUnlocker.iss'
 . (Join-Path $repo 'scripts\InstallerRuntime.ps1')
 

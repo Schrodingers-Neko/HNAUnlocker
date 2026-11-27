@@ -31,15 +31,15 @@ $include = @(
     'gui\MainWindow.Clients.cs',
     'gui\WindowLayout.cs', 'gui\Assets\AppIcon.png', 'gui\Assets\AppIcon.ico',
     'gui\Assets\Fonts\MiSansVF.ttf', 'gui\Assets\Fonts\MiSans-LICENSE.pdf', 'gui\Assets\Fonts\NOTICE.md',
-    'gui\TrayIcon.cs', 'gui\HSRUnlocker.csproj', 'gui\app.manifest'
+    'gui\TrayIcon.cs', 'gui\HNAUnlocker.csproj', 'gui\app.manifest'
 )
 $include += (Get-ChildItem -LiteralPath (Join-Path $repo 'gui\Core') -Filter '*.cs' -File |
     ForEach-Object { 'gui\Core\' + $_.Name })
 $include += (Get-ChildItem -LiteralPath (Join-Path $repo 'gui\Localization') -Filter '*.json' -File |
     ForEach-Object { 'gui\Localization\' + $_.Name })
-$include += (Get-ChildItem -LiteralPath (Join-Path $repo 'tests\HSRUnlocker.Tests') -Filter '*.cs' -File |
-    ForEach-Object { 'tests\HSRUnlocker.Tests\' + $_.Name })
-$include += 'tests\HSRUnlocker.Tests\HSRUnlocker.Tests.csproj'
+$include += (Get-ChildItem -LiteralPath (Join-Path $repo 'tests\HNAUnlocker.Tests') -Filter '*.cs' -File |
+    ForEach-Object { 'tests\HNAUnlocker.Tests\' + $_.Name })
+$include += 'tests\HNAUnlocker.Tests\HNAUnlocker.Tests.csproj'
 
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $OutDir = [IO.Path]::GetFullPath((Resolve-Path -LiteralPath $OutDir).Path)
@@ -61,7 +61,7 @@ foreach ($relative in $include) {
 
 $forbidden = @(Get-ChildItem -LiteralPath $staging -Recurse -File | Where-Object {
     $_.Extension -in @('.dll', '.exe', '.dmp', '.zip', '.7z', '.nupkg', '.log', '.pfx', '.snk') -or
-    $_.Name -in @('settings.json', 'hsr_config.json')
+    $_.Name -in @('settings.json', 'hna_config.json')
 })
 if ($forbidden.Count -gt 0) { throw "Refusing to ship forbidden files: $($forbidden.Name -join ', ')" }
 

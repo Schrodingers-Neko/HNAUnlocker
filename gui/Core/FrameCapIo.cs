@@ -1,4 +1,4 @@
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     internal readonly record struct Int32Transfer(bool NativeSucceeded, long BytesTransferred, int Win32Error)
     {

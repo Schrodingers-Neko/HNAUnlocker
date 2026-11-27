@@ -8,7 +8,7 @@ artifacts/
 
 # 本机与私有内容：绝不提交
 settings.json
-hsr_config.json
+hna_config.json
 *.log
 *.dmp
 *.zip

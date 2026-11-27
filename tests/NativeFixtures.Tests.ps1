@@ -12,7 +12,7 @@ if ([string]::IsNullOrWhiteSpace($CompilerPath)) {
     throw 'An explicit CompilerPath is required for native CI checks.'
 }
 if ([string]::IsNullOrWhiteSpace($EvidenceDir)) {
-    $EvidenceDir = Join-Path ([IO.Path]::GetTempPath()) ('HSRUnlocker-NativeFixtures-' + [Guid]::NewGuid().ToString('N'))
+    $EvidenceDir = Join-Path ([IO.Path]::GetTempPath()) ('HNAUnlocker-NativeFixtures-' + [Guid]::NewGuid().ToString('N'))
 }
 $EvidenceDir = [IO.Path]::GetFullPath($EvidenceDir)
 if (Test-Path -LiteralPath $EvidenceDir) {

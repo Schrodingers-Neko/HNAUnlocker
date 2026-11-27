@@ -8,11 +8,11 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Windowing;
 using Microsoft.Windows.Storage.Pickers;
-using StarRailUnlocker.Core;
+using HNAUnlocker.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics;
 
-namespace StarRailUnlocker
+namespace HNAUnlocker
 {
     public sealed partial class MainWindow
     {

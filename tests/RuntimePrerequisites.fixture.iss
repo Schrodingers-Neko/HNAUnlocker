@@ -4,9 +4,9 @@
 #endif
 
 [Setup]
-AppName=HSRUnlocker Runtime Workflow Fixture
+AppName=HNAUnlocker Runtime Workflow Fixture
 AppVersion=1.0
-DefaultDirName={tmp}\HSRUnlocker-RuntimeFixture-NoApp
+DefaultDirName={tmp}\HNAUnlocker-RuntimeFixture-NoApp
 CreateAppDir=no
 Uninstallable=no
 CreateUninstallRegKey=no

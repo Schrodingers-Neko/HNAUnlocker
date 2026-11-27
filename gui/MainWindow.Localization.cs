@@ -2,9 +2,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using StarRailUnlocker.Core;
+using HNAUnlocker.Core;
 
-namespace StarRailUnlocker
+namespace HNAUnlocker
 {
     public sealed partial class MainWindow
     {

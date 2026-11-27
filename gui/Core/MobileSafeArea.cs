@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     public enum MobileSafeAreaMode { Original = 0, Custom = 1 }
 

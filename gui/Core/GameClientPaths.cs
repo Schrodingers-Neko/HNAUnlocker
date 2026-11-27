@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace StarRailUnlocker.Core
+namespace HNAUnlocker.Core
 {
     /// <summary>Bounded, ordered client paths; existence checks are supplied by the caller.</summary>
     public static class GameClientPaths
