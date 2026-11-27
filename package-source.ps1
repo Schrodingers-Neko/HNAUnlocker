@@ -17,7 +17,7 @@ $include = @(
     'docs\HNA-Internals.md',
     'global.json', 'build.ps1', 'build-installer.ps1', 'installer\HNAUnlocker.iss',
     'package-source.ps1', '.gitignore', '.gitattributes', '.editorconfig',
-    '.github\workflows\build.yml',
+    '.github\workflows\build.yml', '.github\workflows\release.yml',
     'scripts\Copy-ThirdPartyNotices.ps1', 'tests\Packaging.Tests.ps1',
     'scripts\Prepare-ReleaseAssets.ps1', 'tests\ReleaseAssets.Tests.ps1',
     'scripts\InstallerRuntime.ps1', 'installer\runtime-dependencies.json', 'installer\legacy-runtime-files.json',

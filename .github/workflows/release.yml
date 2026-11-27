@@ -1,0 +1,140 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to publish (must match version in gui/HNAUnlocker.csproj, e.g. v0.1.0)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore .\gui\HNAUnlocker.csproj -r win-x64
+
+      - name: Build application
+        run: dotnet build .\gui\HNAUnlocker.csproj -c Release -r win-x64 --no-restore
+
+      - name: Run portable tests
+        # Synthetic fixtures, owned memory, and one bounded test child; no installed game, live settings, or network.
+        run: dotnet run --project .\tests\HNAUnlocker.Tests\HNAUnlocker.Tests.csproj -c Release
+
+      - name: Test dependency notice packaging
+        run: powershell -NoProfile -File .\tests\Packaging.Tests.ps1
+
+      - name: Test installer metadata and cleanup inventory
+        run: powershell -NoProfile -File .\tests\InstallerMetadata.Tests.ps1
+
+      - name: Test release asset preparation
+        shell: pwsh
+        run: .\tests\ReleaseAssets.Tests.ps1
+
+      - name: Install pinned native fixture and installer compiler
+        shell: pwsh
+        timeout-minutes: 5
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = Join-Path $env:RUNNER_TEMP 'innosetup-7.1.0-x64.exe'
+          $compilerDirectory = Join-Path $env:RUNNER_TEMP 'inno-7.1.0'
+          Invoke-WebRequest -Uri 'https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe' -OutFile $installer -TimeoutSec 120
+          $expectedHash = '0362a383ed217d4c4239b5933866dd96d3eb2102737da92f80f6057a4b40df2f'
+          if ((Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash -ine $expectedHash) {
+            throw 'The pinned Inno Setup installer failed SHA-256 verification.'
+          }
+          $process = Start-Process -FilePath $installer -WindowStyle Hidden -PassThru -ArgumentList @(
+            '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', '/CURRENTUSER', '/PORTABLE=1',
+            "/DIR=`"$compilerDirectory`"")
+          if (-not $process.WaitForExit(120000)) {
+            $process.Kill()
+            throw 'The pinned Inno Setup compiler installation exceeded its two-minute bound.'
+          }
+          if ($process.ExitCode -ne 0) { throw "Inno Setup compiler installation failed: $($process.ExitCode)." }
+          $compiler = Join-Path $compilerDirectory 'ISCC.exe'
+          if (-not (Test-Path -LiteralPath $compiler -PathType Leaf)) { throw 'The pinned compiler is missing.' }
+          $version = (& $compiler --version | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $version -cne '7.1.0') { throw 'The pinned compiler version is incorrect.' }
+
+      - name: Test native installer fixtures and negative control
+        shell: pwsh
+        timeout-minutes: 5
+        # Only lowest-privilege synthetic fixtures execute, never the production application installer.
+        run: |
+          & .\tests\NativeFixtures.Tests.ps1 -CompilerPath (Join-Path $env:RUNNER_TEMP 'inno-7.1.0\ISCC.exe') -EvidenceDir (Join-Path $env:RUNNER_TEMP 'native-fixture-evidence')
+
+      - name: Build installer and prepare release assets
+        shell: pwsh
+        timeout-minutes: 10
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $compiler = Join-Path $env:RUNNER_TEMP 'inno-7.1.0\ISCC.exe'
+          $publishOut = Join-Path $env:RUNNER_TEMP 'release-build\installer-publish'
+          $installerOut = Join-Path $env:RUNNER_TEMP 'release-build\installer'
+          $sourceOut = Join-Path $env:RUNNER_TEMP 'release-build\source'
+          $assetsOut = Join-Path $env:RUNNER_TEMP 'release-build\release-assets'
+
+          & .\build-installer.ps1 -PublishDir $publishOut -OutDir $installerOut -CompilerPath $compiler
+          $manifest = Get-Content (Join-Path $installerOut 'update.json') -Raw | ConvertFrom-Json
+          $tagName = $manifest.tag_name
+          $version = $tagName.Substring(1)
+
+          $expectedTag = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME } else { $env:INPUT_TAG }
+          if (-not [string]::IsNullOrWhiteSpace($expectedTag) -and $expectedTag -cne $tagName) {
+            throw "Release tag '$expectedTag' does not match built manifest tag '$tagName'."
+          }
+
+          $source = & .\package-source.ps1 -OutDir $sourceOut | ConvertFrom-Json
+          & .\scripts\Prepare-ReleaseAssets.ps1 `
+            -Version $version `
+            -InstallerPath (Join-Path $installerOut "HNAUnlocker-$version-win-x64-Setup.exe") `
+            -SourceArchivePath $source.Archive `
+            -OutDir $assetsOut
+
+          "TAG_NAME=$tagName" >> $env:GITHUB_ENV
+          "VERSION=$version" >> $env:GITHUB_ENV
+          "ASSETS_DIR=$assetsOut" >> $env:GITHUB_ENV
+
+      - name: Publish GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tag = $env:TAG_NAME
+          $version = $env:VERSION
+          $assets = $env:ASSETS_DIR
+          $installer = Join-Path $assets "HNAUnlocker-$version-win-x64-Setup.exe"
+          $sourceZip = Join-Path $assets "HNAUnlocker-$version-source.zip"
+          $checksums = Join-Path $assets 'SHA256SUMS.txt'
+          $manifest = Join-Path $assets 'update.json'
+
+          gh release create $tag $installer $sourceZip $checksums `
+            --draft `
+            --target $env:GITHUB_SHA `
+            --title "HNAUnlocker $tag" `
+            --generate-notes
+          if ($LASTEXITCODE -ne 0) { throw "gh release create failed with exit code $LASTEXITCODE." }
+
+          gh release upload $tag $manifest --clobber
+          if ($LASTEXITCODE -ne 0) { throw "gh release upload update.json failed with exit code $LASTEXITCODE." }
+
+          gh release edit $tag --draft=false
+          if ($LASTEXITCODE -ne 0) { throw "gh release publish failed with exit code $LASTEXITCODE." }
