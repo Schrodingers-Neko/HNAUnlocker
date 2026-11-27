@@ -13,7 +13,7 @@ $repo = $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($OutDir)) { $OutDir = Join-Path $repo 'artifacts' }
 
 $include = @(
-    'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'CONTRIBUTING.md', 'SECURITY.md',
+    'README.md', 'README.en.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'CONTRIBUTING.md', 'SECURITY.md',
     'docs\HNA-Internals.md',
     'global.json', 'build.ps1', 'build-installer.ps1', 'installer\HNAUnlocker.iss',
     'package-source.ps1', '.gitignore', '.gitattributes', '.editorconfig',
