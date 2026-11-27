@@ -7,8 +7,9 @@ namespace StarRailUnlocker.Core
         float Input, float Output, bool Enabled);
 
     /// <summary>
-    /// Modifies only the camera kind's input scalar and tail-forwards the complete original
-    /// priority implementation. Ordinary transitions, return values and callback paths survive.
+    /// Intercepts HNA's shared CachedRendererDitherController::SetDither(this, int kind, float alpha)
+    /// and forces alpha = 1.0f ONLY for camera Elevation (kind=3) and camera Distance (kind=4) calls.
+    /// Ordinary transitions (kinds 1/2/5), return values, and callbacks survive untouched.
     /// Allocations that might have been published remain valid until the target exits.
     /// </summary>
     public sealed class AntiFadePatcher : IDisposable
@@ -16,12 +17,30 @@ namespace StarRailUnlocker.Core
         internal const int EnabledOffset = 0, OneOffset = 4, CameraCallsOffset = 8, OtherCallsOffset = 16;
         internal const int ObjectOffset = 24, InputOffset = 32, OutputOffset = 36, GatewayPointerOffset = 48;
         private const int AllocationSize = 0x2000, CodeOffset = 0x1000, GatewayOffset = 0x1100;
-        private static readonly byte[] Prologue = { 0x41, 0x56, 0x56, 0x57, 0x55, 0x53, 0x48, 0x83, 0xEC, 0x50 };
+        private static readonly byte[] Prologue =
+        {
+            0x56,                         // push rsi
+            0x57,                         // push rdi
+            0x53,                         // push rbx
+            0x48, 0x83, 0xEC, 0x60,       // sub rsp, 0x60
+            0x0F, 0x29, 0x74, 0x24, 0x50, // movaps [rsp+0x50], xmm6
+        };
+        // Exact version-1 unwind record for Prologue (prolog=0x0C, 6 codes: SAVE_XMM128 xmm6; ALLOC_SMALL 0x60; PUSH RBX/RDI/RSI).
+        internal static readonly byte[] GatewayUnwind =
+        {
+            0x01, 0x0C, 0x06, 0x00,
+            0x0C, 0x68, 0x05, 0x00,
+            0x07, 0xB2,
+            0x03, 0x30,
+            0x02, 0x70,
+            0x01, 0x60,
+        };
         private readonly TargetProcess _proc;
         private readonly ResolvedGameBuild _build;
         private ResolvedCameraFade _resolved;
         private ExecutableEntryPatch _entryPatch;
         private RemoteFunctionTable _unwind;
+        private byte[] _gateway;
         private ulong _region, _entry, _cameraBaseline, _otherBaseline;
         private bool _published, _enabled, _disposed;
         public bool IsInstalled => _enabled && _entryPatch?.IsInstalled == true;
@@ -55,7 +74,7 @@ namespace StarRailUnlocker.Core
                 if (!_resolved.Helper.Code.AsSpan(0, Prologue.Length).SequenceEqual(Prologue))
                     throw new NotSupportedException(L10n.T("Runtime.AntiFade.UnsupportedEntry"));
                 if (_region == 0) PrepareRegion();
-                _unwind ??= new RemoteFunctionTable(_proc, GatewayAddress);
+                _unwind ??= new RemoteFunctionTable(_proc, GatewayAddress, _gateway, GatewayUnwind);
                 try { _unwind.Register(); }
                 finally { _published |= _unwind.MustRetainGateway; }
                 _entryPatch ??= new ExecutableEntryPatch(_proc, _entry, Prologue);
@@ -77,7 +96,6 @@ namespace StarRailUnlocker.Core
             {
                 string reason = ex.Message;
                 bool disabled = Disable();
-                // Installation can have written the entry even when protection restoration failed.
                 if (disabled && _entryPatch?.WasPublished == true)
                 {
                     bool removed = _entryPatch.Remove(log);
@@ -96,12 +114,12 @@ namespace StarRailUnlocker.Core
             if (_region == 0) throw new InvalidOperationException(L10n.T("Runtime.AntiFade.AllocateFailed"));
             try
             {
-                // AllocateNear can fall back to an arbitrary address; all relative branches must fit.
                 _ = ExecutableEntryPatch.BuildEntryWord(_entry, WrapperAddress);
                 byte[] gateway = BuildGateway(GatewayAddress, _entry, Prologue);
-                var flags = new List<ulong>();
-                foreach (ulong rva in _resolved.HotfixFlags) flags.Add(checked(_build.AssemblyBase + rva));
-                byte[] wrapper = BuildWrapper(WrapperAddress, _region, flags);
+                var guards = new List<(ulong Address, byte Mask)>();
+                foreach (var g in _resolved.HotfixGuards)
+                    guards.Add((checked(_build.AssemblyBase + g.Rva), g.Mask));
+                byte[] wrapper = BuildWrapper(WrapperAddress, _region, guards);
                 if (wrapper.Length > GatewayOffset - CodeOffset || gateway.Length > 0x100)
                     throw new InvalidOperationException(L10n.T("Runtime.AntiFade.WrapperPageOverflow"));
                 var state = new byte[0x1000];
@@ -115,10 +133,10 @@ namespace StarRailUnlocker.Core
                 CameraFadeResolver.Equal(_proc, GatewayAddress, gateway);
                 if (!_proc.MakeExecutable(WrapperAddress, 0x1000))
                     throw new InvalidOperationException(L10n.T("Runtime.AntiFade.ProtectFailed"));
+                _gateway = gateway;
             }
             catch
             {
-                // No entry has referenced this allocation, so this is the only safe eager free.
                 _proc.Free(_region); _region = 0;
                 throw;
             }
@@ -154,7 +172,6 @@ namespace StarRailUnlocker.Core
                     _published |= _entryPatch.WasPublished;
                     if (!_entryPatch.Remove(log)) throw new InvalidOperationException(_entryPatch.LastError ?? L10n.T("Runtime.AntiFade.EntryRestoreFailed"));
                 }
-                // A failed partial publication is never silently reported as a completed removal.
                 if (_entry != 0 && _published)
                     CameraFadeResolver.Equal(_proc, _entry, Prologue);
                 log?.Invoke(L10n.T("Runtime.AntiFade.Removed"));
@@ -191,8 +208,12 @@ namespace StarRailUnlocker.Core
             _disposed = true;
         }
 
-        /// <summary>Changes XMM1 only for enabled, unhotfixed camera-kind calls. RSP and all GPRs survive.</summary>
-        public static byte[] BuildWrapper(ulong codeAddress, ulong dataAddress, IReadOnlyList<ulong> hotfixFlags = null)
+        /// <summary>
+        /// Changes XMM2 (alpha) to 1.0f only for enabled, unhotfixed camera Elevation (edx == 3)
+        /// and camera Distance (edx == 4) calls. RSP and all GPRs survive.
+        /// </summary>
+        public static byte[] BuildWrapper(ulong codeAddress, ulong dataAddress,
+            IReadOnlyList<(ulong Address, byte Mask)> hotfixGuards = null)
         {
             var code = new List<byte>(192); var exits = new List<int>();
             void Rip(ulong address, byte[] opcode, byte[] suffix = null)
@@ -206,7 +227,6 @@ namespace StarRailUnlocker.Core
             {
                 code.Add(0x0F); code.Add(condition); int at = code.Count; code.AddRange(new byte[4]); return at;
             }
-            // Resolve branch displacements after all instructions have been appended.
             void Patch(int at, int target)
             {
                 byte[] displacement = BitConverter.GetBytes(checked(target - (at + 4)));
@@ -215,18 +235,21 @@ namespace StarRailUnlocker.Core
             code.AddRange(new byte[] { 0xF3, 0x0F, 0x1E, 0xFA }); // ENDBR64; leaf wrapper
             Rip(dataAddress + EnabledOffset, new byte[] { 0x80, 0x3D }, new byte[] { 0 });
             exits.Add(Branch(0x84)); // je tail
-            if (hotfixFlags != null)
-                foreach (ulong flag in hotfixFlags)
+            if (hotfixGuards != null)
+                foreach (var (address, mask) in hotfixGuards)
                 {
-                    Rip(flag, new byte[] { 0x80, 0x3D }, new byte[] { 0 });
-                    exits.Add(Branch(0x85)); // jne tail: a later live hotfix disables modification
+                    Rip(address, new byte[] { 0xF6, 0x05 }, new byte[] { mask });
+                    exits.Add(Branch(0x85)); // jne tail: live hotfix disables modification
                 }
-            code.AddRange(new byte[] { 0x41, 0x83, 0xF8, 0x01 }); // cmp r8d,1
-            int other = Branch(0x85);
-            Rip(dataAddress + ObjectOffset, new byte[] { 0x48, 0x89, 0x0D });
-            Rip(dataAddress + InputOffset, new byte[] { 0xF3, 0x0F, 0x11, 0x0D });
-            Rip(dataAddress + OneOffset, new byte[] { 0xF3, 0x0F, 0x10, 0x0D }); // movss xmm1,1.0
-            Rip(dataAddress + OutputOffset, new byte[] { 0xF3, 0x0F, 0x11, 0x0D });
+            code.AddRange(new byte[] { 0x83, 0xFA, 0x03 }); // cmp edx, 3 (Elevation / low-angle fade)
+            int isElevation = Branch(0x84);                 // je camera
+            code.AddRange(new byte[] { 0x83, 0xFA, 0x04 }); // cmp edx, 4 (Distance / proximity fade)
+            int other = Branch(0x85);                       // jne other
+            Patch(isElevation, code.Count);
+            Rip(dataAddress + ObjectOffset, new byte[] { 0x48, 0x89, 0x0D });         // mov [obj], rcx
+            Rip(dataAddress + InputOffset, new byte[] { 0xF3, 0x0F, 0x11, 0x15 });    // movss [in], xmm2
+            Rip(dataAddress + OneOffset, new byte[] { 0xF3, 0x0F, 0x10, 0x15 });      // movss xmm2, [1.0f]
+            Rip(dataAddress + OutputOffset, new byte[] { 0xF3, 0x0F, 0x11, 0x15 });   // movss [out], xmm2
             Rip(dataAddress + CameraCallsOffset, new byte[] { 0xF0, 0x48, 0xFF, 0x05 });
             code.Add(0xE9); int afterCamera = code.Count; code.AddRange(new byte[4]);
             Patch(other, code.Count);

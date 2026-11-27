@@ -16,7 +16,7 @@ namespace StarRailUnlocker.Core
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (string.IsNullOrWhiteSpace(config.ProcessPath) || !File.Exists(config.ProcessPath)
-                || !Path.GetFileName(config.ProcessPath).Equals("StarRail.exe", StringComparison.OrdinalIgnoreCase))
+                || !Path.GetFileName(config.ProcessPath).Equals("NexusAnima.exe", StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException(L10n.T("Runtime.Launcher.InvalidPath"));
             string compatibility = Environment.GetEnvironmentVariable("__COMPAT_LAYER") ?? "";
             if (compatibility.Contains("RunAsInvoker", StringComparison.OrdinalIgnoreCase))

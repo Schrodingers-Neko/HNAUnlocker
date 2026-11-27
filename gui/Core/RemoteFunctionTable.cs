@@ -12,8 +12,12 @@ namespace StarRailUnlocker.Core
     /// </summary>
     public sealed class RemoteFunctionTable : IDisposable
     {
-        private const int StorageSize = 0x2000, HelperOffset = 0x1000, UnwindOffset = 0x1100, TableOffset = 0x1120, GatewaySize = 19;
-        private static readonly byte[] Prologue = { 0x41, 0x56, 0x56, 0x57, 0x55, 0x53, 0x48, 0x83, 0xEC, 0x50 };
+        private const int StorageSize = 0x2000, HelperOffset = 0x1000, UnwindOffset = 0x1100, TableOffset = 0x1120, GatewaySize = 21;
+        private static readonly byte[] Prologue =
+        {
+            0x56, 0x57, 0x53, 0x48, 0x83, 0xEC, 0x60,
+            0x0F, 0x29, 0x74, 0x24, 0x50,
+        };
         private readonly TargetProcess _process;
         private readonly ulong _gateway;
         private readonly byte[] _expectedCode, _unwindInfo;
@@ -107,12 +111,10 @@ namespace StarRailUnlocker.Core
             else
             {
                 byte[] branch = { 0x48, 0x39, 0xE4, 0x0F, 0x84 }; // CMP RSP,RSP; JE rel32.
-                if (liveCode == null || !liveCode.AsSpan(0, 10).SequenceEqual(Prologue)
-                    || !liveCode.AsSpan(10, branch.Length).SequenceEqual(branch))
+                if (liveCode == null || !liveCode.AsSpan(0, Prologue.Length).SequenceEqual(Prologue)
+                    || !liveCode.AsSpan(Prologue.Length, branch.Length).SequenceEqual(branch))
                     throw new NotSupportedException(L10n.T("Resolver.FunctionTable.VerifiedFadeGatewayRequired"));
-                // Descending instruction-end offsets: ALLOC_SMALL 0x50; PUSH RBX/RBP/RDI/RSI/R14.
-                unwind = new byte[] { 0x01,0x0A,0x06,0x00, 0x0A,0x92, 0x06,0x30, 0x05,0x50,
-                    0x04,0x70, 0x03,0x60, 0x02,0xE0 };
+                unwind = AntiFadePatcher.GatewayUnwind;
             }
             ulong addFunctionTable = ResolveAddFunctionTable();
             _storage = _process.AllocateNear(_gateway, StorageSize);

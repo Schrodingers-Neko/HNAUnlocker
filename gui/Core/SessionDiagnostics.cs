@@ -89,8 +89,8 @@ namespace StarRailUnlocker.Core
             entries.AddRange(recent);
             entries.Sort((left, right) => left.Sequence.CompareTo(right.Sequence));
             var report = new StringBuilder()
-                .AppendLine("HSRUnlocker diagnostics v1")
-                .AppendLine($"HSRUnlocker: {(Version.TryParse(appVersion, out var version) ? version.ToString() : "unknown")}")
+                .AppendLine("HNAUnlocker diagnostics v1")
+                .AppendLine($"HNAUnlocker: {(Version.TryParse(appVersion, out var version) ? version.ToString() : "unknown")}")
                 .AppendLine($"Windows: {Environment.OSVersion.Version}");
             if (omitted != 0)
                 report.AppendLine(FormattableString.Invariant($"Earlier events omitted: {omitted}"));

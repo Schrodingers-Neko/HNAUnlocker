@@ -82,13 +82,14 @@ namespace StarRailUnlocker
             foreach (var child in PresetPanel.Children)
                 if (child is ToggleButton button) button.IsEnabled = FpsSlider.IsEnabled;
             bool preparing = running && session.State is SessionState.WaitingForGame or SessionState.Patching;
-            MobileUiToggle.IsEnabled = AutoStartToggle.IsEnabled = StartMinimizedToggle.IsEnabled =
+            MobileUiToggle.IsEnabled = false;
+            AutoStartToggle.IsEnabled = StartMinimizedToggle.IsEnabled =
                 !blocked && !preparing && !restoring;
-            GraphicsSourceBox.IsEnabled = MobileUiToggle.IsEnabled && _config.UseMobileUI;
-            SafeAreaModeBox.IsEnabled = GraphicsSourceBox.IsEnabled;
+            GraphicsSourceBox.IsEnabled = false;
+            SafeAreaModeBox.IsEnabled = false;
             bool customSafeArea = _config.SafeAreaMode == MobileSafeAreaMode.Custom;
             SafeAreaInsetsPanel.Visibility = customSafeArea ? Visibility.Visible : Visibility.Collapsed;
-            SafeAreaHorizontalBox.IsEnabled = SafeAreaModeBox.IsEnabled && customSafeArea;
+            SafeAreaHorizontalBox.IsEnabled = false;
             ExitWithGameToggle.IsEnabled = !blocked;
             RefreshUpdatePresentation();
             RefreshDiagnosticsExport();
@@ -242,7 +243,7 @@ namespace StarRailUnlocker
                 if (string.IsNullOrEmpty(report)) return;
                 var picker = new FileSavePicker(AppWindow.Id)
                 {
-                    SuggestedFileName = "HSRUnlocker-diagnostics-" + DateTime.Now.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture),
+                    SuggestedFileName = "HNAUnlocker-diagnostics-" + DateTime.Now.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture),
                     DefaultFileExtension = ".txt",
                     ShowOverwritePrompt = true
                 };

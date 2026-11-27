@@ -9,9 +9,9 @@ namespace StarRailUnlocker.Core
 {
     internal static class UpdateSources
     {
-        internal const string GitHubRoot = "https://github.com/L1angYun/HSRUnlocker";
-        internal const string GiteeRoot = "https://gitee.com/liangyun_Liu/HSRUnlocker";
-        internal static readonly Uri GiteeReleases = new("https://gitee.com/api/v5/repos/liangyun_Liu/HSRUnlocker/releases?direction=desc&per_page=100");
+        internal const string GitHubRoot = "https://github.com/Schrodingers-Neko/HNAUnlocker";
+        internal const string GiteeRoot = "https://gitee.com/Schrodingers-Neko/HNAUnlocker";
+        internal static readonly Uri GiteeReleases = new("https://gitee.com/api/v5/repos/Schrodingers-Neko/HNAUnlocker/releases?direction=desc&per_page=100");
 
         internal static Uri FileUri(string tag, string fileName, bool gitee) =>
             new((gitee ? GiteeRoot : GitHubRoot) + "/releases/download/" + tag + "/" + fileName);
@@ -73,7 +73,7 @@ namespace StarRailUnlocker.Core
                     throw new InvalidDataException("The update redirect transition is not trusted.");
                 previous = location;
                 using var request = new HttpRequestMessage(HttpMethod.Get, uri);
-                request.Headers.UserAgent.ParseAdd("HSRUnlocker-Updater/1.3");
+                request.Headers.UserAgent.ParseAdd("HNAUnlocker-Updater/1.3");
                 using var headersTimeout = CancellationTokenSource.CreateLinkedTokenSource(token);
                 headersTimeout.CancelAfter(TimeSpan.FromSeconds(8));
                 HttpResponseMessage response;
@@ -139,7 +139,7 @@ namespace StarRailUnlocker.Core
             string host = gitee ? "gitee.com" : "github.com";
             if (uri.Host.Equals(host, StringComparison.OrdinalIgnoreCase) && uri.Query.Length == 0)
             {
-                string repository = gitee ? "/liangyun_Liu/HSRUnlocker" : "/L1angYun/HSRUnlocker";
+                string repository = "/Schrodingers-Neko/HNAUnlocker";
                 if (!gitee && expectedTag == null && fileName == "update.json"
                     && uri.AbsolutePath == repository + "/releases/latest/download/update.json") return FileLocation.Release;
                 string prefix = repository + "/releases/download/";

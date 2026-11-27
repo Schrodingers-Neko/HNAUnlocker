@@ -42,15 +42,15 @@
     "ko-KR": "설정을 읽을 수 없습니다: {0}"
   },
   "App.WindowCallbackRegistrationFailed": {
-    "zh-CN": "无法注册 HSRUnlocker 窗口尺寸回调",
-    "en-US": "Cannot register the HSRUnlocker window sizing callback",
-    "ja-JP": "HSRUnlocker のウィンドウサイズコールバックを登録できません",
-    "ko-KR": "HSRUnlocker 창 크기 콜백을 등록할 수 없습니다"
+    "zh-CN": "无法注册 HNAUnlocker 窗口尺寸回调",
+    "en-US": "Cannot register the HNAUnlocker window sizing callback",
+    "ja-JP": "HNAUnlocker のウィンドウサイズコールバックを登録できません",
+    "ko-KR": "HNAUnlocker 창 크기 콜백을 등록할 수 없습니다"
   },
   "App.Starting": {
-    "zh-CN": "正在启动 HSRUnlocker {0}",
-    "en-US": "Starting HSRUnlocker {0}",
-    "ja-JP": "HSRUnlocker {0} を起動しています",
-    "ko-KR": "HSRUnlocker {0} 시작 중"
+    "zh-CN": "正在启动 HNAUnlocker {0}",
+    "en-US": "Starting HNAUnlocker {0}",
+    "ja-JP": "HNAUnlocker {0} を起動しています",
+    "ko-KR": "HNAUnlocker {0} 시작 중"
   }
 }

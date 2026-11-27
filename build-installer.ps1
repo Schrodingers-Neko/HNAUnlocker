@@ -10,7 +10,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $repo = $PSScriptRoot
 $project = Join-Path $repo 'gui\HSRUnlocker.csproj'
-$definition = Join-Path $repo 'installer\HSRUnlocker.iss'
+$definition = Join-Path $repo 'installer\HNAUnlocker.iss'
 . (Join-Path $repo 'scripts\InstallerRuntime.ps1')
 
 function Assert-NoReparsePoint([string]$Path) {
@@ -107,7 +107,7 @@ if ($appVersion -notmatch '^\d+\.\d+\.\d+$' -or $fileVersion -notmatch '^\d+\.\d
     [version]$fileVersion -ne [version]($appVersion + '.0')) {
     throw 'The installer requires a stable numeric project Version and matching FileVersion.'
 }
-$outputName = "HSRUnlocker-$appVersion-win-x64-Setup"
+$outputName = "HNAUnlocker-$appVersion-win-x64-Setup"
 $runtimes = Read-InstallerRuntimeManifest (Join-Path $repo 'installer\runtime-dependencies.json') $sdkNodes[0].Value
 $sdkVersion = [version]$runtimes.windowsAppRuntime.version
 $majorMinor = '$' + (([uint32]$sdkVersion.Major -shl 16) + [uint32]$sdkVersion.Minor).ToString('X8')
@@ -117,13 +117,13 @@ $minimumVersion = '$' + ([uint64]$sdkVersion.Major * 281474976710656 +
 & (Join-Path $repo 'build.ps1') -Project $project -OutDir $PublishDir
 Assert-FrameworkDependentPayload $PublishDir
 
-foreach ($binary in @('HSRUnlocker.exe', 'HSRUnlocker.dll')) {
+foreach ($binary in @('HNAUnlocker.exe', 'HNAUnlocker.dll')) {
     $info = (Get-Item -LiteralPath (Join-Path $PublishDir $binary)).VersionInfo
     if ([version]$info.FileVersion -ne [version]$fileVersion) {
         throw "Published $binary version does not match the project FileVersion."
     }
 }
-$productVersion = (Get-Item -LiteralPath (Join-Path $PublishDir 'HSRUnlocker.dll')).VersionInfo.ProductVersion
+$productVersion = (Get-Item -LiteralPath (Join-Path $PublishDir 'HNAUnlocker.dll')).VersionInfo.ProductVersion
 if (($productVersion -split '\+', 2)[0] -cne $appVersion) {
     throw 'Published application version does not match the project Version.'
 }

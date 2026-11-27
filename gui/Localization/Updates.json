@@ -174,10 +174,10 @@
     "ko-KR": "복원이 완료되지 않아 도구가 열린 상태입니다. 중지 및 복원을 다시 시도해 주세요."
   },
   "Updates.HelperFailed": {
-    "zh-CN": "更新未完成。请重新打开 HSRUnlocker 后重试，或手动下载安装包。",
-    "en-US": "The update did not complete. Reopen HSRUnlocker to retry, or download the installer manually.",
-    "ja-JP": "更新を完了できませんでした。HSRUnlocker を開いて再試行するか、インストーラーを手動でダウンロードしてください。",
-    "ko-KR": "업데이트를 완료하지 못했습니다. HSRUnlocker를 다시 열어 재시도하거나 설치 프로그램을 수동으로 다운로드해 주세요."
+    "zh-CN": "更新未完成。请重新打开 HNAUnlocker 后重试，或手动下载安装包。",
+    "en-US": "The update did not complete. Reopen HNAUnlocker to retry, or download the installer manually.",
+    "ja-JP": "更新を完了できませんでした。HNAUnlocker を開いて再試行するか、インストーラーを手動でダウンロードしてください。",
+    "ko-KR": "업데이트를 완료하지 못했습니다. HNAUnlocker를 다시 열어 재시도하거나 설치 프로그램을 수동으로 다운로드해 주세요."
   },
   "Updates.HelperLogs": {
     "zh-CN": "故障诊断日志：",
@@ -186,10 +186,10 @@
     "ko-KR": "오류 진단 로그:"
   },
   "Updates.InstallGuardFailed": {
-    "zh-CN": "无法登记工具的运行状态。请重新启动 HSRUnlocker 后重试。",
-    "en-US": "Could not register the tool's running state. Restart HSRUnlocker and try again.",
-    "ja-JP": "ツールの実行状態を登録できませんでした。HSRUnlocker を再起動して再試行してください。",
-    "ko-KR": "도구의 실행 상태를 등록하지 못했습니다. HSRUnlocker를 다시 시작한 후 다시 시도해 주세요."
+    "zh-CN": "无法登记工具的运行状态。请重新启动 HNAUnlocker 后重试。",
+    "en-US": "Could not register the tool's running state. Restart HNAUnlocker and try again.",
+    "ja-JP": "ツールの実行状態を登録できませんでした。HNAUnlocker を再起動して再試行してください。",
+    "ko-KR": "도구의 실행 상태를 등록하지 못했습니다. HNAUnlocker를 다시 시작한 후 다시 시도해 주세요."
   },
   "Updates.NotChecked": {
     "zh-CN": "尚未检查更新。",

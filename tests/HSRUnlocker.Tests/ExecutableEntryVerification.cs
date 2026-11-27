@@ -11,7 +11,7 @@ internal static class ExecutableEntryVerification
     private const int PageSize = 0x1000;
     // Leave time for native-thread cleanup before the child's 30-second lifetime expires.
     private const int ChildWorkMilliseconds = 28_000;
-    private static readonly byte[] Prologue = { 0x41, 0x56, 0x56, 0x57, 0x55, 0x53, 0x48, 0x83, 0xEC, 0x50 };
+    private static readonly byte[] Prologue = { 0x56, 0x57, 0x53, 0x48, 0x83, 0xEC, 0x60, 0x0F, 0x29, 0x74, 0x24, 0x50 };
 
     [UnmanagedFunctionPointer(CallingConvention.Winapi)]
     private delegate float EntryCall(IntPtr state, float alpha, int kind, ulong flags);
@@ -55,7 +55,7 @@ internal static class ExecutableEntryVerification
             Ready ready = child.WaitReady();
             ValidateReady(ready, child.Pid, directory);
             using var process = new TargetProcess(checked((uint)child.Pid));
-            check(ReadCode(process, ready, ready.Entry, 10).AsSpan().SequenceEqual(Prologue)
+            check(ReadCode(process, ready, ready.Entry, 12).AsSpan().SequenceEqual(Prologue)
                 && HasProtection(process, ready, ready.CodeBase, Native.PAGE_EXECUTE_READ)
                 && HasProtection(process, ready, ready.State, Native.PAGE_READWRITE),
                 "own bounded child exposes the exact ten-byte entry in RX private code, separate from RW state");
@@ -82,7 +82,7 @@ internal static class ExecutableEntryVerification
                 "child parks only its own native worker at an entry RIP while retaining one explicit suspension");
             check(!patch.Install(ready.Wrapper) && !patch.IsInstalled && !patch.WasPublished
                 && patch.LastError?.Contains("entering", StringComparison.OrdinalIgnoreCase) == true
-                && ReadCode(process, ready, ready.Entry, 10).AsSpan().SequenceEqual(Prologue)
+                && ReadCode(process, ready, ready.Entry, 12).AsSpan().SequenceEqual(Prologue)
                 && HasProtection(process, ready, ready.Entry, Native.PAGE_EXECUTE_READ),
                 "actual child thread guard refuses an in-flight entry without publishing bytes or changing RX protection");
             Reply stillParked = child.Request("status");
@@ -105,7 +105,7 @@ internal static class ExecutableEntryVerification
 
             check(patch.Install(ready.Wrapper) && patch.IsInstalled && patch.WasPublished
                 && ReadCode(process, ready, ready.Entry, 8).AsSpan().SequenceEqual(installedWord)
-                && ReadCode(process, ready, ready.Entry + 8, 2).AsSpan().SequenceEqual(Prologue.AsSpan(8))
+                && ReadCode(process, ready, ready.Entry + 8, 4).AsSpan().SequenceEqual(Prologue.AsSpan(8))
                 && HasProtection(process, ready, ready.Entry, Native.PAGE_EXECUTE_READ),
                 "real Install publishes just the aligned entry word, retains the two-byte suffix and restores the RX page");
             Reply pulse = child.Request("pulse");
@@ -142,14 +142,14 @@ internal static class ExecutableEntryVerification
             // Restore our known published word, not someone else's original bytes, before asking Remove to act.
             WriteOwnEntryWord(process, ready, foreignWord, installedWord);
             check(patch.Remove() && !patch.IsInstalled && patch.WasPublished
-                && ReadCode(process, ready, ready.Entry, 10).AsSpan().SequenceEqual(Prologue)
+                && ReadCode(process, ready, ready.Entry, 12).AsSpan().SequenceEqual(Prologue)
                 && HasProtection(process, ready, ready.Entry, Native.PAGE_EXECUTE_READ)
                 && HasProtection(process, ready, ready.Gateway, Native.PAGE_EXECUTE_READ)
                 && HasProtection(process, ready, ready.State, Native.PAGE_READWRITE),
                 "Remove restores the exact original ten bytes and RX permissions while state remains RW");
             VerifyCall(quarter, 1, 0xA5A55A5AF0F00F0FUL, quarter,
                 "after Remove the original entry again receives/returns kind-1 alpha 0.25 with arguments/counter intact");
-            check(patch.Remove() && ReadCode(process, ready, ready.Entry, 10).AsSpan().SequenceEqual(Prologue)
+            check(patch.Remove() && ReadCode(process, ready, ready.Entry, 12).AsSpan().SequenceEqual(Prologue)
                 && HasProtection(process, ready, ready.Entry, Native.PAGE_EXECUTE_READ)
                 && child.Request("pulse").Heartbeat != pulse.Heartbeat,
                 "repeated Remove is harmless and all child threads remain runnable after restoration");
@@ -158,7 +158,7 @@ internal static class ExecutableEntryVerification
             typeof(ExecutableEntryPatch).GetProperty(nameof(ExecutableEntryPatch.IsInstalled))
                 .SetValue(patch, false);
             check(patch.Remove() && !patch.IsInstalled
-                && ReadCode(process, ready, ready.Entry, 10).AsSpan().SequenceEqual(Prologue)
+                && ReadCode(process, ready, ready.Entry, 12).AsSpan().SequenceEqual(Prologue)
                 && HasProtection(process, ready, ready.Entry, Native.PAGE_EXECUTE_READ),
                 "Remove reconciles a published owned jump even when its installation acknowledgement was lost");
         }
@@ -524,9 +524,9 @@ internal static class ExecutableEntryVerification
                 // Record arguments/call count, return alpha, and unwind all five nonvolatile pushes.
                 byte[] body = { 0xF3,0x0F,0x11,0x09, 0x44,0x89,0x41,0x04, 0x4C,0x89,0x49,0x08,
                     0x48,0x89,0x49,0x10, 0xF0,0x48,0xFF,0x41,0x18, 0xF3,0x0F,0x10,0xC1,
-                    0x48,0x83,0xC4,0x50, 0x5B,0x5D,0x5F,0x5E,0x41,0x5E,0xC3 };
+                    0x0F,0x28,0x74,0x24,0x50, 0x48,0x83,0xC4,0x60, 0x5B,0x5F,0x5E,0xC3 };
                 byte[] entry = Prologue.Concat(body).ToArray();
-                byte[] gateway = Prologue.Concat(Jump(Gateway + 10, Entry + 10)).ToArray();
+                byte[] gateway = Prologue.Concat(Jump(Gateway + 12, Entry + 12)).ToArray();
                 // CMP R8D,1; JNE gateway jump; MOV EAX,1.0f; MOVD XMM1,EAX; JMP gateway.
                 byte[] wrapperHead = { 0x41,0x83,0xF8,0x01, 0x75,0x09, 0xB8,0,0,0x80,0x3F, 0x66,0x0F,0x6E,0xC8 };
                 byte[] wrapper = wrapperHead.Concat(Jump(Wrapper + (ulong)wrapperHead.Length, Gateway)).ToArray();

@@ -10,7 +10,7 @@ namespace StarRailUnlocker
     {
         private const uint Callback = 0x8000 + 51;
         private const nuint Id = 1;
-        private const string WindowProperty = "HSRUnlocker.MainWindow.61134DCF-DF8D-461B-B785-3F546EE26AA7";
+        private const string WindowProperty = "HNAUnlocker.MainWindow.61134DCF-DF8D-461B-B785-3F546EE26AA7";
         private readonly IntPtr _window;
         private readonly SubclassProc _callback;
         private readonly Action _restore, _stop, _exit;
@@ -104,7 +104,7 @@ namespace StarRailUnlocker
         {
             Size = (uint)Marshal.SizeOf<NotifyData>(), Window = _window, Id = 1,
             Flags = flags, Message = Callback, Icon = _icon,
-            Tip = "HSRUnlocker", Info = "", Title = "",
+            Tip = "HNAUnlocker", Info = "", Title = "",
         };
 
         public bool Add()
@@ -122,7 +122,7 @@ namespace StarRailUnlocker
             ShowWindow(_window, 0);
             var balloon = Data(0x10);
             balloon.Info = L10n.T("Tray.HiddenBalloon");
-            balloon.Title = "HSRUnlocker";
+            balloon.Title = "HNAUnlocker";
             balloon.InfoFlags = 1;
             Shell_NotifyIconW(1, ref balloon);
         }

@@ -75,7 +75,7 @@ namespace StarRailUnlocker.Core
             var catalog = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
             var assembly = typeof(L10n).Assembly;
             foreach (string resource in assembly.GetManifestResourceNames()
-                .Where(name => name.StartsWith("HSRUnlocker.Localization.", StringComparison.Ordinal)
+                .Where(name => name.StartsWith("HNAUnlocker.Localization.", StringComparison.Ordinal)
                     && name.EndsWith(".json", StringComparison.Ordinal))
                 .OrderBy(name => name, StringComparer.Ordinal))
             {

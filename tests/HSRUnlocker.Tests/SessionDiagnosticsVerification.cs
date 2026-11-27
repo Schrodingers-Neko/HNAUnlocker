@@ -14,7 +14,7 @@ internal static class SessionDiagnosticsVerification
         diagnostics.AddValues(DiagnosticStep.RestoreReadback, DiagnosticResult.Mismatch, 60, 120);
         diagnostics.Add(DiagnosticStep.RestoreFrameCap, DiagnosticResult.Confirmed);
         string snapshot = diagnostics.CreateReport("1.3.7");
-        check(diagnostics.HasEntries && snapshot.Contains("HSRUnlocker: 1.3.7")
+        check(diagnostics.HasEntries && snapshot.Contains("HNAUnlocker: 1.3.7")
             && snapshot.Contains("Windows: ") && snapshot.Contains("WaitForGame Started")
             && snapshot.Contains("UpdateFrameCap Reapplied previous=60 requested=320")
             && snapshot.Contains("MonitorFrameCap TransferFailed win32=299 bytes=2/4")
@@ -22,7 +22,7 @@ internal static class SessionDiagnosticsVerification
             && snapshot.Contains("RestoreFrameCap Confirmed"),
             "diagnostics includes structured version, OS build, phases, Win32 code, byte count and readback values");
         check(snapshot.Contains("Z ") && !snapshot.Contains("0x")
-            && diagnostics.CreateReport("C:\\Users\\PrivateFixture").Contains("HSRUnlocker: unknown"),
+            && diagnostics.CreateReport("C:\\Users\\PrivateFixture").Contains("HNAUnlocker: unknown"),
             "diagnostics uses UTC dates, omits addresses and cannot print raw version text");
 
         diagnostics.Reset();

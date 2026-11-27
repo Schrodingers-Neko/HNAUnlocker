@@ -134,7 +134,7 @@ namespace StarRailUnlocker.Core
                     bool launchRequested = launchIfMissing || launchConfig.AutoStart;
                     if (launchRequested)
                     {
-                        foreach (uint existing in TargetProcess.FindProcessIds("StarRail.exe"))
+                        foreach (uint existing in TargetProcess.FindProcessIds("NexusAnima.exe"))
                         {
                             var module = TargetProcess.FindMainModule(existing);
                             if (string.IsNullOrWhiteSpace(module.Path))
@@ -143,7 +143,7 @@ namespace StarRailUnlocker.Core
                             { pid = existing; break; }
                         }
                     }
-                    else pid = TargetProcess.FindProcessId("StarRail.exe");
+                    else pid = TargetProcess.FindProcessId("NexusAnima.exe");
                     if (pid == 0 && launchRequested)
                     {
                         pid = GameLauncher.Launch(launchConfig, Log, token);
@@ -155,7 +155,7 @@ namespace StarRailUnlocker.Core
                     while (pid == 0 && DateTime.UtcNow < deadline)
                     {
                         Delay(token, 500);
-                        pid = TargetProcess.FindProcessId("StarRail.exe");
+                        pid = TargetProcess.FindProcessId("NexusAnima.exe");
                     }
                     if (pid == 0) throw new InvalidOperationException(L10n.T("Runtime.Session.GameWaitTimeout"));
                 }

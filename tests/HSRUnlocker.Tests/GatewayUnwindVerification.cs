@@ -56,7 +56,7 @@ internal static class GatewayUnwindVerification
         try
         {
             ulong gateway = region + 0x100, entry = region + 0x200;
-            byte[] prologue = { 0x41, 0x56, 0x56, 0x57, 0x55, 0x53, 0x48, 0x83, 0xEC, 0x50 };
+            byte[] prologue = { 0x56, 0x57, 0x53, 0x48, 0x83, 0xEC, 0x60, 0x0F, 0x29, 0x74, 0x24, 0x50 };
             byte[] code = AntiFadePatcher.BuildGateway(gateway, entry, prologue);
             if (!process.WriteData(gateway, code) || !process.MakeExecutable(region, 0x1000))
                 throw new InvalidOperationException("Cannot prepare own RX gateway unwind fixture.");
@@ -73,17 +73,16 @@ internal static class GatewayUnwindVerification
             tableAllocation = unchecked((ulong)information.AllocationBase.ToInt64());
 
             const ulong returnAddress = 0x0000123456789ABC;
-            int[] contextOffsets = { 232, 168, 176, 160, 144 }; // R14, RSI, RDI, RBP, RBX.
-            ulong[] saved = { 0x1414141414141414, 0x6161616161616161, 0x7171717171717171,
-                0x5151515151515151, 0x3131313131313131 };
+            int[] contextOffsets = { 168, 176, 144 }; // RSI, RDI, RBX.
+            ulong[] saved = { 0x6161616161616161, 0x7171717171717171, 0x3131313131313131 };
             ulong initialRsp = ((unchecked((ulong)stack.ToInt64()) + 0x200) & ~15UL) + 8;
             Marshal.WriteInt64((IntPtr)(long)initialRsp, unchecked((long)returnAddress));
             for (int i = 0; i < saved.Length; i++)
                 Marshal.WriteInt64((IntPtr)(long)(initialRsp - (ulong)(i + 1) * 8), unchecked((long)saved[i]));
 
-            // These stack depths follow the authored instructions, independently of the unwind encoder.
-            foreach (var point in new (int Offset, int Pushes, int Depth)[] { (0, 0, 0), (2, 1, 8), (3, 2, 16),
-                (4, 3, 24), (5, 4, 32), (6, 5, 40), (10, 5, 120), (13, 5, 120) })
+            // These stack depths follow the authored 12-byte HNA prologue, independently of the unwind encoder.
+            foreach (var point in new (int Offset, int Pushes, int Depth)[] { (0, 0, 0), (1, 1, 8), (2, 2, 16),
+                (3, 3, 24), (7, 3, 120), (12, 3, 120), (15, 3, 120) })
             {
                 Marshal.Copy(new byte[1232], 0, context, 1232);
                 Marshal.WriteInt32(context, 48, 0x0010000B); // AMD64 CONTROL | INTEGER | FLOATING_POINT.
@@ -103,7 +102,7 @@ internal static class GatewayUnwindVerification
                         == (i < point.Pushes ? saved[i] : saved[i] ^ 0xFF);
                 check(restored, $"gateway+{point.Offset} unwinds the exact caller RIP/RSP and only the nonvolatile registers already saved");
             }
-            check(RtlLookupFunctionEntry(gateway + 19, out _, IntPtr.Zero) == IntPtr.Zero,
+            check(RtlLookupFunctionEntry(gateway + 21, out _, IntPtr.Zero) == IntPtr.Zero,
                 "gateway unwind range stops immediately after the complete conditional relative jump");
             registration.Register();
             check(RtlLookupFunctionEntry(gateway, out _, IntPtr.Zero) == registeredTable,

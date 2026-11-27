@@ -6,18 +6,18 @@ using StarRailUnlocker.Core;
 
 internal static class UpdateMirrorDownloadVerification
 {
-    private const string FileName = "HSRUnlocker-1.2.3-win-x64-Setup.exe";
-    private const string GitHub = "https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/HSRUnlocker-1.2.3-win-x64-Setup.exe";
-    private const string Gitee = "https://gitee.com/liangyun_Liu/HSRUnlocker/releases/download/v1.2.3/HSRUnlocker-1.2.3-win-x64-Setup.exe";
-    private const string Attachment = "https://gitee.com/liangyun_Liu/HSRUnlocker/attach_files/123/download/HSRUnlocker-1.2.3-win-x64-Setup.exe";
-    private const string Cdn = "https://foruda.gitee.com/attach_file/456/HSRUnlocker-1.2.3-win-x64-Setup.exe?fixture-signature=private-fixture-value";
-    private const string LowercaseCdn = "https://foruda.gitee.com/attach_file/456/hsrunlocker-1.2.3-win-x64-setup.exe?fixture-signature=synthetic-lowercase-value";
+    private const string FileName = "HNAUnlocker-1.2.3-win-x64-Setup.exe";
+    private const string GitHub = "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/HNAUnlocker-1.2.3-win-x64-Setup.exe";
+    private const string Gitee = "https://gitee.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/HNAUnlocker-1.2.3-win-x64-Setup.exe";
+    private const string Attachment = "https://gitee.com/Schrodingers-Neko/HNAUnlocker/attach_files/123/download/HNAUnlocker-1.2.3-win-x64-Setup.exe";
+    private const string Cdn = "https://foruda.gitee.com/attach_file/456/HNAUnlocker-1.2.3-win-x64-Setup.exe?fixture-signature=private-fixture-value";
+    private const string LowercaseCdn = "https://foruda.gitee.com/attach_file/456/hnaunlocker-1.2.3-win-x64-setup.exe?fixture-signature=synthetic-lowercase-value";
 
     public static void Run(Action<bool, string> check) => RunAsync(check).GetAwaiter().GetResult();
 
     private static async Task RunAsync(Action<bool, string> check)
     {
-        string root = Path.Combine(Path.GetTempPath(), "HSRUnlocker-mirror-fixtures-" + Guid.NewGuid().ToString("N"));
+        string root = Path.Combine(Path.GetTempPath(), "HNAUnlocker-mirror-fixtures-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         byte[] payload = Enumerable.Range(0, 200000).Select(value => (byte)(value % 251)).ToArray();
         UpdatePackage package = Package(payload, GitHub);
@@ -87,7 +87,7 @@ internal static class UpdateMirrorDownloadVerification
             using (var client = Client(localRequests, (_, _) =>
             {
                 string stage = Directory.EnumerateDirectories(root).Single();
-                if (Path.GetDirectoryName(stage) != root || !Path.GetFileName(stage).StartsWith("HSRUnlocker-Update-", StringComparison.Ordinal))
+                if (Path.GetDirectoryName(stage) != root || !Path.GetFileName(stage).StartsWith("HNAUnlocker-Update-", StringComparison.Ordinal))
                     throw new InvalidOperationException("Unexpected local fixture directory.");
                 Directory.Delete(stage);
                 return Task.FromResult(Response(payload));
@@ -156,7 +156,7 @@ internal static class UpdateMirrorDownloadVerification
                 var requests = new List<string>();
                 using var client = Client(requests, (request, _) => Task.FromResult(
                     request.RequestUri.AbsoluteUri == Gitee && redirected
-                        ? Redirect("/liangyun_Liu/HSRUnlocker/attach_files/123/download/" + FileName)
+                        ? Redirect("/Schrodingers-Neko/HNAUnlocker/attach_files/123/download/" + FileName)
                         : request.RequestUri.AbsoluteUri == Attachment
                             ? Redirect(Cdn)
                             : Response(payload)));
@@ -205,20 +205,20 @@ internal static class UpdateMirrorDownloadVerification
 
             foreach (var sample in new (string Origin, string Target, string Description)[]
             {
-                (GitHub, "http://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/" + FileName, "HTTPS downgrade"),
+                (GitHub, "http://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/" + FileName, "HTTPS downgrade"),
                 (GitHub, "https://attacker.invalid/" + FileName, "untrusted host"),
                 (GitHub, "https://gitee.com.evil.invalid/" + FileName, "lookalike Gitee host"),
                 (Gitee, "https://gitee.com/unrelated/repository/attach_files/123/download/" + FileName, "another Gitee repository"),
                 (Gitee, "https://gitee.com/liangyun_liu/HSRUnlocker/attach_files/123/download/" + FileName, "changed owned repository casing"),
-                (Gitee, "https://gitee.com/liangyun_Liu/HSRUnlocker/attach_files/123/download/hsrunlocker-1.2.3-win-x64-setup.exe", "lowercase owned attachment basename"),
-                (Gitee, "https://gitee.com/liangyun_Liu/HSRUnlocker/releases/download/v1.2.3/hsrunlocker-1.2.3-win-x64-setup.exe", "lowercase release basename"),
+                (Gitee, "https://gitee.com/Schrodingers-Neko/HNAUnlocker/attach_files/123/download/hnaunlocker-1.2.3-win-x64-setup.exe", "lowercase owned attachment basename"),
+                (Gitee, "https://gitee.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/hnaunlocker-1.2.3-win-x64-setup.exe", "lowercase release basename"),
                 (Gitee, "https://foruda.gitee.com.evil.invalid/attach_file/456/" + FileName, "lookalike CDN host"),
                 (Gitee, Cdn, "Gitee CDN bypass without an owned attachment"),
                 (Gitee, LowercaseCdn, "lowercase Gitee CDN bypass without an owned attachment"),
                 (Gitee, Attachment + "#fragment", "attachment fragment"),
                 (Gitee, Attachment + "?query=unexpected", "attachment query"),
-                (Gitee, "https://user@gitee.com/liangyun_Liu/HSRUnlocker/attach_files/123/download/" + FileName, "attachment userinfo"),
-                (Gitee, "https://gitee.com:444/liangyun_Liu/HSRUnlocker/attach_files/123/download/" + FileName, "attachment non-443 port")
+                (Gitee, "https://user@gitee.com/Schrodingers-Neko/HNAUnlocker/attach_files/123/download/" + FileName, "attachment userinfo"),
+                (Gitee, "https://gitee.com:444/Schrodingers-Neko/HNAUnlocker/attach_files/123/download/" + FileName, "attachment non-443 port")
             })
             {
                 var requests = new List<string>();
@@ -307,7 +307,7 @@ internal static class UpdateMirrorDownloadVerification
         {
             string expectedParent = Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar);
             if (!Path.GetDirectoryName(Path.GetFullPath(root)).Equals(expectedParent, StringComparison.OrdinalIgnoreCase)
-                || !Path.GetFileName(root).StartsWith("HSRUnlocker-mirror-fixtures-", StringComparison.Ordinal))
+                || !Path.GetFileName(root).StartsWith("HNAUnlocker-mirror-fixtures-", StringComparison.Ordinal))
                 throw new InvalidOperationException("Unexpected mirror fixture cleanup directory.");
             Directory.Delete(root, true);
         }
@@ -380,17 +380,17 @@ internal static class UpdateMirrorDownloadVerification
         foreach (var sample in new (string Target, string Description)[]
         {
             ("https://foruda.gitee.com/attach_file/456/hsrUnlocker-1.2.3-win-x64-setup.exe", "other mixed casing"),
-            ("https://foruda.gitee.com/attach_file/456/hsrunlocker-1.2.4-win-x64-setup.exe", "changed version"),
-            ("https://foruda.gitee.com/attach_file/456/hsrunlocker-1.2.3-win-x64-setup.zip", "changed extension"),
+            ("https://foruda.gitee.com/attach_file/456/hnaunlocker-1.2.4-win-x64-setup.exe", "changed version"),
+            ("https://foruda.gitee.com/attach_file/456/hnaunlocker-1.2.3-win-x64-setup.zip", "changed extension"),
             ("https://foruda.gitee.com/attach_file/456/other-1.2.3-win-x64-setup.exe", "changed product name"),
-            ("https://foruda.gitee.com.evil.invalid/attach_file/456/hsrunlocker-1.2.3-win-x64-setup.exe", "lookalike CDN host"),
-            ("https://attacker.invalid/attach_file/456/hsrunlocker-1.2.3-win-x64-setup.exe", "foreign CDN host"),
-            ("http://foruda.gitee.com/attach_file/456/hsrunlocker-1.2.3-win-x64-setup.exe", "HTTP downgrade"),
-            ("https://foruda.gitee.com:444/attach_file/456/hsrunlocker-1.2.3-win-x64-setup.exe", "non-443 port"),
-            ("https://user@foruda.gitee.com/attach_file/456/hsrunlocker-1.2.3-win-x64-setup.exe", "userinfo"),
-            ("https://foruda.gitee.com/attach_file/456/hsrunlocker-1.2.3-win-x64-setup.exe#fragment", "fragment"),
-            ("https://foruda.gitee.com/attach_file/not-numeric/hsrunlocker-1.2.3-win-x64-setup.exe", "nonnumeric attachment identifier"),
-            ("https://foruda.gitee.com/attach_file/456/download/hsrunlocker-1.2.3-win-x64-setup.exe", "extra path segment")
+            ("https://foruda.gitee.com.evil.invalid/attach_file/456/hnaunlocker-1.2.3-win-x64-setup.exe", "lookalike CDN host"),
+            ("https://attacker.invalid/attach_file/456/hnaunlocker-1.2.3-win-x64-setup.exe", "foreign CDN host"),
+            ("http://foruda.gitee.com/attach_file/456/hnaunlocker-1.2.3-win-x64-setup.exe", "HTTP downgrade"),
+            ("https://foruda.gitee.com:444/attach_file/456/hnaunlocker-1.2.3-win-x64-setup.exe", "non-443 port"),
+            ("https://user@foruda.gitee.com/attach_file/456/hnaunlocker-1.2.3-win-x64-setup.exe", "userinfo"),
+            ("https://foruda.gitee.com/attach_file/456/hnaunlocker-1.2.3-win-x64-setup.exe#fragment", "fragment"),
+            ("https://foruda.gitee.com/attach_file/not-numeric/hnaunlocker-1.2.3-win-x64-setup.exe", "nonnumeric attachment identifier"),
+            ("https://foruda.gitee.com/attach_file/456/download/hnaunlocker-1.2.3-win-x64-setup.exe", "extra path segment")
         })
         {
             var requests = new List<string>();

@@ -60,14 +60,14 @@ if ($Version -cnotmatch '\A(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\z')
 $InstallerPath = Get-ReleaseFileSystemPath $InstallerPath
 $SourceArchivePath = Get-ReleaseFileSystemPath $SourceArchivePath
 $OutDir = Get-ReleaseFileSystemPath $OutDir
-$installerName = "HSRUnlocker-$Version-win-x64-Setup.exe"
+$installerName = "HNAUnlocker-$Version-win-x64-Setup.exe"
 if ([IO.Path]::GetFileName($InstallerPath) -cne $installerName) {
     throw "InstallerPath must identify $installerName."
 }
 $manifestPath = Join-Path ([IO.Path]::GetDirectoryName($InstallerPath)) 'update.json'
 $inputs = @(
     [pscustomobject]@{ Name = $installerName; Path = $InstallerPath; Stream = $null; Size = 0L; SHA256 = $null },
-    [pscustomobject]@{ Name = "HSRUnlocker-$Version-source.zip"; Path = $SourceArchivePath; Stream = $null; Size = 0L; SHA256 = $null },
+    [pscustomobject]@{ Name = "HNAUnlocker-$Version-source.zip"; Path = $SourceArchivePath; Stream = $null; Size = 0L; SHA256 = $null },
     [pscustomobject]@{ Name = 'update.json'; Path = $manifestPath; Stream = $null; Size = 0L; SHA256 = $null }
 )
 Assert-EmptyOutput

@@ -7,28 +7,28 @@ internal static class GameClientPathsVerification
     {
         check(GameClientPaths.Normalize(new[]
         {
-            @" D:/custom folder/./StarRail.exe ",
-            @"d:\CUSTOM folder\StarRail.exe",
-            "E:\\\u81ea\u5b9a\u4e49\\\u6e38\u620f\\StarRail.exe",
-            @"F:\manual\old\..\StarRail.exe"
+            @" D:/custom folder/./NexusAnima.exe ",
+            @"d:\CUSTOM folder\NexusAnima.exe",
+            "E:\\\u81ea\u5b9a\u4e49\\\u6e38\u620f\\NexusAnima.exe",
+            @"F:\manual\old\..\NexusAnima.exe"
         }).SequenceEqual(new[]
         {
-            @"D:\custom folder\StarRail.exe",
-            "E:\\\u81ea\u5b9a\u4e49\\\u6e38\u620f\\StarRail.exe",
-            @"F:\manual\StarRail.exe"
+            @"D:\custom folder\NexusAnima.exe",
+            "E:\\\u81ea\u5b9a\u4e49\\\u6e38\u620f\\NexusAnima.exe",
+            @"F:\manual\NexusAnima.exe"
         }), "remembered clients normalize local paths, preserve Unicode and keep first case-insensitive duplicates");
 
         foreach (string invalid in new[]
         {
-            null, "", "  ", @"StarRail.exe", @"games\StarRail.exe", @"C:StarRail.exe",
-            @"\games\StarRail.exe", @"\\server\games\StarRail.exe",
-            @"\\?\C:\games\StarRail.exe", @"\\.\C:\games\StarRail.exe",
-            @"https://example/StarRail.exe", @"C:\games\StarRail.exe:stream",
-            @"C:\games:stream\StarRail.exe", @"C:\bad|folder\StarRail.exe",
-            @"C:\bad*folder\StarRail.exe", @"C:\bad?folder\StarRail.exe",
-            "C:\\bad\0folder\\StarRail.exe", @"C:\games\Other.exe",
-            @"C:\games\StarRail.exe.bak", @"C:\games\StarRail.exe\",
-            "C:\\" + new string('x', 32768) + "\\StarRail.exe"
+            null, "", "  ", @"NexusAnima.exe", @"games\NexusAnima.exe", @"C:NexusAnima.exe",
+            @"\games\NexusAnima.exe", @"\\server\games\NexusAnima.exe",
+            @"\\?\C:\games\NexusAnima.exe", @"\\.\C:\games\NexusAnima.exe",
+            @"https://example/NexusAnima.exe", @"C:\games\NexusAnima.exe:stream",
+            @"C:\games:stream\NexusAnima.exe", @"C:\bad|folder\NexusAnima.exe",
+            @"C:\bad*folder\NexusAnima.exe", @"C:\bad?folder\NexusAnima.exe",
+            "C:\\bad\0folder\\NexusAnima.exe", @"C:\games\Other.exe",
+            @"C:\games\NexusAnima.exe.bak", @"C:\games\NexusAnima.exe\",
+            "C:\\" + new string('x', 32768) + "\\NexusAnima.exe"
         })
         {
             check(GameClientPaths.Normalize(new[] { invalid }).Length == 0,
@@ -40,9 +40,9 @@ internal static class GameClientPathsVerification
             "absent remembered client collections normalize to an empty list");
 
         string[] normalizedLimit = GameClientPaths.Normalize(
-            Enumerable.Range(0, 200).Select(index => $@"D:\client{index}\StarRail.exe"));
-        check(normalizedLimit.Length == 64 && normalizedLimit[0] == @"D:\client0\StarRail.exe" &&
-              normalizedLimit[^1] == @"D:\client63\StarRail.exe",
+            Enumerable.Range(0, 200).Select(index => $@"D:\client{index}\NexusAnima.exe"));
+        check(normalizedLimit.Length == 64 && normalizedLimit[0] == @"D:\client0\NexusAnima.exe" &&
+              normalizedLimit[^1] == @"D:\client63\NexusAnima.exe",
             "remembered client limits preserve the earliest 64 eligible paths");
 
         int normalizationReads = 0;
@@ -54,40 +54,40 @@ internal static class GameClientPathsVerification
         check(bounded.Length == 0 && normalizationReads > 0 && normalizationReads < 8192,
             "normalization bounds source enumeration even when all entries are invalid");
 
-        string current = @"E:\selected\StarRail.exe";
+        string current = @"E:\selected\NexusAnima.exe";
         var existing = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            current, @"D:\manual\StarRail.exe", @"F:\discovered\StarRail.exe"
+            current, @"D:\manual\NexusAnima.exe", @"F:\discovered\NexusAnima.exe"
         };
         check(GameClientPaths.Available(current,
-            new[] { @"D:/manual/StarRail.exe", @"e:\SELECTED\StarRail.exe", @"C:\deleted\StarRail.exe" },
-            new[] { @"d:\MANUAL\StarRail.exe", @"F:\discovered\StarRail.exe" },
+            new[] { @"D:/manual/NexusAnima.exe", @"e:\SELECTED\NexusAnima.exe", @"C:\deleted\NexusAnima.exe" },
+            new[] { @"d:\MANUAL\NexusAnima.exe", @"F:\discovered\NexusAnima.exe" },
             existing.Contains).SequenceEqual(new[]
             {
-                current, @"D:\manual\StarRail.exe", @"F:\discovered\StarRail.exe"
+                current, @"D:\manual\NexusAnima.exe", @"F:\discovered\NexusAnima.exe"
             }), "available clients keep the selected client first, then remembered manual and newly discovered clients");
 
-        check(GameClientPaths.Available(@"C:\missing\StarRail.exe",
-            new[] { @"D:\denied\StarRail.exe", @"relative\StarRail.exe", @"D:\valid\Other.exe" },
-            new[] { @"F:\working\StarRail.exe" },
-            path => path == @"D:\denied\StarRail.exe" ? throw new IOException() :
-                path == @"F:\working\StarRail.exe").SequenceEqual(new[] { @"F:\working\StarRail.exe" }),
+        check(GameClientPaths.Available(@"C:\missing\NexusAnima.exe",
+            new[] { @"D:\denied\NexusAnima.exe", @"relative\NexusAnima.exe", @"D:\valid\Other.exe" },
+            new[] { @"F:\working\NexusAnima.exe" },
+            path => path == @"D:\denied\NexusAnima.exe" ? throw new IOException() :
+                path == @"F:\working\NexusAnima.exe").SequenceEqual(new[] { @"F:\working\NexusAnima.exe" }),
             "missing, inaccessible and ineligible clients do not hide an available installation");
         check(GameClientPaths.Available(null, null, null, _ => throw new IOException()).Length == 0,
             "absent client sources require no filesystem probes");
 
         string[] remembered = GameClientPaths.Normalize(
-            new[] { @"D:\manual\StarRail.exe", @"F:\discovered\StarRail.exe" });
+            new[] { @"D:\manual\NexusAnima.exe", @"F:\discovered\NexusAnima.exe" });
         check(GameClientPaths.Available(null, remembered, Array.Empty<string>(), existing.Contains)
-                .SequenceEqual(new[] { @"D:\manual\StarRail.exe", @"F:\discovered\StarRail.exe" }),
+                .SequenceEqual(new[] { @"D:\manual\NexusAnima.exe", @"F:\discovered\NexusAnima.exe" }),
             "a later empty rescan retains remembered manual and discovered clients that still exist");
 
         string[] availableLimit = GameClientPaths.Available(null,
-            Enumerable.Range(0, 64).Select(index => $@"C:\missing{index}\StarRail.exe"),
-            Enumerable.Range(0, 200).Select(index => $@"E:\found{index}\StarRail.exe"),
+            Enumerable.Range(0, 64).Select(index => $@"C:\missing{index}\NexusAnima.exe"),
+            Enumerable.Range(0, 200).Select(index => $@"E:\found{index}\NexusAnima.exe"),
             path => path.StartsWith(@"E:\", StringComparison.Ordinal));
-        check(availableLimit.Length == 64 && availableLimit[0] == @"E:\found0\StarRail.exe" &&
-              availableLimit[^1] == @"E:\found63\StarRail.exe",
+        check(availableLimit.Length == 64 && availableLimit[0] == @"E:\found0\NexusAnima.exe" &&
+              availableLimit[^1] == @"E:\found63\NexusAnima.exe",
             "unavailable history does not consume the 64 available-client slots");
 
         int availabilityReads = 0;
@@ -95,18 +95,18 @@ internal static class GameClientPathsVerification
             Enumerable.Range(0, 8192).Select(index =>
             {
                 availabilityReads++;
-                return $@"C:\missing{index}\StarRail.exe";
-            }), new[] { @"E:\found\StarRail.exe" },
-            path => path == @"E:\found\StarRail.exe");
-        check(boundedAvailable.SequenceEqual(new[] { @"E:\found\StarRail.exe" }) &&
+                return $@"C:\missing{index}\NexusAnima.exe";
+            }), new[] { @"E:\found\NexusAnima.exe" },
+            path => path == @"E:\found\NexusAnima.exe");
+        check(boundedAvailable.SequenceEqual(new[] { @"E:\found\NexusAnima.exe" }) &&
               availabilityReads > 0 && availabilityReads < 8192,
             "available-client enumeration is bounded per source while discovery remains reachable");
 
         var legacy = JsonSerializer.Deserialize<UnlockConfig>(
-            """{"ProcessPath":" D:\\old client\\StarRail.exe ","TargetFramerate":165,"FovDelta":8.5,"UseMobileUI":true,"Language":"ja-JP"}""");
+            """{"ProcessPath":" D:\\old client\\NexusAnima.exe ","TargetFramerate":165,"FovDelta":8.5,"UseMobileUI":true,"Language":"ja-JP"}""");
         legacy.Normalize();
-        check(legacy.ProcessPath == @"D:\old client\StarRail.exe" &&
-              legacy.GamePaths.SequenceEqual(new[] { @"D:\old client\StarRail.exe" }) &&
+        check(legacy.ProcessPath == @"D:\old client\NexusAnima.exe" &&
+              legacy.GamePaths.SequenceEqual(new[] { @"D:\old client\NexusAnima.exe" }) &&
               legacy.TargetFramerate == 165 && legacy.FovDelta == 8.5 &&
               legacy.UseMobileUI && legacy.Language == "ja-JP",
             "legacy settings seed remembered clients from the selected path without changing other preferences");
@@ -118,51 +118,51 @@ internal static class GameClientPathsVerification
 
         var selected = new UnlockConfig
         {
-            ProcessPath = @" E:\selected\StarRail.exe ",
+            ProcessPath = @" E:\selected\NexusAnima.exe ",
             GamePaths = new[]
             {
-                @"D:\manual\StarRail.exe", @"e:\SELECTED\StarRail.exe", null, @"relative\StarRail.exe"
+                @"D:\manual\NexusAnima.exe", @"e:\SELECTED\NexusAnima.exe", null, @"relative\NexusAnima.exe"
             }
         };
         selected.Normalize();
-        check(selected.GamePaths.SequenceEqual(new[] { current, @"D:\manual\StarRail.exe" }),
+        check(selected.GamePaths.SequenceEqual(new[] { current, @"D:\manual\NexusAnima.exe" }),
             "settings normalization keeps the current selection first and removes malformed remembered paths");
 
         var noSelection = new UnlockConfig
         {
             ProcessPath = " ",
-            GamePaths = new[] { @"D:\manual\StarRail.exe" }
+            GamePaths = new[] { @"D:\manual\NexusAnima.exe" }
         };
         noSelection.Normalize();
         check(noSelection.ProcessPath == "" &&
-              noSelection.GamePaths.SequenceEqual(new[] { @"D:\manual\StarRail.exe" }),
+              noSelection.GamePaths.SequenceEqual(new[] { @"D:\manual\NexusAnima.exe" }),
             "remembered clients do not automatically replace an empty selection");
 
         var deletedSelection = new UnlockConfig
         {
-            ProcessPath = @"C:\deleted\StarRail.exe",
-            GamePaths = new[] { @"D:\manual\StarRail.exe" }
+            ProcessPath = @"C:\deleted\NexusAnima.exe",
+            GamePaths = new[] { @"D:\manual\NexusAnima.exe" }
         };
         deletedSelection.Normalize();
         string[] withoutDeleted = GameClientPaths.Available(deletedSelection.ProcessPath,
             deletedSelection.GamePaths, Array.Empty<string>(), existing.Contains);
-        check(deletedSelection.ProcessPath == @"C:\deleted\StarRail.exe" &&
-              deletedSelection.GamePaths.Contains(@"C:\deleted\StarRail.exe") &&
-              withoutDeleted.SequenceEqual(new[] { @"D:\manual\StarRail.exe" }),
+        check(deletedSelection.ProcessPath == @"C:\deleted\NexusAnima.exe" &&
+              deletedSelection.GamePaths.Contains(@"C:\deleted\NexusAnima.exe") &&
+              withoutDeleted.SequenceEqual(new[] { @"D:\manual\NexusAnima.exe" }),
             "deleted clients remain structural history while availability does not replace the selected path");
 
         var snapshot = selected.Clone();
-        check(snapshot.GamePaths.SequenceEqual(new[] { current, @"D:\manual\StarRail.exe" }),
+        check(snapshot.GamePaths.SequenceEqual(new[] { current, @"D:\manual\NexusAnima.exe" }),
             "config snapshots retain the remembered client list");
-        snapshot.GamePaths[0] = @"G:\snapshot\StarRail.exe";
-        selected.GamePaths[1] = @"H:\original\StarRail.exe";
-        check(selected.GamePaths[0] == current && snapshot.GamePaths[1] == @"D:\manual\StarRail.exe",
+        snapshot.GamePaths[0] = @"G:\snapshot\NexusAnima.exe";
+        selected.GamePaths[1] = @"H:\original\NexusAnima.exe";
+        check(selected.GamePaths[0] == current && snapshot.GamePaths[1] == @"D:\manual\NexusAnima.exe",
             "config snapshots keep independent remembered-client arrays");
 
         var restored = JsonSerializer.Deserialize<UnlockConfig>(JsonSerializer.Serialize(selected));
         restored.Normalize();
         check(restored.ProcessPath == current &&
-              restored.GamePaths.SequenceEqual(new[] { current, @"H:\original\StarRail.exe" }),
+              restored.GamePaths.SequenceEqual(new[] { current, @"H:\original\NexusAnima.exe" }),
             "selected and remembered clients survive a JSON roundtrip without live settings IO");
     }
 }

@@ -9,12 +9,12 @@ $workspaceName = 'HSRUnlocker-ReleaseAssetsTests-' + [Guid]::NewGuid().ToString(
 $workspace = [IO.Path]::GetFullPath((Join-Path ([IO.Path]::GetTempPath()) $workspaceName))
 $results = [Collections.Generic.List[object]]::new()
 $script:caseNumber = 0
-$installerName = 'HSRUnlocker-1.3.6-win-x64-Setup.exe'
-$sourceName = 'HSRUnlocker-1.3.6-source.zip'
+$installerName = 'HNAUnlocker-1.3.6-win-x64-Setup.exe'
+$sourceName = 'HNAUnlocker-1.3.6-source.zip'
 $installerHash = 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'
 $sourceHash = '868b4d560d5a90e7abcfd4e208d4689e1be178ec85cdec6400e19dbf8f919b4d'
-$manifestHash = '9a56bdb360347f55239f931a82b4000f43ad4e845de97eeb29deadf40566f497'
-$manifestText = '{"tag_name":"v1.3.6","draft":false,"prerelease":false,"assets":[{"name":"HSRUnlocker-1.3.6-win-x64-Setup.exe","size":3,"digest":"sha256:ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"}]}'
+$manifestHash = '359da3af94f371d425bc85a4e4608efdcf2e5d32306d16fb5fae37bbdbc72989'
+$manifestText = '{"tag_name":"v1.3.6","draft":false,"prerelease":false,"assets":[{"name":"HNAUnlocker-1.3.6-win-x64-Setup.exe","size":3,"digest":"sha256:ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"}]}'
 $zipBytes = [Convert]::FromBase64String('UEsDBBQAAAAAAAAAIVyJV7Q3DgAAAA4AAAAKAAAAUkVBRE1FLnR4dGZpeHR1cmUgc291cmNlUEsBAhQAFAAAAAAAAAAhXIlXtDcOAAAADgAAAAoAAAAAAAAAAAAAAAAAAAAAAFJFQURNRS50eHRQSwUGAAAAAAEAAQA4AAAANgAAAAAA')
 New-Item -ItemType Directory -Path $workspace | Out-Null
 

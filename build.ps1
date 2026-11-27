@@ -26,7 +26,7 @@ $tfm = 'net8.0-windows10.0.22621.0'
 $rid = 'win-x64'
 $bin = Join-Path $gui "bin\$configuration\$tfm\$rid"
 $obj = Join-Path $gui "obj\$configuration\$tfm\$rid"
-$resources = @('App.xbf', 'MainWindow.xbf', 'HSRUnlocker.pri')
+$resources = @('App.xbf', 'MainWindow.xbf', 'HNAUnlocker.pri')
 
 if (Test-Path -LiteralPath $OutDir) {
     if ((Get-ChildItem -LiteralPath $OutDir -Force | Measure-Object).Count -gt 0) {
@@ -34,7 +34,7 @@ if (Test-Path -LiteralPath $OutDir) {
     }
 }
 
-Write-Host "--- publishing HSRUnlocker to $OutDir ---" -ForegroundColor Green
+Write-Host "--- publishing HNAUnlocker to $OutDir ---" -ForegroundColor Green
 $arguments = @('publish', $projectPath, '-c', $configuration, '-r', $rid, '-o', $OutDir)
 $arguments += @('-p:PublishSingleFile=false', '-p:PublishTrimmed=false')
 if ($SelfContained) {
@@ -77,7 +77,7 @@ $notices = & (Join-Path $repo 'scripts\Copy-ThirdPartyNotices.ps1') `
 Write-Host ("  packages: {0}; copied texts: {1}; packages without embedded texts: {2}" -f
     $notices.Packages, $notices.CopiedFiles, $notices.PackagesWithoutEmbeddedText) -ForegroundColor Cyan
 
-$required = @('HSRUnlocker.exe', 'HSRUnlocker.dll', 'HSRUnlocker.deps.json', 'HSRUnlocker.runtimeconfig.json',
+$required = @('HNAUnlocker.exe', 'HNAUnlocker.dll', 'HNAUnlocker.deps.json', 'HNAUnlocker.runtimeconfig.json',
               'LICENSE', 'THIRD_PARTY_NOTICES.md', 'ThirdPartyNotices\manifest.json',
               'Assets\Fonts\MiSansVF.ttf', 'Assets\Fonts\MiSans-LICENSE.pdf', 'Assets\Fonts\NOTICE.md') + $resources
 if ($SelfContained) {
@@ -93,7 +93,7 @@ $missing = @($required | Where-Object {
 })
 if ($missing.Count -gt 0) { throw "Deliverable incomplete; missing: $($missing -join ', ')" }
 if ($SelfContained) {
-    $runtime = Get-Content -LiteralPath (Join-Path $OutDir 'HSRUnlocker.runtimeconfig.json') -Raw | ConvertFrom-Json
+    $runtime = Get-Content -LiteralPath (Join-Path $OutDir 'HNAUnlocker.runtimeconfig.json') -Raw | ConvertFrom-Json
     if ($null -ne $runtime.runtimeOptions.framework -or $null -ne $runtime.runtimeOptions.frameworks -or
         @($runtime.runtimeOptions.includedFrameworks | Where-Object { $_.name -eq 'Microsoft.NETCore.App' }).Count -ne 1) {
         throw 'Self-contained publish still requires an installed .NET runtime.'

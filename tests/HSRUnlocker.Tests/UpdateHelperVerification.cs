@@ -6,12 +6,12 @@ internal static class UpdateHelperVerification
 {
     public static void Run(Action<bool, string> check)
     {
-        string root = Path.Combine(Path.GetTempPath(), "HSRUnlocker-helper-fixtures-" + Guid.NewGuid().ToString("N"));
+        string root = Path.Combine(Path.GetTempPath(), "HNAUnlocker-helper-fixtures-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         try
         {
-            using var staged = new StagedUpdate(new UpdatePackage("1.2.3", "HSRUnlocker-1.2.3-win-x64-Setup.exe",
-                new Uri("https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/HSRUnlocker-1.2.3-win-x64-Setup.exe"),
+            using var staged = new StagedUpdate(new UpdatePackage("1.2.3", "HNAUnlocker-1.2.3-win-x64-Setup.exe",
+                new Uri("https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/HNAUnlocker-1.2.3-win-x64-Setup.exe"),
                 1, new string('0', 64)), Path.Combine(root, "uncreated launch fixture"), false, null);
             ProcessStartInfo handoff = UpdateInstallHelper.StartInfo(staged, 12345, 67890, "fixture failure");
             // Count even unnecessary argument quotes and the final NUL, leaving room below CreateProcess's limit.
@@ -59,7 +59,7 @@ internal static class UpdateHelperVerification
         {
             string expectedParent = Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar);
             if (!Path.GetDirectoryName(Path.GetFullPath(root)).Equals(expectedParent, StringComparison.OrdinalIgnoreCase)
-                || !Path.GetFileName(root).StartsWith("HSRUnlocker-helper-fixtures-", StringComparison.Ordinal))
+                || !Path.GetFileName(root).StartsWith("HNAUnlocker-helper-fixtures-", StringComparison.Ordinal))
                 throw new InvalidOperationException("Unexpected helper fixture cleanup path.");
             foreach (string fixture in new[] { "green", "no-log-control", "no-retention-control" })
             {
@@ -126,7 +126,7 @@ internal static class UpdateHelperVerification
             . ([scriptblock]::Create($definitions[0].Extent.Text))
         }
         $root = $env:HSR_HELPER_ROOT
-        $installerName = 'HSRUnlocker-1.2.3-win-x64-Setup.exe'
+        $installerName = 'HNAUnlocker-1.2.3-win-x64-Setup.exe'
         function New-Stage([string] $name) {
             $path = [IO.Path]::Combine($root, $name)
             $null = [IO.Directory]::CreateDirectory($path)

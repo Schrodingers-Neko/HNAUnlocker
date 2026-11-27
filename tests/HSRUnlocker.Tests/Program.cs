@@ -128,8 +128,8 @@ internal static class Program
 
     private static void VerifyLaunchGuard()
     {
-        string directory = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "HSRUnlocker-guard-" + Guid.NewGuid().ToString("N")));
-        string executable = Path.Combine(directory, "StarRail.exe");
+        string directory = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "HNAUnlocker-guard-" + Guid.NewGuid().ToString("N")));
+        string executable = Path.Combine(directory, "NexusAnima.exe");
         string compatibility = Environment.GetEnvironmentVariable("__COMPAT_LAYER");
         Directory.CreateDirectory(directory);
         File.WriteAllBytes(executable, Array.Empty<byte>());
@@ -140,12 +140,12 @@ internal static class Program
             try { GameLauncher.Launch(new UnlockConfig { ProcessPath = executable }); }
             catch (InvalidOperationException ex) { refused = ex.Message.Contains("RunAsInvoker", StringComparison.OrdinalIgnoreCase); }
             Check(refused && new FileInfo(executable).Length == 0,
-                "RunAsInvoker guard refuses an empty own StarRail.exe fixture before Process.Start");
+                "RunAsInvoker guard refuses an empty own NexusAnima.exe fixture before Process.Start");
         }
         finally
         {
             Environment.SetEnvironmentVariable("__COMPAT_LAYER", compatibility);
-            if (!Path.GetFullPath(executable).Equals(Path.Combine(directory, "StarRail.exe"), StringComparison.OrdinalIgnoreCase))
+            if (!Path.GetFullPath(executable).Equals(Path.Combine(directory, "NexusAnima.exe"), StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("Unexpected launch-guard cleanup path");
             File.Delete(executable);
             Directory.Delete(directory);

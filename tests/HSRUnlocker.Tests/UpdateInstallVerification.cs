@@ -9,7 +9,7 @@ internal static class UpdateInstallVerification
 
     private static async Task RunAsync(Action<bool, string> check)
     {
-        string root = Path.Combine(Path.GetTempPath(), "HSRUnlocker-update-fixtures-" + Guid.NewGuid().ToString("N"));
+        string root = Path.Combine(Path.GetTempPath(), "HNAUnlocker-update-fixtures-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         byte[] payload = Enumerable.Range(0, 200000).Select(value => (byte)(value % 251)).ToArray();
         UpdatePackage package = Package(payload);
@@ -31,7 +31,7 @@ internal static class UpdateInstallVerification
                 {
                     check(File.ReadAllBytes(staged.FilePath).SequenceEqual(payload),
                         "downloaded installer contains exactly the fixture's bytes");
-                    check(Path.GetFileName(staged.FilePath) == "HSRUnlocker-1.2.3-win-x64-Setup.exe"
+                    check(Path.GetFileName(staged.FilePath) == "HNAUnlocker-1.2.3-win-x64-Setup.exe"
                         && !File.Exists(Path.Combine(Path.GetDirectoryName(staged.FilePath), "download.bin")),
                         "verified download is renamed from its private partial filename");
                     check(progress.Values.Count <= 101 && progress.Values.Count > 1
@@ -160,14 +160,14 @@ internal static class UpdateInstallVerification
         {
             string expectedParent = Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar);
             if (!Path.GetDirectoryName(Path.GetFullPath(root)).Equals(expectedParent, StringComparison.OrdinalIgnoreCase)
-                || !Path.GetFileName(root).StartsWith("HSRUnlocker-update-fixtures-", StringComparison.Ordinal))
+                || !Path.GetFileName(root).StartsWith("HNAUnlocker-update-fixtures-", StringComparison.Ordinal))
                 throw new InvalidOperationException("Unexpected fixture cleanup directory.");
             Directory.Delete(root, true);
         }
     }
 
-    private static UpdatePackage Package(byte[] bytes) => new("1.2.3", "HSRUnlocker-1.2.3-win-x64-Setup.exe",
-        new Uri("https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/HSRUnlocker-1.2.3-win-x64-Setup.exe"),
+    private static UpdatePackage Package(byte[] bytes) => new("1.2.3", "HNAUnlocker-1.2.3-win-x64-Setup.exe",
+        new Uri("https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/HNAUnlocker-1.2.3-win-x64-Setup.exe"),
         bytes.Length, Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant());
 
     private static HttpResponseMessage Response(Stream stream) => new(HttpStatusCode.OK) { Content = new StreamContent(stream) };

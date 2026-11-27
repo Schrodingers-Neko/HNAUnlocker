@@ -1,15 +1,15 @@
 {
   "Runtime.Session.FindingGame": {
-    "zh-CN": "正在查找 StarRail.exe…",
-    "en-US": "Looking for StarRail.exe…",
-    "ja-JP": "StarRail.exe を検索中…",
-    "ko-KR": "StarRail.exe 찾는 중…"
+    "zh-CN": "正在查找 NexusAnima.exe…",
+    "en-US": "Looking for NexusAnima.exe…",
+    "ja-JP": "NexusAnima.exe を検索中…",
+    "ko-KR": "NexusAnima.exe 찾는 중…"
   },
   "Runtime.Session.RunningPathUnknown": {
-    "zh-CN": "无法确认已运行 StarRail.exe（PID {0}）的客户端路径；请使用可访问该进程的权限连接，未启动另一个客户端",
-    "en-US": "Cannot verify the running StarRail.exe path (PID {0}); connect with permission to access it. No additional client was started",
-    "ja-JP": "実行中の StarRail.exe（PID {0}）のパスを確認できません。アクセス権限のある状態で接続してください。別のクライアントは起動していません",
-    "ko-KR": "실행 중인 StarRail.exe(PID {0}) 경로를 확인할 수 없습니다. 해당 프로세스에 접근 가능한 권한으로 연결하세요. 추가 클라이언트는 실행하지 않았습니다"
+    "zh-CN": "无法确认已运行 NexusAnima.exe（PID {0}）的客户端路径；请使用可访问该进程的权限连接，未启动另一个客户端",
+    "en-US": "Cannot verify the running NexusAnima.exe path (PID {0}); connect with permission to access it. No additional client was started",
+    "ja-JP": "実行中の NexusAnima.exe（PID {0}）のパスを確認できません。アクセス権限のある状態で接続してください。別のクライアントは起動していません",
+    "ko-KR": "실행 중인 NexusAnima.exe(PID {0}) 경로를 확인할 수 없습니다. 해당 프로세스에 접근 가능한 권한으로 연결하세요. 추가 클라이언트는 실행하지 않았습니다"
   },
   "Runtime.Session.GameStarted": {
     "zh-CN": "已启动游戏，PID {0}",
@@ -642,22 +642,22 @@
     "ko-KR": "프레임 속도 getter/setter 모두 UnityPlayer+0x{0:X} 참조, 현재 값 {1}"
   },
   "Runtime.Launcher.InvalidPath": {
-    "zh-CN": "请选择有效的 StarRail.exe 游戏路径",
-    "en-US": "Select a valid StarRail.exe game path",
-    "ja-JP": "有効な StarRail.exe のパスを選択してください",
-    "ko-KR": "올바른 StarRail.exe 게임 경로를 선택하세요"
+    "zh-CN": "请选择有效的 NexusAnima.exe 游戏路径",
+    "en-US": "Select a valid NexusAnima.exe game path",
+    "ja-JP": "有効な NexusAnima.exe のパスを選択してください",
+    "ko-KR": "올바른 NexusAnima.exe 게임 경로를 선택하세요"
   },
   "Runtime.Launcher.RunAsInvoker": {
-    "zh-CN": "检测到 RunAsInvoker 降权启动环境，已取消启动游戏；请从正常管理员权限的 HSRUnlocker 启动，避免资源更新失败",
-    "en-US": "RunAsInvoker was detected; game launch canceled. Run HSRUnlocker with normal administrator rights to avoid resource update failures",
-    "ja-JP": "RunAsInvoker を検出したため起動を中止しました。リソース更新の失敗を防ぐため、通常の管理者権限で HSRUnlocker を実行してください",
-    "ko-KR": "RunAsInvoker 환경을 감지하여 게임 실행을 취소했습니다. 리소스 업데이트 실패를 방지하려면 정상적인 관리자 권한으로 HSRUnlocker를 실행하세요"
+    "zh-CN": "检测到 RunAsInvoker 降权启动环境，已取消启动游戏；请从正常管理员权限的 HNAUnlocker 启动，避免资源更新失败",
+    "en-US": "RunAsInvoker was detected; game launch canceled. Run HNAUnlocker with normal administrator rights to avoid resource update failures",
+    "ja-JP": "RunAsInvoker を検出したため起動を中止しました。リソース更新の失敗を防ぐため、通常の管理者権限で HNAUnlocker を実行してください",
+    "ko-KR": "RunAsInvoker 환경을 감지하여 게임 실행을 취소했습니다. 리소스 업데이트 실패를 방지하려면 정상적인 관리자 권한으로 HNAUnlocker를 실행하세요"
   },
   "Runtime.Launcher.AdminRequired": {
-    "zh-CN": "启动游戏需要管理员权限以写入客户端资源目录；请正常运行 HSRUnlocker 并允许 Windows 管理员提示",
-    "en-US": "Game launch requires administrator rights to write client resources; run HSRUnlocker normally and allow the Windows administrator prompt",
-    "ja-JP": "ゲーム起動にはリソースフォルダーへの書き込み用の管理者権限が必要です。通常どおり HSRUnlocker を実行し、Windows の管理者確認を許可してください",
-    "ko-KR": "클라이언트 리소스 폴더에 쓰려면 관리자 권한이 필요합니다. HSRUnlocker를 정상 실행하고 Windows 관리자 권한 요청을 허용하세요"
+    "zh-CN": "启动游戏需要管理员权限以写入客户端资源目录；请正常运行 HNAUnlocker 并允许 Windows 管理员提示",
+    "en-US": "Game launch requires administrator rights to write client resources; run HNAUnlocker normally and allow the Windows administrator prompt",
+    "ja-JP": "ゲーム起動にはリソースフォルダーへの書き込み用の管理者権限が必要です。通常どおり HNAUnlocker を実行し、Windows の管理者確認を許可してください",
+    "ko-KR": "클라이언트 리소스 폴더에 쓰려면 관리자 권한이 필요합니다. HNAUnlocker를 정상 실행하고 Windows 관리자 권한 요청을 허용하세요"
   },
   "Runtime.Launcher.StartFailed": {
     "zh-CN": "游戏未能启动",
@@ -1026,10 +1026,10 @@
     "ko-KR": "클라이언트 {0} 메타데이터가 {1}바이트를 초과합니다. 클라이언트를 확인하거나 그래픽 설정 원본을 수동으로 선택하세요"
   },
   "Runtime.Interop.ProcessOpenFailed": {
-    "zh-CN": "无法打开目标进程（错误 {0}）。请以管理员身份运行 HSRUnlocker。",
-    "en-US": "Cannot open the target process (error {0}). Run HSRUnlocker as administrator.",
-    "ja-JP": "対象プロセスを開けません（エラー {0}）。HSRUnlocker を管理者として実行してください。",
-    "ko-KR": "대상 프로세스를 열 수 없습니다(오류 {0}). HSRUnlocker를 관리자 권한으로 실행하세요."
+    "zh-CN": "无法打开目标进程（错误 {0}）。请以管理员身份运行 HNAUnlocker。",
+    "en-US": "Cannot open the target process (error {0}). Run HNAUnlocker as administrator.",
+    "ja-JP": "対象プロセスを開けません（エラー {0}）。HNAUnlocker を管理者として実行してください。",
+    "ko-KR": "대상 프로세스를 열 수 없습니다(오류 {0}). HNAUnlocker를 관리자 권한으로 실행하세요."
   },
   "Runtime.Interop.PointerReadFailed": {
     "zh-CN": "无法读取 0x{0:X} 处的指针",

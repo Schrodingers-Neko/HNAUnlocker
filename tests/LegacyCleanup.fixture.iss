@@ -4,9 +4,9 @@
 #endif
 
 [Setup]
-AppName=HSRUnlocker Legacy Cleanup Fixture
+AppName=HNAUnlocker Legacy Cleanup Fixture
 AppVersion=1.0
-DefaultDirName={tmp}\HSRUnlocker-LegacyFixture-NoApp
+DefaultDirName={tmp}\HNAUnlocker-LegacyFixture-NoApp
 CreateAppDir=no
 Uninstallable=no
 CreateUninstallRegKey=no
@@ -113,8 +113,8 @@ begin
   FixtureApp := 'C:\SyntheticOwned\App';
   Location64 := 'c:\syntheticowned\app\';
   Location32 := FixtureApp;
-  Name64 := 'HSRUnlocker';
-  Name32 := 'HSRUnlocker';
+  Name64 := 'HNAUnlocker';
+  Name32 := 'HNAUnlocker';
   Registry64 := True;
   Registry32 := False;
   RegistryFailure := False;
@@ -129,7 +129,7 @@ begin
   PutAttributes('C:\', $10);
   PutAttributes('C:\SyntheticOwned', $10);
   PutAttributes(FixtureApp, $10);
-  PutAttributes(FixtureApp + '\HSRUnlocker.exe', $80);
+  PutAttributes(FixtureApp + '\HNAUnlocker.exe', $80);
   PutAttributes(FixtureApp + '\coreclr.dll', $80);
   PutAttributes(FixtureApp + '\legacy-native.dll', $80);
   PutAttributes(FixtureApp + '\locales', $10);
@@ -183,7 +183,7 @@ begin
   Check(not CanDeleteLegacyRuntimeFile('legacy-native.dll'),
     'missing registered DisplayName fails closed');
   Reset;
-  PutAttributes(FixtureApp + '\HSRUnlocker.exe', $FFFFFFFF);
+  PutAttributes(FixtureApp + '\HNAUnlocker.exe', $FFFFFFFF);
   Check(not CanDeleteLegacyRuntimeFile('legacy-native.dll'),
     'missing application executable prevents legacy ownership');
   Reset;
@@ -191,9 +191,9 @@ begin
   Check(not CanDeleteLegacyRuntimeFile('legacy-native.dll'),
     'missing coreclr prevents ownership of framework-dependent installs');
   Reset;
-  PutAttributes(FixtureApp + '\HSRUnlocker.exe', $10);
+  PutAttributes(FixtureApp + '\HNAUnlocker.exe', $10);
   Check(not CanDeleteLegacyRuntimeFile('legacy-native.dll'),
-    'a directory named HSRUnlocker.exe cannot establish ownership');
+    'a directory named HNAUnlocker.exe cannot establish ownership');
   Reset;
   PutAttributes(FixtureApp + '\coreclr.dll', $10);
   Check(not CanDeleteLegacyRuntimeFile('legacy-native.dll'),
@@ -221,7 +221,7 @@ begin
   PutAttributes(FixtureApp, $410);
   Check(not CanDeleteLegacyRuntimeFile('legacy-native.dll'), 'reparse app directory fails closed');
   Reset;
-  PutAttributes(FixtureApp + '\HSRUnlocker.exe', $480);
+  PutAttributes(FixtureApp + '\HNAUnlocker.exe', $480);
   Check(not CanDeleteLegacyRuntimeFile('legacy-native.dll'), 'reparse ownership executable fails closed');
   Reset;
   PutAttributes(FixtureApp + '\coreclr.dll', $480);
@@ -317,7 +317,7 @@ begin
     'unknown unrelated file outside the exact deletion plan is preserved');
   Check(LegacyCleanupGetFileAttributes('C:\SharedRuntime\coreclr.dll') = $80,
     'shared runtime outside the app directory is preserved');
-  Check(LegacyCleanupGetFileAttributes(FixtureApp + '\HSRUnlocker.exe') = $80,
+  Check(LegacyCleanupGetFileAttributes(FixtureApp + '\HNAUnlocker.exe') = $80,
     'application executable outside the exact runtime deletion plan is preserved');
   Report := Report + 'CHECKS=' + IntToStr(Checks) + #13#10 +
     'FAILURES=' + IntToStr(Failures) + #13#10;

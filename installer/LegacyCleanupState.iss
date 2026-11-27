@@ -114,7 +114,7 @@ begin
   if not LegacyCleanupReadUninstallData(Is64Bit, Location, DisplayName) then
     Exit;
   NormalizedLocation := NormalizeLegacyCleanupDirectory(Location);
-  Result := (DisplayName = 'HSRUnlocker') and (NormalizedLocation <> '') and
+  Result := (DisplayName = 'HNAUnlocker') and (NormalizedLocation <> '') and
     (CompareText(NormalizedLocation, AppDirectory) = 0);
 end;
 
@@ -126,7 +126,7 @@ begin
     LegacyCleanupOwnedDirectory := AppDirectory;
     LegacyCleanupOwnershipValid := False;
     if not LegacyCleanupSafeExistingPath(AppDirectory, True) or
-      not LegacyCleanupSafeExistingPath(AppDirectory + '\HSRUnlocker.exe', False) or
+      not LegacyCleanupSafeExistingPath(AppDirectory + '\HNAUnlocker.exe', False) or
       not LegacyCleanupSafeExistingPath(AppDirectory + '\coreclr.dll', False) then begin
       Result := False;
       Exit;

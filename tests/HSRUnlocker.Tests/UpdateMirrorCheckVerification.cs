@@ -5,9 +5,9 @@ using StarRailUnlocker.Core;
 
 internal static class UpdateMirrorCheckVerification
 {
-    private const string ListUri = "https://gitee.com/api/v5/repos/liangyun_Liu/HSRUnlocker/releases?direction=desc&per_page=100";
-    private const string ManifestUri = "https://gitee.com/liangyun_Liu/HSRUnlocker/releases/download/v1.2.3/update.json";
-    private const string AttachmentUri = "https://gitee.com/liangyun_Liu/HSRUnlocker/attach_files/123/download/update.json";
+    private const string ListUri = "https://gitee.com/api/v5/repos/Schrodingers-Neko/HNAUnlocker/releases?direction=desc&per_page=100";
+    private const string ManifestUri = "https://gitee.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/update.json";
+    private const string AttachmentUri = "https://gitee.com/Schrodingers-Neko/HNAUnlocker/attach_files/123/download/update.json";
     private const string CdnUri = "https://foruda.gitee.com/attach_file/456/update.json?signature=fixture-private-signature";
     private const string Hash = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
@@ -38,13 +38,13 @@ internal static class UpdateMirrorCheckVerification
             catch (HttpRequestException) { }
             catch (OperationCanceledException) { }
             check(result?.IsNewer == true && result.Version == "1.2.3"
-                && result.ReleaseUri.AbsoluteUri == "https://gitee.com/liangyun_Liu/HSRUnlocker/releases/tag/v1.2.3"
+                && result.ReleaseUri.AbsoluteUri == "https://gitee.com/Schrodingers-Neko/HNAUnlocker/releases/tag/v1.2.3"
                 && result.Installer?.DownloadUri.AbsoluteUri ==
-                    "https://gitee.com/liangyun_Liu/HSRUnlocker/releases/download/v1.2.3/HSRUnlocker-1.2.3-win-x64-Setup.exe"
+                    "https://gitee.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/HNAUnlocker-1.2.3-win-x64-Setup.exe"
                 && result.Installer.Size == 12345 && result.Installer.Sha256 == Hash
                 && requests.SequenceEqual(new[]
                 {
-                    "https://api.github.com/repos/L1angYun/HSRUnlocker/releases/latest", ListUri, ManifestUri
+                    "https://api.github.com/repos/Schrodingers-Neko/HNAUnlocker/releases/latest", ListUri, ManifestUri
                 }), $"GitHub {failure} switches metadata and the exact verified package to Gitee");
         }
 
@@ -75,7 +75,7 @@ internal static class UpdateMirrorCheckVerification
             var result = await new UpdateChecker(client).CheckAsync("1.2.3");
             check(!result.IsNewer && redirects.SequenceEqual(new[]
             {
-                "https://api.github.com/repos/L1angYun/HSRUnlocker/releases/latest", ListUri, ManifestUri, AttachmentUri, CdnUri
+                "https://api.github.com/repos/Schrodingers-Neko/HNAUnlocker/releases/latest", ListUri, ManifestUri, AttachmentUri, CdnUri
             }), "Gitee metadata follows only its repository attachment and signed CDN while preserving version comparison");
         }
 
@@ -86,7 +86,7 @@ internal static class UpdateMirrorCheckVerification
                 ? Json("[" + Row("v1.9.0") + "," + Row("v1.10.0") + "," + Row("v2.0.0-preview") + "]")
                 : Json(Manifest("v1.10.0")))))
             check((await new UpdateChecker(client).CheckAsync("1.9.0")).Version == "1.10.0"
-                && sorted[^1] == "https://gitee.com/liangyun_Liu/HSRUnlocker/releases/download/v1.10.0/update.json",
+                && sorted[^1] == "https://gitee.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.10.0/update.json",
                 "Gitee selects the highest stable numeric release rather than last-updated or lexical ordering");
 
         foreach (string body in new[]
@@ -109,7 +109,7 @@ internal static class UpdateMirrorCheckVerification
 
         foreach (string target in new[]
         {
-            "http://gitee.com/liangyun_Liu/HSRUnlocker/attach_files/123/download/update.json",
+            "http://gitee.com/Schrodingers-Neko/HNAUnlocker/attach_files/123/download/update.json",
             "https://attacker.invalid/update.json",
             "https://gitee.com/other/project/attach_files/123/download/update.json",
             "https://foruda.gitee.com.evil.invalid/attach_file/456/update.json",
@@ -373,7 +373,7 @@ internal static class UpdateMirrorCheckVerification
             ("attachment", AttachmentUri, 3),
             ("cdn", AttachmentUri, 4),
             ("cdn", CdnUri, 4),
-            ("release", "https://gitee.com/liangyun_Liu/HSRUnlocker/releases/download/v1.2.4/update.json", 2)
+            ("release", "https://gitee.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.4/update.json", 2)
         })
         {
             var requests = new List<string>();
@@ -464,7 +464,7 @@ internal static class UpdateMirrorCheckVerification
     private static string Manifest(string tag)
     {
         string version = tag.TrimStart('v');
-        return "{\"tag_name\":\"" + tag + "\",\"draft\":false,\"prerelease\":false,\"assets\":[{\"name\":\"HSRUnlocker-"
+        return "{\"tag_name\":\"" + tag + "\",\"draft\":false,\"prerelease\":false,\"assets\":[{\"name\":\"HNAUnlocker-"
             + version + "-win-x64-Setup.exe\",\"size\":12345,\"digest\":\"sha256:" + Hash + "\"}]}";
     }
     private static HttpResponseMessage Json(string body) => new(HttpStatusCode.OK)

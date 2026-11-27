@@ -79,9 +79,11 @@ namespace StarRailUnlocker
                 FovBox.Value = _config.FovDelta;
                 FovSlider.Value = _config.FovDelta;
                 AntiFadeToggle.IsOn = _config.DisableCameraFade;
-                MobileUiToggle.IsOn = _config.UseMobileUI;
+                _config.UseMobileUI = false;
+                MobileUiToggle.IsOn = false;
+                MobileUiToggle.IsEnabled = false;
                 GraphicsSourceBox.SelectedIndex = (int)_config.GraphicsSource;
-                GraphicsSourceBox.IsEnabled = _config.UseMobileUI;
+                GraphicsSourceBox.IsEnabled = false;
                 SafeAreaModeBox.SelectedIndex = (int)_config.SafeAreaMode;
                 SafeAreaHorizontalBox.Value = _config.SafeAreaHorizontalPercent;
                 StartMinimizedToggle.IsOn = _config.StartMinimized;
@@ -327,7 +329,7 @@ namespace StarRailUnlocker
 
             try
             {
-                foreach (uint pid in TargetProcess.FindProcessIds("StarRail.exe"))
+                foreach (uint pid in TargetProcess.FindProcessIds("NexusAnima.exe"))
                 {
                     foundProcess = true;
                     try
@@ -476,7 +478,7 @@ namespace StarRailUnlocker
         }
 
         private static bool IsValidGamePath(string path) =>
-            File.Exists(path) && string.Equals(Path.GetFileName(path), "StarRail.exe", StringComparison.OrdinalIgnoreCase);
+            File.Exists(path) && string.Equals(Path.GetFileName(path), "NexusAnima.exe", StringComparison.OrdinalIgnoreCase);
 
         private async System.Threading.Tasks.Task<bool> ChooseGameAsync(bool duringSetup = false)
         {

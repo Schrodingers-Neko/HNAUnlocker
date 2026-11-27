@@ -11,7 +11,7 @@
   <ItemGroup>
     <Compile Include="$(CoreSourceRoot)/*.cs" Link="Core/%(Filename)%(Extension)" />
     <EmbeddedResource Include="$(CoreSourceRoot)/../Localization/*.json">
-      <LogicalName>HSRUnlocker.Localization.%(Filename)%(Extension)</LogicalName>
+      <LogicalName>HNAUnlocker.Localization.%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

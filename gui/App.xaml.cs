@@ -22,7 +22,7 @@ namespace StarRailUnlocker
             AppDomain.CurrentDomain.UnhandledException += (_, e) =>
                 WriteLog("AppDomain.UnhandledException", e.ExceptionObject as Exception);
 
-            _instanceGuard = new System.Threading.Mutex(true, "HSRUnlocker", out _ownsInstance);
+            _instanceGuard = new System.Threading.Mutex(true, "HNAUnlocker", out _ownsInstance);
             InitializeComponent();
         }
 
@@ -37,7 +37,7 @@ namespace StarRailUnlocker
                 {
                     MessageBoxW(IntPtr.Zero,
                         L10n.T("Updates.InstallGuardFailed"),
-                        "HSRUnlocker", 0x10);
+                        "HNAUnlocker", 0x10);
                     throw;
                 }
                 AppDomain.CurrentDomain.ProcessExit += (_, __) => _installerRunningGuard.Dispose();

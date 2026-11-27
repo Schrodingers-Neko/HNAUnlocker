@@ -14,7 +14,8 @@ if ([string]::IsNullOrWhiteSpace($OutDir)) { $OutDir = Join-Path $repo 'artifact
 
 $include = @(
     'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'CONTRIBUTING.md', 'SECURITY.md',
-    'global.json', 'build.ps1', 'build-installer.ps1', 'installer\HSRUnlocker.iss',
+    'docs\HNA-Internals.md',
+    'global.json', 'build.ps1', 'build-installer.ps1', 'installer\HNAUnlocker.iss',
     'package-source.ps1', '.gitignore', '.gitattributes', '.editorconfig',
     '.github\workflows\build.yml',
     'scripts\Copy-ThirdPartyNotices.ps1', 'tests\Packaging.Tests.ps1',
@@ -43,7 +44,7 @@ $include += 'tests\HSRUnlocker.Tests\HSRUnlocker.Tests.csproj'
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $OutDir = [IO.Path]::GetFullPath((Resolve-Path -LiteralPath $OutDir).Path)
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-$stagingName = "HSRUnlocker-source-$stamp"
+$stagingName = "HNAUnlocker-source-$stamp"
 $staging = Join-Path $OutDir $stagingName
 if (Test-Path -LiteralPath $staging) { throw "Staging directory already exists: $staging" }
 New-Item -ItemType Directory -Path $staging | Out-Null
@@ -64,7 +65,7 @@ $forbidden = @(Get-ChildItem -LiteralPath $staging -Recurse -File | Where-Object
 })
 if ($forbidden.Count -gt 0) { throw "Refusing to ship forbidden files: $($forbidden.Name -join ', ')" }
 
-$archive = Join-Path $OutDir ("HSRUnlocker-source-$stamp.zip")
+$archive = Join-Path $OutDir ("HNAUnlocker-source-$stamp.zip")
 [IO.Compression.ZipFile]::CreateFromDirectory($staging, $archive, [IO.Compression.CompressionLevel]::Optimal, $true)
 $stagingItem = Get-Item -LiteralPath $staging -Force
 $resolvedStaging = [IO.Path]::GetFullPath((Resolve-Path -LiteralPath $staging).Path)

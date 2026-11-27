@@ -3,7 +3,7 @@
     x:Class="StarRailUnlocker.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="HSRUnlocker">
+    Title="HNAUnlocker">
 
     <Grid x:Name="LayoutRoot" SizeChanged="OnLayoutSizeChanged"
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -50,9 +50,9 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Image Source="Assets/AppIcon.png" Width="40" Height="40"
-                   AutomationProperties.Name="HSRUnlocker" />
+                   AutomationProperties.Name="HNAUnlocker" />
             <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
-                <TextBlock Text="HSRUnlocker" FontSize="22" FontWeight="SemiBold" />
+                <TextBlock Text="HNAUnlocker" FontSize="22" FontWeight="SemiBold" />
                 <TextBlock x:Name="VersionText" Style="{StaticResource SecondaryTextStyle}" />
             </StackPanel>
             <Button Grid.Column="2" x:Name="SaveButton" Style="{StaticResource ToolButtonStyle}"
@@ -98,7 +98,7 @@
                                         IsEnabled="False"
                                         AutomationProperties.AutomationId="SessionFailureExportButton" />
                                 <HyperlinkButton Grid.Column="1" x:Name="SessionFailureReportLink"
-                                                 NavigateUri="https://github.com/L1angYun/HSRUnlocker/issues/new"
+                                                 NavigateUri="https://github.com/Schrodingers-Neko/HNAUnlocker/issues/new"
                                                  MinWidth="0" AutomationProperties.AutomationId="SessionFailureReportLink" />
                             </Grid>
                             <TextBlock x:Name="SessionFailureReportHint" Style="{StaticResource SecondaryTextStyle}" />

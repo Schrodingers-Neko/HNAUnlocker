@@ -38,7 +38,7 @@ namespace StarRailUnlocker.Core
             getter = Follow(getter);
             var setCode = proc.Read(setter, 16);
             var getCode = proc.Read(getter, 16);
-            if (setCode == null || setCode[0] != 0x89 || setCode[1] != 0x0D || setCode[6] != 0xE9)
+            if (setCode == null || setCode[0] != 0x89 || setCode[1] != 0x0D || (setCode[6] != 0xE9 && setCode[6] != 0xC3))
                 throw new NotSupportedException(L10n.T("Runtime.FrameCap.UnsupportedSetter"));
             if (getCode == null || getCode[0] != 0x8B || getCode[1] != 0x05 || getCode[6] != 0xC3)
                 throw new NotSupportedException(L10n.T("Runtime.FrameCap.UnsupportedGetter"));

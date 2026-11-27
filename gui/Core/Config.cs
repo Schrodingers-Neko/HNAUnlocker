@@ -8,11 +8,11 @@ using System.Text.Json.Serialization;
 namespace StarRailUnlocker.Core
 {
     /// <summary>
-    /// Settings owned by HSRUnlocker.
+    /// Settings owned by HNAUnlocker.
     ///
     /// The current file is always under the user's local application data directory:
-    /// %LOCALAPPDATA%\HSRUnlocker\settings.json.  The only legacy source considered is
-    /// hsr_config.json beside the old tool executable.  Game installation directories are
+    /// %LOCALAPPDATA%\HNAUnlocker\settings.json.  The only legacy source considered is
+    /// hna_config.json beside the old tool executable.  Game installation directories are
     /// never used for settings or diagnostics.
     /// </summary>
     public sealed class UnlockConfig
@@ -46,16 +46,16 @@ namespace StarRailUnlocker.Core
         /// <summary>Directory owned by this tool for settings and diagnostics.</summary>
         public static string DataDirectory =>
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                         "HSRUnlocker");
+                         "HNAUnlocker");
 
         /// <summary>Current settings path; never resolve this from a game path.</summary>
         public static string DefaultPath => Path.Combine(DataDirectory, "settings.json");
 
         /// <summary>The pre-migration settings path used by the old tool executable.</summary>
-        public static string LegacyPath => Path.Combine(AppContext.BaseDirectory, "hsr_config.json");
+        public static string LegacyPath => Path.Combine(AppContext.BaseDirectory, "hna_config.json");
 
         /// <summary>Persistent UTF-8 diagnostics that can be inspected after a failed launch.</summary>
-        public static string LogPath => Path.Combine(DataDirectory, "HSRUnlocker.log");
+        public static string LogPath => Path.Combine(DataDirectory, "HNAUnlocker.log");
 
         /// <summary>
         /// Load current settings, recover their backup, or import a legacy settings file

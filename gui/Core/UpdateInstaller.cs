@@ -111,7 +111,7 @@ namespace StarRailUnlocker.Core
     public sealed class UpdateInstaller
     {
         private const long MaximumPackageBytes = 512L * 1024 * 1024;
-        private const string StagePrefix = "HSRUnlocker-Update-";
+        private const string StagePrefix = "HNAUnlocker-Update-";
         private readonly HttpClient client;
         private readonly string fixtureRoot;
         private static readonly SecurityIdentifier Administrators = new(WellKnownSidType.BuiltinAdministratorsSid, null);
@@ -288,7 +288,7 @@ namespace StarRailUnlocker.Core
                 || !Regex.IsMatch(package.Version, @"\A(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:\.(0|[1-9][0-9]*))?\z",
                     RegexOptions.CultureInvariant)
                 || !Version.TryParse(package.Version, out _)
-                || package.FileName != "HSRUnlocker-" + package.Version + "-win-x64-Setup.exe"
+                || package.FileName != "HNAUnlocker-" + package.Version + "-win-x64-Setup.exe"
                 || package.Size < 1 || package.Size > MaximumPackageBytes
                 || package.Sha256 == null || !Regex.IsMatch(package.Sha256, @"\A[0-9a-fA-F]{64}\z", RegexOptions.CultureInvariant)
                 || package.DownloadUri == null || !package.DownloadUri.IsAbsoluteUri)
@@ -377,7 +377,7 @@ namespace StarRailUnlocker.Core
             string root = Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
             var directory = new DirectoryInfo(directoryPath);
             if (directory.Parent == null || !directory.Parent.FullName.Equals(root, StringComparison.OrdinalIgnoreCase)
-                || !Regex.IsMatch(directory.Name, @"\AHSRUnlocker-Update-[0-9a-f]{32}\z", RegexOptions.CultureInvariant))
+                || !Regex.IsMatch(directory.Name, @"\AHNAUnlocker-Update-[0-9a-f]{32}\z", RegexOptions.CultureInvariant))
                 throw new IOException("The protected update directory is outside the system staging location.");
             RejectReparseAncestors(directoryPath);
             ValidateSecurity(directory.GetAccessControl(AccessControlSections.Owner | AccessControlSections.Access));

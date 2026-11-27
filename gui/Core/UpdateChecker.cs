@@ -60,8 +60,8 @@ namespace StarRailUnlocker.Core
     public sealed class UpdateChecker
     {
         private const int MaximumResponseBytes = 256 * 1024;
-        private static readonly Uri ApiUri = new("https://api.github.com/repos/L1angYun/HSRUnlocker/releases/latest");
-        private static readonly Uri ManifestUri = new("https://github.com/L1angYun/HSRUnlocker/releases/latest/download/update.json");
+        private static readonly Uri ApiUri = new("https://api.github.com/repos/Schrodingers-Neko/HNAUnlocker/releases/latest");
+        private static readonly Uri ManifestUri = new("https://github.com/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json");
         private static readonly Regex StableVersion = new(
             @"\Av?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:\.(0|[1-9][0-9]*))?\z",
             RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
@@ -295,7 +295,7 @@ namespace StarRailUnlocker.Core
         {
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
             request.Headers.Accept.ParseAdd(api ? "application/vnd.github+json" : "application/json");
-            request.Headers.UserAgent.ParseAdd("HSRUnlocker-UpdateChecker/1.1");
+            request.Headers.UserAgent.ParseAdd("HNAUnlocker-UpdateChecker/1.1");
             if (api) request.Headers.Add("X-GitHub-Api-Version", "2026-03-10");
             return request;
         }
@@ -315,8 +315,8 @@ namespace StarRailUnlocker.Core
             if (uri.Host.Equals("release-assets.githubusercontent.com", StringComparison.OrdinalIgnoreCase)) return null;
             if (uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) && uri.Query.Length == 0)
             {
-                if (uri.AbsolutePath == "/L1angYun/HSRUnlocker/releases/latest/download/update.json") return null;
-                const string prefix = "/L1angYun/HSRUnlocker/releases/download/";
+                if (uri.AbsolutePath == "/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json") return null;
+                const string prefix = "/Schrodingers-Neko/HNAUnlocker/releases/download/";
                 const string suffix = "/update.json";
                 string path = uri.AbsolutePath;
                 if (path.Length > prefix.Length + suffix.Length
@@ -421,7 +421,7 @@ namespace StarRailUnlocker.Core
             if (!root.TryGetProperty("assets", out JsonElement assets)) return null;
             if (assets.ValueKind != JsonValueKind.Array)
                 throw new InvalidDataException("The release asset collection is invalid.");
-            string fileName = "HSRUnlocker-" + version + "-win-x64-Setup.exe";
+            string fileName = "HNAUnlocker-" + version + "-win-x64-Setup.exe";
             UpdatePackage installer = null;
             foreach (JsonElement asset in assets.EnumerateArray())
             {

@@ -71,7 +71,7 @@ namespace StarRailUnlocker.Core
             {
                 string full = Path.GetFullPath(path);
                 return full.Length < MaxPathLength &&
-                    Path.GetFileName(full).Equals("StarRail.exe", StringComparison.OrdinalIgnoreCase) ? full : null;
+                    Path.GetFileName(full).Equals("NexusAnima.exe", StringComparison.OrdinalIgnoreCase) ? full : null;
             }
             catch (Exception) { return null; }
         }

@@ -89,7 +89,7 @@ internal static class LocalizationVerification
 
             var assembly = typeof(L10n).Assembly;
             string[] resources = assembly.GetManifestResourceNames()
-                .Where(name => name.StartsWith("HSRUnlocker.Localization.", StringComparison.Ordinal)
+                .Where(name => name.StartsWith("HNAUnlocker.Localization.", StringComparison.Ordinal)
                     && name.EndsWith(".json", StringComparison.Ordinal)).ToArray();
             check(resources.Length >= 3, "all UI and runtime translation catalogs are embedded in the shipped assembly");
             var keys = new HashSet<string>(StringComparer.Ordinal);

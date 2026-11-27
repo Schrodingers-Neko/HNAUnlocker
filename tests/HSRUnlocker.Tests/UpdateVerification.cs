@@ -20,7 +20,7 @@ internal static class UpdateVerification
                 limited.Headers.Add("X-RateLimit-Reset", DateTimeOffset.UtcNow.AddMinutes(30).ToUnixTimeSeconds().ToString());
                 return limited;
             }
-            check(request.RequestUri.AbsoluteUri == "https://github.com/L1angYun/HSRUnlocker/releases/latest/download/update.json",
+            check(request.RequestUri.AbsoluteUri == "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json",
                 "quota fallback requests the same repository's first-party release manifest");
             return Json(Release("v1.2.3"));
         }))
@@ -33,20 +33,20 @@ internal static class UpdateVerification
         await VerifyFallbackTagBindingAsync(check);
 
         const string digest = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-        string asset = "{\"name\":\"HSRUnlocker-1.2.3-win-x64-Setup.exe\",\"size\":12345,\"digest\":\"sha256:" + digest +
+        string asset = "{\"name\":\"HNAUnlocker-1.2.3-win-x64-Setup.exe\",\"size\":12345,\"digest\":\"sha256:" + digest +
             "\",\"browser_download_url\":\"https://attacker.invalid/payload\"}";
         using (var client = Client(_ => Json(Release("v1.2.3", "\"assets\":[" + asset + "],"))))
         {
             UpdateCheckResult result = await new UpdateChecker(client).CheckAsync("1.1.0", UpdateSourcePreference.GitHub);
             check(result.Installer != null, "latest release exposes its matching hashed Windows installer");
-            check(result.Installer.Version == "1.2.3" && result.Installer.FileName == "HSRUnlocker-1.2.3-win-x64-Setup.exe"
+            check(result.Installer.Version == "1.2.3" && result.Installer.FileName == "HNAUnlocker-1.2.3-win-x64-Setup.exe"
                 && result.Installer.Size == 12345 && result.Installer.Sha256 == digest,
                 "installer metadata preserves validated version, filename, size and SHA256");
             check(result.Installer.DownloadUri.AbsoluteUri ==
-                "https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/HSRUnlocker-1.2.3-win-x64-Setup.exe",
+                "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/HNAUnlocker-1.2.3-win-x64-Setup.exe",
                 "installer URL is built from the official repository instead of remote arbitrary URLs");
         }
-        using (var client = Client(_ => Json(Release("v1.0.0", "\"assets\":[{\"name\":\"HSRUnlocker-1.0.0-win-x64.zip\"}],"))))
+        using (var client = Client(_ => Json(Release("v1.0.0", "\"assets\":[{\"name\":\"HNAUnlocker-1.0.0-win-x64.zip\"}],"))))
             check((await new UpdateChecker(client).CheckAsync("1.1.0", UpdateSourcePreference.GitHub)).Installer == null,
                 "older ZIP-only releases remain checkable without offering self-update");
 
@@ -92,7 +92,7 @@ internal static class UpdateVerification
         {
             if (++requestCount > 1) return Json("{}");
             check(request.Method == HttpMethod.Get &&
-                request.RequestUri.AbsoluteUri == "https://api.github.com/repos/L1angYun/HSRUnlocker/releases/latest",
+                request.RequestUri.AbsoluteUri == "https://api.github.com/repos/Schrodingers-Neko/HNAUnlocker/releases/latest",
                 "update request uses the official repository latest-release endpoint");
             check(request.Headers.Accept.Any(value => value.MediaType == "application/vnd.github+json")
                 && request.Headers.UserAgent.Count > 0
@@ -103,7 +103,7 @@ internal static class UpdateVerification
         }))
         {
             UpdateCheckResult result = await new UpdateChecker(client).CheckAsync("1.1.0", UpdateSourcePreference.GitHub);
-            check(result.ReleaseUri.AbsoluteUri == "https://github.com/L1angYun/HSRUnlocker/releases/tag/v1.2.3",
+            check(result.ReleaseUri.AbsoluteUri == "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/tag/v1.2.3",
                 "release link is constructed from the trusted repository and validated tag");
             check(client.DefaultRequestHeaders.Count() == 0, "update checking preserves shared client default headers");
             using HttpResponseMessage reusable = await client.GetAsync("https://example.invalid/");
@@ -193,12 +193,12 @@ internal static class UpdateVerification
 
     private static async Task VerifyFallbackTagBindingAsync(Action<bool, string> check)
     {
-        const string api = "https://api.github.com/repos/L1angYun/HSRUnlocker/releases/latest";
-        const string latest = "https://github.com/L1angYun/HSRUnlocker/releases/latest/download/update.json";
-        const string tagged = "https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/update.json";
-        const string unprefixed = "https://github.com/L1angYun/HSRUnlocker/releases/download/1.2.3/update.json";
-        const string fourParts = "https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3.0/update.json";
-        const string otherTag = "https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.4/update.json";
+        const string api = "https://api.github.com/repos/Schrodingers-Neko/HNAUnlocker/releases/latest";
+        const string latest = "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json";
+        const string tagged = "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/update.json";
+        const string unprefixed = "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/1.2.3/update.json";
+        const string fourParts = "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3.0/update.json";
+        const string otherTag = "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.4/update.json";
         const string signed = "https://release-assets.githubusercontent.com/opaque-object?sig=fixture-private-signature";
         const string hash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         foreach (var sample in new (string Name, string[] Hops, string BodyTag, bool Accept, int Requests)[]
@@ -226,7 +226,7 @@ internal static class UpdateVerification
             var requests = new List<string>();
             int hop = 0;
             string version = sample.BodyTag.TrimStart('v');
-            string body = Release(sample.BodyTag, "\"assets\":[{\"name\":\"HSRUnlocker-" + version
+            string body = Release(sample.BodyTag, "\"assets\":[{\"name\":\"HNAUnlocker-" + version
                 + "-win-x64-Setup.exe\",\"size\":12,\"digest\":\"sha256:" + hash + "\"}],");
             using var client = Client(request =>
             {
@@ -243,19 +243,19 @@ internal static class UpdateVerification
             catch (UpdateRateLimitException failure) { error = failure; }
             bool outcome = sample.Accept
                 ? error == null && result?.IsNewer == true && result.Version == version
-                    && result.ReleaseUri.AbsoluteUri == "https://github.com/L1angYun/HSRUnlocker/releases/tag/" + sample.BodyTag
+                    && result.ReleaseUri.AbsoluteUri == "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/tag/" + sample.BodyTag
                     && result.Installer?.Sha256 == hash && result.Installer.Size == 12
                     && result.Installer.Preference == UpdateSourcePreference.GitHub
-                    && result.Installer.DownloadUri.AbsoluteUri == "https://github.com/L1angYun/HSRUnlocker/releases/download/"
-                        + sample.BodyTag + "/HSRUnlocker-" + version + "-win-x64-Setup.exe"
+                    && result.Installer.DownloadUri.AbsoluteUri == "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/"
+                        + sample.BodyTag + "/HNAUnlocker-" + version + "-win-x64-Setup.exe"
                 : result == null && error?.InnerException is InvalidDataException
                     && !error.ToString().Contains("fixture-private-signature", StringComparison.Ordinal);
             check(outcome && requests.SequenceEqual(new[] { api }.Concat(sample.Hops.Take(sample.Requests - 1))),
                 "fallback tag binding: " + sample.Name);
         }
 
-        const string giteeList = "https://gitee.com/api/v5/repos/liangyun_Liu/HSRUnlocker/releases?direction=desc&per_page=100";
-        const string giteeManifest = "https://gitee.com/liangyun_Liu/HSRUnlocker/releases/download/v1.2.3/update.json";
+        const string giteeList = "https://gitee.com/api/v5/repos/Schrodingers-Neko/HNAUnlocker/releases?direction=desc&per_page=100";
+        const string giteeManifest = "https://gitee.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/update.json";
         foreach (bool validGitHub in new[] { false, true })
         {
             var requests = new List<string>();
@@ -284,8 +284,8 @@ internal static class UpdateVerification
     private static async Task VerifyRateLimitFallbackAsync(Action<bool, string> check)
     {
         DateTimeOffset now = new(2030, 1, 2, 3, 4, 5, TimeSpan.Zero);
-        const string manifest = "https://github.com/L1angYun/HSRUnlocker/releases/latest/download/update.json";
-        const string tagged = "https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/update.json";
+        const string manifest = "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json";
+        const string tagged = "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/update.json";
         const string signed = "https://release-assets.githubusercontent.com/github-production-release-asset/fixture/update.json?sig=fixture-private-signature";
         int calls = 0;
         using (var client = Client(request =>
@@ -294,10 +294,10 @@ internal static class UpdateVerification
             if (calls == 1) return Quota(HttpStatusCode.Forbidden);
             check(request.Headers.Authorization == null && request.Headers.UserAgent.Count > 0,
                 "fallback requests retain a User-Agent and send no authorization");
-            if (request.RequestUri.AbsoluteUri == manifest) return Redirect("/L1angYun/HSRUnlocker/releases/download/v1.2.3/update.json");
+            if (request.RequestUri.AbsoluteUri == manifest) return Redirect("/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/update.json");
             if (request.RequestUri.AbsoluteUri == tagged) return Redirect(signed);
             check(request.RequestUri.AbsoluteUri == signed, "manual redirects retain the first-party CDN's signed query");
-            var response = Json(Release("v1.2.3", "\"assets\":[{\"name\":\"HSRUnlocker-1.2.3-win-x64-Setup.exe\",\"size\":12,\"digest\":\"sha256:" + new string('a', 64) + "\"}],"));
+            var response = Json(Release("v1.2.3", "\"assets\":[{\"name\":\"HNAUnlocker-1.2.3-win-x64-Setup.exe\",\"size\":12,\"digest\":\"sha256:" + new string('a', 64) + "\"}],"));
             response.RequestMessage = new HttpRequestMessage(HttpMethod.Get, request.RequestUri);
             return response;
         }))
@@ -305,7 +305,7 @@ internal static class UpdateVerification
             UpdateCheckResult result = await new UpdateChecker(client).CheckAsync("1.1.0", UpdateSourcePreference.GitHub);
             check(calls == 4 && result.Installer?.Sha256 == new string('a', 64)
                 && result.Installer.DownloadUri.AbsoluteUri ==
-                    "https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/HSRUnlocker-1.2.3-win-x64-Setup.exe",
+                    "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/HNAUnlocker-1.2.3-win-x64-Setup.exe",
                 "first-party release redirects preserve the same exact installer hash and trusted URL validation");
             check(client.DefaultRequestHeaders.Count() == 0, "fallback redirects leave shared client default headers unchanged");
         }
@@ -404,18 +404,18 @@ internal static class UpdateVerification
 
         foreach (string target in new[]
         {
-            "http://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/update.json",
+            "http://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/update.json",
             "https://attacker.invalid/update.json",
-            "https://github.com.evil.invalid/L1angYun/HSRUnlocker/releases/latest/download/update.json",
+            "https://github.com.evil.invalid/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json",
             "https://github.com/other/HSRUnlocker/releases/latest/download/update.json",
-            "https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3-beta/update.json",
-            "https://github.com/L1angYun/HSRUnlocker/releases/download//update.json",
-            "https://github.com/L1angYun/HSRUnlocker/releases/download/update.json",
-            "https://github.com/L1angYun/HSRUnlocker/releases/download/v1.2.3/other.json",
-            "https://github.com/L1angYun/HSRUnlocker/releases/latest/download/update.json?token=bad",
-            "https://github.com/L1angYun/HSRUnlocker/releases/latest/download/update.json#fragment",
-            "https://user@github.com/L1angYun/HSRUnlocker/releases/latest/download/update.json",
-            "https://github.com:444/L1angYun/HSRUnlocker/releases/latest/download/update.json",
+            "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3-beta/update.json",
+            "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download//update.json",
+            "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/update.json",
+            "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/other.json",
+            "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json?token=bad",
+            "https://github.com/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json#fragment",
+            "https://user@github.com/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json",
+            "https://github.com:444/Schrodingers-Neko/HNAUnlocker/releases/latest/download/update.json",
             "https://release-assets.githubusercontent.com/fixture?sig=bad#fragment",
             "https://user@release-assets.githubusercontent.com/fixture?sig=bad",
             "https://release-assets.githubusercontent.com:444/fixture?sig=bad",
@@ -484,7 +484,7 @@ internal static class UpdateVerification
         {
             "not json", Release("v1.2.3-beta"),
             "{\"tag_name\":\"v1.2.3\",\"draft\":false,\"prerelease\":true}",
-            Release("v1.2.3", "\"assets\":[{\"name\":\"HSRUnlocker-1.2.3-win-x64-Setup.exe\",\"size\":12,\"digest\":\"sha256:bad\"}],"),
+            Release("v1.2.3", "\"assets\":[{\"name\":\"HNAUnlocker-1.2.3-win-x64-Setup.exe\",\"size\":12,\"digest\":\"sha256:bad\"}],"),
             new string(' ', 262145) + Release("v1.2.3")
         })
         {

@@ -38,7 +38,7 @@ function Set-Payload([bool]$SelfContained) {
     $options = if ($SelfContained) {
         @{ includedFrameworks = @(@{ name = 'Microsoft.NETCore.App'; version = '8.0.32' }) }
     } else { @{ framework = @{ name = 'Microsoft.NETCore.App'; version = '8.0.0' } } }
-    Write-Json @{ runtimeOptions = $options } (Join-Path $payload 'HSRUnlocker.runtimeconfig.json')
+    Write-Json @{ runtimeOptions = $options } (Join-Path $payload 'HNAUnlocker.runtimeconfig.json')
     $native = [byte[]]::new(128)
     $native[0] = 0x4D; $native[1] = 0x5A; $native[0x3C] = 64
     $native[64] = 0x50; $native[65] = 0x45
@@ -58,11 +58,11 @@ function Reject-Legacy([string]$Name, [string[]]$Files) {
 try {
     $project = [xml][IO.File]::ReadAllText((Join-Path $repo 'gui\HSRUnlocker.csproj'))
     $minimum = $project.SelectSingleNode('/Project/PropertyGroup/TargetPlatformMinVersion').InnerText
-    $setup = [IO.File]::ReadAllText((Join-Path $repo 'installer\HSRUnlocker.iss'))
+    $setup = [IO.File]::ReadAllText((Join-Path $repo 'installer\HNAUnlocker.iss'))
     $setupMinimum = [regex]::Match($setup, '(?m)^MinVersion=(10\.0\.\d+)\r?$').Groups[1].Value
     Check ([version]$minimum -eq [version]'10.0.19045.0' -and
         ([version]$minimum).ToString(3) -ceq $setupMinimum) 'Installer and app both allow Windows 10 22H2'
-    Check ($setup -match '(?m)^OutputBaseFilename=HSRUnlocker-\{#AppVersion\}-win-x64-Setup\r?$' -and
+    Check ($setup -match '(?m)^OutputBaseFilename=HNAUnlocker-\{#AppVersion\}-win-x64-Setup\r?$' -and
         @([regex]::Matches($setup, '(?m)^OutputBaseFilename=')).Count -eq 1) 'Uses one canonical x64 installer for manual downloads and automatic updates'
     [IO.File]::WriteAllText($manifestPath, $baseline)
     $valid = Read-InstallerRuntimeManifest $manifestPath '2.5.1'
@@ -125,7 +125,7 @@ try {
     Reject-Legacy 'Rejects mixed separators in cleanup paths' @('dir\../outside.dll')
     Reject-Legacy 'Rejects wildcard cleanup paths' @('*.dll')
     Reject-Legacy 'Rejects case-insensitive duplicate cleanup entries' @('coreclr.dll', 'CORECLR.dll')
-    Reject-Legacy 'Rejects application files in cleanup inventory' @('HSRUnlocker.dll')
+    Reject-Legacy 'Rejects application files in cleanup inventory' @('HNAUnlocker.dll')
     Reject-Legacy 'Rejects settings in cleanup inventory' @('settings.json')
     Reject-Legacy 'Rejects root license in cleanup inventory' @('LICENSE')
     Reject-Legacy 'Rejects cleanup paths with trailing Windows dots' @('dir./runtime.dll')

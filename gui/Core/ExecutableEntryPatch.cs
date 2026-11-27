@@ -13,8 +13,12 @@ namespace StarRailUnlocker.Core
     public sealed class ExecutableEntryPatch
     {
         // The only supported displacement consists entirely of stack/nonvolatile saves.
-        // No relative instruction is copied and the complete SUB RSP instruction is replayed.
-        private static readonly byte[] Prologue = { 0x41, 0x56, 0x56, 0x57, 0x55, 0x53, 0x48, 0x83, 0xEC, 0x50 };
+        // No relative instruction is copied and the complete SUB RSP + XMM6 save are replayed.
+        private static readonly byte[] Prologue =
+        {
+            0x56, 0x57, 0x53, 0x48, 0x83, 0xEC, 0x60,
+            0x0F, 0x29, 0x74, 0x24, 0x50,
+        };
         private static readonly object ExchangeLock = new();
         private readonly TargetProcess _process;
         private readonly ulong _entry;

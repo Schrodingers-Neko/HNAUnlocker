@@ -10,11 +10,11 @@ internal static class MobileEntryVerification
     public static void Run(Action<bool, string> check)
     {
         string payload = Convert.ToBase64String(Encoding.UTF8.GetBytes("{\"FPS\":60}\0"));
-        var arguments = new[] { "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", payload };
+        var arguments = new[] { "-is_cloud", "1", "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", payload };
         check(MobileGameLauncher.BuildCommandLine(arguments) == string.Join(" ", arguments),
             "mobile entry preserves exact canonical graphics bytes and raw platform arguments");
-        foreach (var bad in new[] { Array.Empty<string>(), new[] { "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", "" },
-            new[] { "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", "YQ== x" } })
+        foreach (var bad in new[] { Array.Empty<string>(), new[] { "-is_cloud", "1", "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", "" },
+            new[] { "-is_cloud", "1", "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", "YQ== x" } })
         {
             bool refused = false;
             try { MobileGameLauncher.BuildCommandLine(bad); } catch (ArgumentException) { refused = true; }

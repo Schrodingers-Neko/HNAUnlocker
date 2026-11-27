@@ -280,6 +280,40 @@ namespace StarRailUnlocker.Core
             VerifyNativeCode(proc, CameraGetterTarget);
             var setter = UnityImage.ReadRva(CameraSetterTarget - UnityBase, 32);
             var getter = UnityImage.ReadRva(CameraGetterTarget - UnityBase, 32);
+            // Unity 2022.3 layout: sub rsp, 0x48; mov rdx, rcx; inlined getter movss xmm0, [rax + fovOff]; add rsp, 0x48; ret.
+            byte[] setter2022 = { 0x48,0x83,0xEC,0x48,0x48,0x89,0xCA,0x48,0x85,0xC9,0x74,0x12,
+                0x48,0x8B,0x4A,0,0x48,0x85,0xC9,0x74,0x09,0x48,0x83,0xC4,0x48,0xE9 };
+            byte[] getter2022 = { 0x48,0x83,0xEC,0x48,0x48,0x89,0xCA,0x48,0x85,0xC9,0x74,0x16,
+                0x48,0x8B,0x42,0,0x48,0x85,0xC0,0x74,0x0D,0xF3,0x0F,0x10,0x80 };
+            bool is2022 = true;
+            for (int i = 0; i < setter2022.Length; i++)
+                if (i != 15 && setter[i] != setter2022[i]) { is2022 = false; break; }
+            for (int i = 0; is2022 && i < getter2022.Length; i++)
+                if (i != 15 && getter[i] != getter2022[i]) { is2022 = false; break; }
+            if (is2022)
+            {
+                var getterTail = UnityImage.ReadRva(CameraGetterTarget - UnityBase + 29, 5);
+                if (getterTail[0] != 0x48 || getterTail[1] != 0x83 || getterTail[2] != 0xC4
+                    || getterTail[3] != 0x48 || getterTail[4] != 0xC3)
+                    throw new NotSupportedException(L10n.T("Resolver.GameBuild.CameraObjectResolutionMismatch"));
+                int objectOffset22 = unchecked((sbyte)setter[15]);
+                if (objectOffset22 <= 0 || objectOffset22 % 8 != 0 || getter[15] != setter[15])
+                    throw new NotSupportedException(L10n.T("Resolver.GameBuild.CameraObjectPointerFieldMismatch"));
+                int fovOffset22 = BitConverter.ToInt32(getter, 25);
+                if (fovOffset22 <= 0 || fovOffset22 > 0x10000 || fovOffset22 % 4 != 0)
+                    throw new NotSupportedException(L10n.T("Resolver.GameBuild.CameraFovFieldNotUnique"));
+                ulong nativeSetterRva22 = GameBuildResolver.RelativeTarget(CameraSetterTarget - UnityBase + 30, BitConverter.ToInt32(setter, 26));
+                var setterBody22 = UnityImage.ReadFunctionBytes(nativeSetterRva22);
+                VerifyNativeCode(proc, checked(UnityBase + nativeSetterRva22), setterBody22.Length);
+                byte[] argument22 = { 0x0F,0x28,0xF1 }; // MOVAPS XMM6,XMM1
+                byte[] storeFov22 = { 0xF3,0x0F,0x11,0xB6, (byte)fovOffset22, (byte)(fovOffset22 >> 8),
+                    (byte)(fovOffset22 >> 16), (byte)(fovOffset22 >> 24) }; // MOVSS [RSI+fovOffset],XMM6
+                if (setterBody22.AsSpan().IndexOf(argument22) < 0 || setterBody22.AsSpan().IndexOf(storeFov22) < 0)
+                    throw new NotSupportedException(L10n.T("Resolver.GameBuild.CameraRegisterRelationshipMismatch"));
+                StoredFovOffset = fovOffset22;
+                _nativePointerOffset = objectOffset22;
+                return;
+            }
             // Validate the entire object-resolution path. Only its encoded object displacement is variable.
             byte[] prefix = { 0x48,0x83,0xEC,0x28,0x48,0x85,0xC9,0x74,0x15,0x48,0x8B,0x41,0,
                 0x48,0x85,0xC0,0x74,0x0C,0x48,0x8B,0xC8,0x48,0x83,0xC4,0x28,0xE9 };
@@ -357,7 +391,7 @@ namespace StarRailUnlocker.Core
         private static readonly byte[] GetterPadding = { 0x66,0x0F,0x1F,0x84,0,0,0,0,0 };
         private static readonly byte[] SetterPadding = { 0x66,0x0F,0x1F,0x44,0,0 };
         internal sealed record Forwarder(ulong EntryRva, ulong SlotRva, byte[] Code);
-        private sealed record Registration(ulong EntryRva, ulong LoopRva, ulong KeysRva, byte[] Entry,
+        private sealed record Registration(ulong EntryRva, ulong LoopRva, ulong KeysRva, ulong FunctionsRva, byte[] Entry,
             byte[] Loop, byte[] Keys, Dictionary<string, (ulong Rva, ulong TableEntry)> Targets);
 
         internal static ulong RelativeTarget(ulong nextRva, int displacement)
@@ -398,18 +432,13 @@ namespace StarRailUnlocker.Core
             return matches == 1;
         }
 
-        private static Registration ParseRegistration(PeImage image, ulong rva, byte[] entry)
+        private static Registration ValidateRegistrationTables(PeImage image, ulong entryRva, ulong loopRva,
+            byte[] entry, byte[] loop, ulong functionsRva, ulong keysRva, int count)
         {
-            int count = BitConverter.ToInt32(entry, 2);
             if (count < Names.Length || count > 10000) return null;
-            ulong functionsRva = RelativeTarget(rva + 13, BitConverter.ToInt32(entry, 9));
-            ulong keysRva = RelativeTarget(rva + 20, BitConverter.ToInt32(entry, 16));
-            ulong loopRva = RelativeTarget(rva + 25, BitConverter.ToInt32(entry, 21));
             if (functionsRva % 8 != 0 || keysRva % 4 != 0
-                || !image.IsFileBackedRva(functionsRva, count * 8) || !image.IsFileBackedRva(keysRva, count * 4)
-                || !image.IsExecutableRva(loopRva, 144)) return null;
-            byte[] loop = image.ReadRva(loopRva, 144);
-            if (!RegistrationLoop(image, loopRva, loop)) return null;
+                || !image.IsFileBackedRva(functionsRva, count * 8) || !image.IsFileBackedRva(keysRva, count * 4))
+                return null;
             byte[] keys = image.ReadRva(keysRva, count * 4), functions = image.ReadRva(functionsRva, count * 8);
             var nativeRvas = new ulong[count];
             for (int i = 0; i < count; i++)
@@ -436,7 +465,43 @@ namespace StarRailUnlocker.Core
                     || !uniqueTargets.Add(nativeRvas[found])) return null;
                 targets.Add(name, (nativeRvas[found], functionsRva + (ulong)found * 8));
             }
-            return new(rva, loopRva, keysRva, entry, loop, keys, targets);
+            return new(entryRva, loopRva, keysRva, functionsRva, entry, loop, keys, targets);
+        }
+
+        private static Registration ParseRegistration(PeImage image, ulong rva, byte[] entry)
+        {
+            int count = BitConverter.ToInt32(entry, 2);
+            if (count < Names.Length || count > 10000) return null;
+            ulong functionsRva = RelativeTarget(rva + 13, BitConverter.ToInt32(entry, 9));
+            ulong keysRva = RelativeTarget(rva + 20, BitConverter.ToInt32(entry, 16));
+            ulong loopRva = RelativeTarget(rva + 25, BitConverter.ToInt32(entry, 21));
+            if (!image.IsExecutableRva(loopRva, 144)) return null;
+            byte[] loop = image.ReadRva(loopRva, 144);
+            if (!RegistrationLoop(image, loopRva, loop)) return null;
+            return ValidateRegistrationTables(image, rva, loopRva, entry, loop, functionsRva, keysRva, count);
+        }
+
+        private static bool InlinedRegistrationShape(ReadOnlySpan<byte> code) => code.Length >= 16
+            && code[0] == 0x31 && code[1] == 0xDB
+            && code[2] == 0x4C && code[3] == 0x8D && code[4] == 0x35
+            && code[9] == 0x4C && code[10] == 0x8D && code[11] == 0x3D;
+
+        private static Registration ParseInlinedRegistration(PeImage image, ulong rva, byte[] entry)
+        {
+            ulong functionsRva = RelativeTarget(rva + 9, BitConverter.ToInt32(entry, 5));
+            ulong keysRva = RelativeTarget(rva + 16, BitConverter.ToInt32(entry, 12));
+            ulong loopRva = rva + 16;
+            if (!image.IsExecutableRva(loopRva, 64)) return null;
+            byte[] loop = image.ReadRva(loopRva, 64);
+            byte[] compare = { 0x48, 0xFF, 0xC3, 0x48, 0x81, 0xFB };
+            byte[] loadFunc = { 0x49, 0x8B, 0x34, 0xDE };
+            byte[] loadKey = { 0x41, 0x8B, 0x3C, 0x9F };
+            int compareAt = loop.AsSpan().IndexOf(compare);
+            if (compareAt < 0 || compareAt + 10 > loop.Length
+                || loop.AsSpan().IndexOf(loadFunc) < 0 || loop.AsSpan().IndexOf(loadKey) < 0)
+                return null;
+            int count = BitConverter.ToInt32(loop, compareAt + 6);
+            return ValidateRegistrationTables(image, rva, loopRva, entry, loop, functionsRva, keysRva, count);
         }
 
         private static Registration FindRegistration(PeImage image)
@@ -444,14 +509,23 @@ namespace StarRailUnlocker.Core
             Registration found = null;
             foreach (var chunk in image.ReadExecutableChunks())
             {
-                for (int i = 0; i < chunk.ScanLength && i + 25 <= chunk.Bytes.Length; i++)
+                for (int i = 0; i < chunk.ScanLength; i++)
                 {
-                    if (chunk.Bytes[i] != 0x41 || chunk.Bytes[i + 1] != 0xB8
-                        || !RegistrationShape(chunk.Bytes.AsSpan(i, 25))) continue;
-                    Registration candidate;
-                    try { candidate = ParseRegistration(image, chunk.Rva + (ulong)i, chunk.Bytes.AsSpan(i, 25).ToArray()); }
-                    catch (InvalidDataException) { continue; }
-                    catch (OverflowException) { continue; }
+                    Registration candidate = null;
+                    if (i + 25 <= chunk.Bytes.Length && chunk.Bytes[i] == 0x41 && chunk.Bytes[i + 1] == 0xB8
+                        && RegistrationShape(chunk.Bytes.AsSpan(i, 25)))
+                    {
+                        try { candidate = ParseRegistration(image, chunk.Rva + (ulong)i, chunk.Bytes.AsSpan(i, 25).ToArray()); }
+                        catch (InvalidDataException) { continue; }
+                        catch (OverflowException) { continue; }
+                    }
+                    else if (i + 16 <= chunk.Bytes.Length && chunk.Bytes[i] == 0x31 && chunk.Bytes[i + 1] == 0xDB
+                        && InlinedRegistrationShape(chunk.Bytes.AsSpan(i, 16)))
+                    {
+                        try { candidate = ParseInlinedRegistration(image, chunk.Rva + (ulong)i, chunk.Bytes.AsSpan(i, 16).ToArray()); }
+                        catch (InvalidDataException) { continue; }
+                        catch (OverflowException) { continue; }
+                    }
                     if (candidate == null) continue;
                     if (found != null) throw new NotSupportedException(L10n.T("Resolver.GameBuild.AmbiguousInternalCallRegistration"));
                     found = candidate;
@@ -475,8 +549,7 @@ namespace StarRailUnlocker.Core
                     found = i;
                 }
             if (found < 0) throw new NotSupportedException(L10n.T("Resolver.GameBuild.NamedInternalCallMissing", name));
-            ulong functions = RelativeTarget(registration.EntryRva + 13, BitConverter.ToInt32(registration.Entry, 9));
-            ulong slot = checked(functions + (ulong)found * 8);
+            ulong slot = checked(registration.FunctionsRva + (ulong)found * 8);
             ulong pointer = BitConverter.ToUInt64(image.ReadRva(slot, 8));
             if (pointer < image.PreferredImageBase || !image.IsExecutableRva(pointer - image.PreferredImageBase, 32))
                 throw new InvalidDataException(L10n.T("Resolver.GameBuild.NamedInternalCallNotExecutable", name));

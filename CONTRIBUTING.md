@@ -22,7 +22,7 @@ $version = (Get-Content .\artifacts\installer\update.json -Raw | ConvertFrom-Jso
 $source = .\package-source.ps1 -OutDir .\artifacts\source | ConvertFrom-Json
 $release = @{
     Version = $version
-    InstallerPath = ".\artifacts\installer\HSRUnlocker-$version-win-x64-Setup.exe"
+    InstallerPath = ".\artifacts\installer\HNAUnlocker-$version-win-x64-Setup.exe"
     SourceArchivePath = $source.Archive
     OutDir = '.\artifacts\release-assets'
 }
@@ -34,7 +34,7 @@ $release = @{
 To verify a download, place the installer and `SHA256SUMS.txt` from the same release in one folder. Open PowerShell there, replace `<version>` in the example with the actual version, and compare the two SHA-256 values.
 
 ```powershell
-Get-FileHash '.\HSRUnlocker-<version>-win-x64-Setup.exe' -Algorithm SHA256
+Get-FileHash '.\HNAUnlocker-<version>-win-x64-Setup.exe' -Algorithm SHA256
 Get-Content .\SHA256SUMS.txt
 ```
 

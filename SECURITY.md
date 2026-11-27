@@ -8,7 +8,7 @@
 
 本工具需要管理员权限，会读写目标进程内存，并会在用户选择启动时启动客户端。请先阅读源码与使用说明，仅运行自行构建或来自可信来源的程序。进程内存修改可能带来稳定性与账号风险，本项目不保证使用结果。
 
-应用配置与运行日志保存在 `%LOCALAPPDATA%\HSRUnlocker\`。报告问题不需要上传该目录或完整日志。
+应用配置与运行日志保存在 `%LOCALAPPDATA%\HNAUnlocker\`。报告问题不需要上传该目录或完整日志。
 
 ### 报告范围
 
@@ -38,7 +38,7 @@
 
 This tool requires administrator privileges, reads and writes target-process memory, and launches a game client when requested. Review the source and usage instructions first. Run only software you build yourself or obtain from a trusted source. Process-memory modifications may affect stability and put accounts at risk; this project does not guarantee an outcome.
 
-Application settings and runtime logs are stored in `%LOCALAPPDATA%\HSRUnlocker\`. You do not need to upload that directory or complete logs to report an issue.
+Application settings and runtime logs are stored in `%LOCALAPPDATA%\HNAUnlocker\`. You do not need to upload that directory or complete logs to report an issue.
 
 ### What To Report
 

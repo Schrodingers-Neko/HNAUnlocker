@@ -174,8 +174,8 @@ namespace StarRailUnlocker.Core
                 $stage = [System.IO.DirectoryInfo]::new($directory)
                 $systemRoot = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::CommonApplicationData)
                 if (-not $stage.Parent.FullName.Equals($systemRoot, [System.StringComparison]::OrdinalIgnoreCase) -or
-                    $stage.Name -cnotmatch '\AHSRUnlocker-Update-[0-9a-f]{32}\z' -or
-                    [System.IO.Path]::GetFileName($installer) -cnotmatch '\AHSRUnlocker-(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?-win-x64-Setup\.exe\z') {
+                    $stage.Name -cnotmatch '\AHNAUnlocker-Update-[0-9a-f]{32}\z' -or
+                    [System.IO.Path]::GetFileName($installer) -cnotmatch '\AHNAUnlocker-(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?-win-x64-Setup\.exe\z') {
                     throw 'Invalid update staging identity.'
                 }
                 Assert-PlainAncestors $directory
@@ -256,7 +256,7 @@ namespace StarRailUnlocker.Core
                             [System.Environment]::NewLine + [string]::Join([System.Environment]::NewLine, [string[]] $retainedLogs)
                     }
                     $null = [System.Reflection.Assembly]::Load('System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089')
-                    $null = [System.Windows.Forms.MessageBox]::Show($message, 'HSRUnlocker',
+                    $null = [System.Windows.Forms.MessageBox]::Show($message, 'HNAUnlocker',
                         [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
                 } catch {}
             }

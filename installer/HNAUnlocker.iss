@@ -16,16 +16,16 @@
 #include "RuntimeDependencies.iss"
 
 [Setup]
-AppId={{928328BA-7DAB-4F7F-9E3D-CC87061C2460}
-AppName=HSRUnlocker
+AppId={{B7F4D8C1-6A2E-4C9B-8F13-4E9A2D5C8B71}
+AppName=HNAUnlocker
 AppVersion={#AppVersion}
-AppVerName=HSRUnlocker {#AppVersion}
-AppPublisher=L1angYun
-AppPublisherURL=https://github.com/L1angYun/HSRUnlocker
-AppSupportURL=https://github.com/L1angYun/HSRUnlocker/issues
-AppUpdatesURL=https://github.com/L1angYun/HSRUnlocker/releases
-DefaultDirName={autopf}\HSRUnlocker
-DefaultGroupName=HSRUnlocker
+AppVerName=HNAUnlocker {#AppVersion}
+AppPublisher=Schrodingers-Neko
+AppPublisherURL=https://github.com/Schrodingers-Neko/HNAUnlocker
+AppSupportURL=https://github.com/Schrodingers-Neko/HNAUnlocker/issues
+AppUpdatesURL=https://github.com/Schrodingers-Neko/HNAUnlocker/releases
+DefaultDirName={autopf}\HNAUnlocker
+DefaultGroupName=HNAUnlocker
 UsePreviousAppDir=yes
 DisableDirPage=no
 DisableProgramGroupPage=yes
@@ -35,16 +35,16 @@ SetupArchitecture=x64
 ArchitecturesAllowed=x64os
 ArchitecturesInstallIn64BitMode=x64os
 MinVersion=10.0.19045
-AppMutex=Global\HSRUnlocker.Running,HSRUnlocker
+AppMutex=Global\HNAUnlocker.Running,HNAUnlocker
 CloseApplications=no
 RestartApplications=no
-UninstallDisplayName=HSRUnlocker
-UninstallDisplayIcon={app}\HSRUnlocker.exe
+UninstallDisplayName=HNAUnlocker
+UninstallDisplayIcon={app}\HNAUnlocker.exe
 SetupIconFile={#PublishDir}\Assets\AppIcon.ico
 LicenseFile={#PublishDir}\LICENSE
 VersionInfoVersion={#AppFileVersion}
 VersionInfoProductVersion={#AppFileVersion}
-OutputBaseFilename=HSRUnlocker-{#AppVersion}-win-x64-Setup
+OutputBaseFilename=HNAUnlocker-{#AppVersion}-win-x64-Setup
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
@@ -62,12 +62,12 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "{#PublishDir}\*"; DestDir: "{app}"; Excludes: "*.pdb"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\HSRUnlocker"; Filename: "{app}\HSRUnlocker.exe"; WorkingDir: "{app}"
-Name: "{group}\{cm:UninstallProgram,HSRUnlocker}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\HSRUnlocker"; Filename: "{app}\HSRUnlocker.exe"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{group}\HNAUnlocker"; Filename: "{app}\HNAUnlocker.exe"; WorkingDir: "{app}"
+Name: "{group}\{cm:UninstallProgram,HNAUnlocker}"; Filename: "{uninstallexe}"
+Name: "{autodesktop}\HNAUnlocker"; Filename: "{app}\HNAUnlocker.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\HSRUnlocker.exe"; WorkingDir: "{app}"; Flags: nowait runasoriginaluser skipifdoesntexist; Check: IsUpdaterInstall
+Filename: "{app}\HNAUnlocker.exe"; WorkingDir: "{app}"; Flags: nowait runasoriginaluser skipifdoesntexist; Check: IsUpdaterInstall
 
 [Code]
 function IsUpdaterInstall: Boolean;

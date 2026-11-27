@@ -35,7 +35,7 @@ namespace StarRailUnlocker.Core
             void AddExecutable(string path)
             {
                 string executable = LocalPath(path);
-                if (executable == null || !Path.GetFileName(executable).Equals("StarRail.exe", StringComparison.OrdinalIgnoreCase))
+                if (executable == null || !Path.GetFileName(executable).Equals("NexusAnima.exe", StringComparison.OrdinalIgnoreCase))
                     return;
                 try { if (fileExists(executable)) found.Add(executable); }
                 catch (Exception) { }
@@ -45,18 +45,18 @@ namespace StarRailUnlocker.Core
             {
                 string directory = LocalPath(raw);
                 if (directory == null) return;
-                if (legacy && Path.GetFileName(directory).Equals("StarRail.exe", StringComparison.OrdinalIgnoreCase))
+                if (legacy && Path.GetFileName(directory).Equals("NexusAnima.exe", StringComparison.OrdinalIgnoreCase))
                 {
                     AddExecutable(directory);
                     return;
                 }
-                AddExecutable(Path.Combine(directory, "StarRail.exe"));
+                AddExecutable(Path.Combine(directory, "NexusAnima.exe"));
                 if (!legacy) return;
                 try
                 {
                     string[] lines = readLines(Path.Combine(directory, "config.ini"));
                     string installed = LauncherDirectory(lines);
-                    if (installed != null) AddExecutable(Path.Combine(installed, "StarRail.exe"));
+                    if (installed != null) AddExecutable(Path.Combine(installed, "NexusAnima.exe"));
                 }
                 catch (Exception) { }
             }
@@ -66,11 +66,13 @@ namespace StarRailUnlocker.Core
                 string root = @"Software\" + vendor + @"\HYP";
                 foreach (string version in Children(readSubKeys, RegistryHive.CurrentUser, RegistryView.Registry64, root, MaxHypVersions))
                 {
-                    foreach (string business in new[] { "hkrpg_cn", "hkrpg_global" })
+                    foreach (string business in new[] { "abc_cn", "abc_global" })
                         AddDirectory(Value(RegistryHive.CurrentUser, RegistryView.Registry64,
                             root + "\\" + version + "\\" + business, "GameInstallPath"), legacy: false);
                 }
             }
+
+            AddExecutable(@"C:\Program Files\Nexus Anima\games\NexusAnima Game\NexusAnima.exe");
 
             foreach (RegistryHive hive in new[] { RegistryHive.CurrentUser, RegistryHive.LocalMachine })
             {
@@ -110,8 +112,8 @@ namespace StarRailUnlocker.Core
         private static bool RecognizedName(string name)
         {
             string trimmed = name?.Trim();
-            return trimmed != null && new[] { "Star Rail", "Honkai Star Rail", "Honkai: Star Rail",
-                "崩坏：星穹铁道", "崩壞：星穹鐵道" }.Contains(trimmed, StringComparer.OrdinalIgnoreCase);
+            return trimmed != null && new[] { "Nexus Anima", "Honkai: Nexus Anima", "Honkai Nexus Anima",
+                "崩坏：因缘精灵", "崩壞：因緣精靈" }.Contains(trimmed, StringComparer.OrdinalIgnoreCase);
         }
 
         private static string LauncherDirectory(IReadOnlyList<string> lines)

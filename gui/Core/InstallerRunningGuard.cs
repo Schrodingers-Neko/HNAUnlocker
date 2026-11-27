@@ -7,7 +7,7 @@ namespace StarRailUnlocker.Core
 {
     internal sealed class InstallerRunningGuard : IDisposable
     {
-        private const string MutexName = @"Global\HSRUnlocker.Running";
+        private const string MutexName = @"Global\HNAUnlocker.Running";
         private const uint Synchronize = 0x00100000;
         private readonly SafeWaitHandle _handle;
 

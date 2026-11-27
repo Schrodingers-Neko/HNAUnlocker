@@ -6,16 +6,16 @@
     "ko-KR": "이 소프트웨어는 MiSans 글꼴을 사용합니다."
   },
   "Ui.WindowTitle": {
-    "zh-CN": "HSRUnlocker {0}",
-    "en-US": "HSRUnlocker {0}",
-    "ja-JP": "HSRUnlocker {0}",
-    "ko-KR": "HSRUnlocker {0}"
+    "zh-CN": "HNAUnlocker {0}",
+    "en-US": "HNAUnlocker {0}",
+    "ja-JP": "HNAUnlocker {0}",
+    "ko-KR": "HNAUnlocker {0}"
   },
   "Ui.Version": {
-    "zh-CN": "崩坏：星穹铁道 · {0}",
-    "en-US": "Honkai: Star Rail · {0}",
-    "ja-JP": "崩壊：スターレイル · {0}",
-    "ko-KR": "붕괴: 스타레일 · {0}"
+    "zh-CN": "崩坏：因缘精灵 · {0}",
+    "en-US": "Honkai: Nexus Anima · {0}",
+    "ja-JP": "崩壊：ネクサスアニマ · {0}",
+    "ko-KR": "붕괴: 넥서스 아니마 · {0}"
   },
   "Ui.UnknownVersion": {
     "zh-CN": "未知版本",
@@ -30,16 +30,16 @@
     "ko-KR": "게임 클라이언트"
   },
   "Ui.ChooseExecutable": {
-    "zh-CN": "选择 StarRail.exe",
-    "en-US": "Choose StarRail.exe",
-    "ja-JP": "StarRail.exe を選択",
-    "ko-KR": "StarRail.exe 선택"
+    "zh-CN": "选择 NexusAnima.exe",
+    "en-US": "Choose NexusAnima.exe",
+    "ja-JP": "NexusAnima.exe を選択",
+    "ko-KR": "NexusAnima.exe 선택"
   },
   "Ui.ScanClients": {
-    "zh-CN": "重新扫描 StarRail.exe",
-    "en-US": "Scan for StarRail.exe again",
-    "ja-JP": "StarRail.exe を再検索",
-    "ko-KR": "StarRail.exe 다시 검색"
+    "zh-CN": "重新扫描 NexusAnima.exe",
+    "en-US": "Scan for NexusAnima.exe again",
+    "ja-JP": "NexusAnima.exe を再検索",
+    "ko-KR": "NexusAnima.exe 다시 검색"
   },
   "Ui.ScanningClients": {
     "zh-CN": "正在查找游戏客户端…",
@@ -54,10 +54,10 @@
     "ko-KR": "사용 가능한 클라이언트: {0}"
   },
   "Ui.NoClientsFound": {
-    "zh-CN": "未找到游戏，请手动选择 StarRail.exe",
-    "en-US": "No game found. Choose StarRail.exe manually.",
-    "ja-JP": "ゲームが見つかりません。StarRail.exe を手動で選択してください。",
-    "ko-KR": "게임을 찾지 못했습니다. StarRail.exe를 직접 선택하세요."
+    "zh-CN": "未找到游戏，请手动选择 NexusAnima.exe",
+    "en-US": "No game found. Choose NexusAnima.exe manually.",
+    "ja-JP": "ゲームが見つかりません。NexusAnima.exe を手動で選択してください。",
+    "ko-KR": "게임을 찾지 못했습니다. NexusAnima.exe를 직접 선택하세요."
   },
   "Ui.ClientScanFailed": {
     "zh-CN": "扫描失败，请重试",
@@ -528,10 +528,10 @@
     "ko-KR": "이전 세션 종료 중"
   },
   "Ui.StatusWaiting": {
-    "zh-CN": "正在等待 StarRail.exe",
-    "en-US": "Waiting for StarRail.exe",
-    "ja-JP": "StarRail.exe を待機しています",
-    "ko-KR": "StarRail.exe 대기 중"
+    "zh-CN": "正在等待 NexusAnima.exe",
+    "en-US": "Waiting for NexusAnima.exe",
+    "ja-JP": "NexusAnima.exe を待機しています",
+    "ko-KR": "NexusAnima.exe 대기 중"
   },
   "Ui.StatusAttaching": {
     "zh-CN": "正在等待游戏加载并准备应用设置",
@@ -636,10 +636,10 @@
     "ko-KR": "적용 대기 중"
   },
   "Ui.NoAttachableGame": {
-    "zh-CN": "未找到可连接的 StarRail.exe。请确认游戏已启动，并有权限访问。",
-    "en-US": "No accessible StarRail.exe found. Make sure the game is running and you have permission to access it.",
-    "ja-JP": "接続可能な StarRail.exe が見つかりません。ゲームが起動しており、アクセス権限があることを確認してください。",
-    "ko-KR": "연결 가능한 StarRail.exe를 찾을 수 없습니다. 게임이 실행 중이며 접근 권한이 있는지 확인하세요."
+    "zh-CN": "未找到可连接的 NexusAnima.exe。请确认游戏已启动，并有权限访问。",
+    "en-US": "No accessible NexusAnima.exe found. Make sure the game is running and you have permission to access it.",
+    "ja-JP": "接続可能な NexusAnima.exe が見つかりません。ゲームが起動しており、アクセス権限があることを確認してください。",
+    "ko-KR": "연결 가능한 NexusAnima.exe를 찾을 수 없습니다. 게임이 실행 중이며 접근 권한이 있는지 확인하세요."
   },
   "Ui.SetupTitle": {
     "zh-CN": "设置游戏路径",
@@ -648,10 +648,10 @@
     "ko-KR": "게임 경로 설정"
   },
   "Ui.SetupContent": {
-    "zh-CN": "未自动找到游戏。请选择游戏目录中的 StarRail.exe。",
-    "en-US": "No game was found automatically. Choose StarRail.exe in the game folder.",
-    "ja-JP": "ゲームを自動検出できませんでした。ゲームフォルダーにある StarRail.exe を選択してください。",
-    "ko-KR": "게임을 자동으로 찾지 못했습니다. 게임 폴더에서 StarRail.exe를 선택하세요."
+    "zh-CN": "未自动找到游戏。请选择游戏目录中的 NexusAnima.exe。",
+    "en-US": "No game was found automatically. Choose NexusAnima.exe in the game folder.",
+    "ja-JP": "ゲームを自動検出できませんでした。ゲームフォルダーにある NexusAnima.exe を選択してください。",
+    "ko-KR": "게임을 자동으로 찾지 못했습니다. 게임 폴더에서 NexusAnima.exe를 선택하세요."
   },
   "Ui.SetupLater": {
     "zh-CN": "稍后设置",
@@ -684,10 +684,10 @@
     "ko-KR": "찾아보기…"
   },
   "Ui.RunningGame": {
-    "zh-CN": "StarRail.exe · PID {0}",
-    "en-US": "StarRail.exe · PID {0}",
-    "ja-JP": "StarRail.exe · PID {0}",
-    "ko-KR": "StarRail.exe · PID {0}"
+    "zh-CN": "NexusAnima.exe · PID {0}",
+    "en-US": "NexusAnima.exe · PID {0}",
+    "ja-JP": "NexusAnima.exe · PID {0}",
+    "ko-KR": "NexusAnima.exe · PID {0}"
   },
   "Ui.ChooseRunningGameTitle": {
     "zh-CN": "选择正在运行的游戏",
@@ -750,10 +750,10 @@
     "ko-KR": "게임에 연결합니다: PID {0}, {1}"
   },
   "Ui.LogNoAutoDetectedGame": {
-    "zh-CN": "未自动检测到游戏，请选择 StarRail.exe",
-    "en-US": "No game detected automatically. Choose StarRail.exe.",
-    "ja-JP": "ゲームを自動検出できませんでした。StarRail.exe を選択してください。",
-    "ko-KR": "게임을 자동 감지하지 못했습니다. StarRail.exe를 선택하세요."
+    "zh-CN": "未自动检测到游戏，请选择 NexusAnima.exe",
+    "en-US": "No game detected automatically. Choose NexusAnima.exe.",
+    "ja-JP": "ゲームを自動検出できませんでした。NexusAnima.exe を選択してください。",
+    "ko-KR": "게임을 자동 감지하지 못했습니다. NexusAnima.exe를 선택하세요."
   },
   "Ui.LogModulePathUnavailable": {
     "zh-CN": "PID {0}: 无法枚举主模块路径（进程可能已退出或权限不足）",
@@ -774,10 +774,10 @@
     "ko-KR": "PID {0}: 주 모듈 경로에 접근할 수 없거나 파일이 더 이상 존재하지 않습니다: {1}"
   },
   "Ui.LogFoundGame": {
-    "zh-CN": "发现 StarRail.exe，PID {0}: {1}",
-    "en-US": "Found StarRail.exe, PID {0}: {1}",
-    "ja-JP": "StarRail.exe を検出しました。PID {0}: {1}",
-    "ko-KR": "StarRail.exe를 찾았습니다. PID {0}: {1}"
+    "zh-CN": "发现 NexusAnima.exe，PID {0}: {1}",
+    "en-US": "Found NexusAnima.exe, PID {0}: {1}",
+    "ja-JP": "NexusAnima.exe を検出しました。PID {0}: {1}",
+    "ko-KR": "NexusAnima.exe를 찾았습니다. PID {0}: {1}"
   },
   "Ui.LogModuleEnumerationFailed": {
     "zh-CN": "PID {0}: 枚举主模块时出错",
@@ -786,22 +786,22 @@
     "ko-KR": "PID {0}: 주 모듈 열거에 실패했습니다"
   },
   "Ui.LogProcessEnumerationFailed": {
-    "zh-CN": "枚举 StarRail.exe 进程失败，无法安全连接",
-    "en-US": "Failed to enumerate StarRail.exe processes; cannot connect safely.",
-    "ja-JP": "StarRail.exe プロセスの列挙に失敗したため、安全に接続できません。",
-    "ko-KR": "StarRail.exe 프로세스 열거에 실패하여 안전하게 연결할 수 없습니다."
+    "zh-CN": "枚举 NexusAnima.exe 进程失败，无法安全连接",
+    "en-US": "Failed to enumerate NexusAnima.exe processes; cannot connect safely.",
+    "ja-JP": "NexusAnima.exe プロセスの列挙に失敗したため、安全に接続できません。",
+    "ko-KR": "NexusAnima.exe 프로세스 열거에 실패하여 안전하게 연결할 수 없습니다."
   },
   "Ui.LogNoRunningGame": {
-    "zh-CN": "未找到正在运行的 StarRail.exe",
-    "en-US": "No running StarRail.exe found",
-    "ja-JP": "実行中の StarRail.exe が見つかりません",
-    "ko-KR": "실행 중인 StarRail.exe를 찾을 수 없습니다"
+    "zh-CN": "未找到正在运行的 NexusAnima.exe",
+    "en-US": "No running NexusAnima.exe found",
+    "ja-JP": "実行中の NexusAnima.exe が見つかりません",
+    "ko-KR": "실행 중인 NexusAnima.exe를 찾을 수 없습니다"
   },
   "Ui.LogNoAccessibleGame": {
-    "zh-CN": "找到 StarRail.exe，但无法取得任何主模块路径；请确认管理员权限后重试",
-    "en-US": "Found StarRail.exe, but no main module paths are accessible. Check administrator permissions and try again.",
-    "ja-JP": "StarRail.exe は見つかりましたが、メインモジュールのパスを取得できません。管理者権限を確認して再試行してください。",
-    "ko-KR": "StarRail.exe를 찾았지만 주 모듈 경로에 접근할 수 없습니다. 관리자 권한을 확인한 후 다시 시도하세요."
+    "zh-CN": "找到 NexusAnima.exe，但无法取得任何主模块路径；请确认管理员权限后重试",
+    "en-US": "Found NexusAnima.exe, but no main module paths are accessible. Check administrator permissions and try again.",
+    "ja-JP": "NexusAnima.exe は見つかりましたが、メインモジュールのパスを取得できません。管理者権限を確認して再試行してください。",
+    "ko-KR": "NexusAnima.exe를 찾았지만 주 모듈 경로에 접근할 수 없습니다. 관리자 권한을 확인한 후 다시 시도하세요."
   },
   "Ui.LogFovChanged": {
     "zh-CN": "FOV 增量设为 {0:0.##}",
@@ -810,10 +810,10 @@
     "ko-KR": "FOV 조정값을 {0:0.##}(으)로 설정했습니다"
   },
   "Ui.LogChooseGameExecutable": {
-    "zh-CN": "请选择客户端目录中的 StarRail.exe",
-    "en-US": "Choose StarRail.exe in the game client's directory",
-    "ja-JP": "ゲームクライアントのフォルダーにある StarRail.exe を選択してください",
-    "ko-KR": "게임 클라이언트 폴더에서 StarRail.exe를 선택하세요"
+    "zh-CN": "请选择客户端目录中的 NexusAnima.exe",
+    "en-US": "Choose NexusAnima.exe in the game client's directory",
+    "ja-JP": "ゲームクライアントのフォルダーにある NexusAnima.exe を選択してください",
+    "ko-KR": "게임 클라이언트 폴더에서 NexusAnima.exe를 선택하세요"
   },
   "Ui.LogGamePathSet": {
     "zh-CN": "游戏路径已设为: {0}",
@@ -828,10 +828,10 @@
     "ko-KR": "게임을 선택하지 못했습니다: {0}"
   },
   "Ui.LogAutoStartNeedsPath": {
-    "zh-CN": "自启动已开启，但尚未选择有效游戏路径；请先选择 StarRail.exe",
-    "en-US": "Automatic launch is enabled, but the game path is invalid. Choose StarRail.exe first.",
-    "ja-JP": "自動起動は有効ですが、有効なゲームのパスが設定されていません。先に StarRail.exe を選択してください。",
-    "ko-KR": "자동 실행이 활성화되어 있지만 게임 경로가 유효하지 않습니다. 먼저 StarRail.exe를 선택하세요."
+    "zh-CN": "自启动已开启，但尚未选择有效游戏路径；请先选择 NexusAnima.exe",
+    "en-US": "Automatic launch is enabled, but the game path is invalid. Choose NexusAnima.exe first.",
+    "ja-JP": "自動起動は有効ですが、有効なゲームのパスが設定されていません。先に NexusAnima.exe を選択してください。",
+    "ko-KR": "자동 실행이 활성화되어 있지만 게임 경로가 유효하지 않습니다. 먼저 NexusAnima.exe를 선택하세요."
   },
   "Ui.LogConfigSaved": {
     "zh-CN": "配置已保存: {0}",
@@ -846,10 +846,10 @@
     "ko-KR": "설정을 저장하지 못했습니다. 도구 로그를 확인하세요: {0}"
   },
   "Ui.LogInvalidGamePath": {
-    "zh-CN": "当前游戏路径无效，请选择 StarRail.exe",
-    "en-US": "The current game path is invalid. Choose StarRail.exe.",
-    "ja-JP": "現在のゲームのパスは無効です。StarRail.exe を選択してください。",
-    "ko-KR": "현재 게임 경로가 유효하지 않습니다. StarRail.exe를 선택하세요."
+    "zh-CN": "当前游戏路径无效，请选择 NexusAnima.exe",
+    "en-US": "The current game path is invalid. Choose NexusAnima.exe.",
+    "ja-JP": "現在のゲームのパスは無効です。NexusAnima.exe を選択してください。",
+    "ko-KR": "현재 게임 경로가 유효하지 않습니다. NexusAnima.exe를 선택하세요."
   },
   "Ui.LogStartingGame": {
     "zh-CN": "开始：查找或启动游戏…",
@@ -882,16 +882,16 @@
     "ko-KR": "로그를 복사하지 못했습니다: {0}"
   },
   "Tray.RegisterCallbackFailed": {
-    "zh-CN": "无法注册 HSRUnlocker 托盘窗口回调",
-    "en-US": "Cannot register the HSRUnlocker tray window callback",
-    "ja-JP": "HSRUnlocker のトレイウィンドウコールバックを登録できません",
-    "ko-KR": "HSRUnlocker 트레이 창 콜백을 등록할 수 없습니다"
+    "zh-CN": "无法注册 HNAUnlocker 托盘窗口回调",
+    "en-US": "Cannot register the HNAUnlocker tray window callback",
+    "ja-JP": "HNAUnlocker のトレイウィンドウコールバックを登録できません",
+    "ko-KR": "HNAUnlocker 트레이 창 콜백을 등록할 수 없습니다"
   },
   "Tray.RegisterWindowFailed": {
-    "zh-CN": "无法注册 HSRUnlocker 主窗口",
-    "en-US": "Cannot register the HSRUnlocker main window",
-    "ja-JP": "HSRUnlocker のメインウィンドウを登録できません",
-    "ko-KR": "HSRUnlocker 기본 창을 등록할 수 없습니다"
+    "zh-CN": "无法注册 HNAUnlocker 主窗口",
+    "en-US": "Cannot register the HNAUnlocker main window",
+    "ja-JP": "HNAUnlocker のメインウィンドウを登録できません",
+    "ko-KR": "HNAUnlocker 기본 창을 등록할 수 없습니다"
   },
   "Tray.LoadIconFailed": {
     "zh-CN": "无法加载 Assets/AppIcon.ico；改用 Windows 默认图标",
@@ -900,10 +900,10 @@
     "ko-KR": "Assets/AppIcon.ico를 불러올 수 없어 Windows 기본 아이콘을 사용합니다"
   },
   "Tray.CreateIconFailed": {
-    "zh-CN": "无法创建 HSRUnlocker 托盘图标；窗口保持可见",
-    "en-US": "Cannot create the HSRUnlocker tray icon; window remains visible",
-    "ja-JP": "HSRUnlocker のトレイアイコンを作成できません。ウィンドウを表示したままにします",
-    "ko-KR": "HSRUnlocker 트레이 아이콘을 만들 수 없습니다. 창을 계속 표시합니다"
+    "zh-CN": "无法创建 HNAUnlocker 托盘图标；窗口保持可见",
+    "en-US": "Cannot create the HNAUnlocker tray icon; window remains visible",
+    "ja-JP": "HNAUnlocker のトレイアイコンを作成できません。ウィンドウを表示したままにします",
+    "ko-KR": "HNAUnlocker 트레이 아이콘을 만들 수 없습니다. 창을 계속 표시합니다"
   },
   "Tray.HiddenBalloon": {
     "zh-CN": "工具已最小化到托盘，双击图标可恢复窗口。",
@@ -912,10 +912,10 @@
     "ko-KR": "도구를 시스템 트레이로 최소화했습니다. 아이콘을 두 번 클릭하면 창이 다시 표시됩니다."
   },
   "Tray.Open": {
-    "zh-CN": "打开 HSRUnlocker",
-    "en-US": "Open HSRUnlocker",
-    "ja-JP": "HSRUnlocker を開く",
-    "ko-KR": "HSRUnlocker 열기"
+    "zh-CN": "打开 HNAUnlocker",
+    "en-US": "Open HNAUnlocker",
+    "ja-JP": "HNAUnlocker を開く",
+    "ko-KR": "HNAUnlocker 열기"
   },
   "Tray.StopRestore": {
     "zh-CN": "停止并还原",

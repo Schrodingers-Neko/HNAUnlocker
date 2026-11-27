@@ -5,7 +5,7 @@ This software uses MiSans fonts.
 Copyright © 2020-2023 Beijing Xiaomi Mobile Software Co.,Ltd. All Rights Reserved.
 
 `MiSansVF.ttf` is an unmodified MiSans VF font from the MiSans Global distribution.
-It is included as part of HSRUnlocker under Xiaomi's separate font license, not
+It is included as part of HNAUnlocker under Xiaomi's separate font license, not
 under the project's GPL license. Keep this notice and the complete
 [MiSans license](MiSans-LICENSE.pdf) with the font when distributing this software.
 

@@ -4,9 +4,9 @@ using StarRailUnlocker.Core;
 
 internal static class MobileLaunchVerification
 {
-    private static readonly string FixtureExecutable = Path.Combine(Path.GetTempPath(), "HSRUnlocker-mobile-fixture", "StarRail.exe");
-    private static readonly string[] ChinaApp = { "miHoYo", "崩坏：星穹铁道" };
-    private static readonly string[] GlobalApp = { "Cognosphere", "Star Rail" };
+    private static readonly string FixtureExecutable = Path.Combine(Path.GetTempPath(), "HNAUnlocker-mobile-fixture", "NexusAnima.exe");
+    private static readonly string[] ChinaApp = { "miHoYo", "ABC" };
+    private static readonly string[] GlobalApp = { "Cognosphere", "Nexus Anima" };
     // Includes binary values and two trailing NUL bytes. No text conversion or trimming is valid.
     private static readonly byte[] Graphics = { 0, 1, 254, 255, 0, 0 };
     private const string ExpectedBase64 = "AAH+/wAA";
@@ -16,13 +16,13 @@ internal static class MobileLaunchVerification
         VerifySelection(check, "missing config.ini falls back to recognized CN app.info", MobileGraphicsSource.Auto,
             null, ChinaApp, MobileLaunchSettings.ChinaRegistryPath);
         VerifySelection(check, "CN uapc selects exactly the CN graphics source", MobileGraphicsSource.Auto,
-            new[] { "[launcher]", " uapc = hkrpg_cn " }, null, MobileLaunchSettings.ChinaRegistryPath);
+            new[] { "[launcher]", " uapc = abc_cn " }, null, MobileLaunchSettings.ChinaRegistryPath);
         VerifySelection(check, "Global uapc selects exactly the Global graphics source", MobileGraphicsSource.Auto,
-            new[] { "uapc=hkrpg_global" }, null, MobileLaunchSettings.GlobalRegistryPath);
+            new[] { "uapc=abc_global" }, null, MobileLaunchSettings.GlobalRegistryPath);
         VerifySelection(check, "JSON CN uapc agrees with CN app.info", MobileGraphicsSource.Auto,
-            new[] { "uapc={\"hkrpg_cn\":{\"channel_id\":1}}" }, ChinaApp, MobileLaunchSettings.ChinaRegistryPath);
+            new[] { "uapc={\"abc_cn\":{\"channel_id\":1}}" }, ChinaApp, MobileLaunchSettings.ChinaRegistryPath);
         VerifySelection(check, "JSON Global uapc agrees with Global app.info", MobileGraphicsSource.Auto,
-            new[] { "uapc={\"hkrpg_global\":{\"channel_id\":1}}" }, GlobalApp, MobileLaunchSettings.GlobalRegistryPath);
+            new[] { "uapc={\"abc_global\":{\"channel_id\":1}}" }, GlobalApp, MobileLaunchSettings.GlobalRegistryPath);
         VerifySelection(check, "missing config.ini falls back to recognized Global app.info", MobileGraphicsSource.Auto,
             null, GlobalApp, MobileLaunchSettings.GlobalRegistryPath);
         VerifySelection(check, "explicit CN works without consulting metadata", MobileGraphicsSource.China,
@@ -30,21 +30,21 @@ internal static class MobileLaunchVerification
         VerifySelection(check, "explicit Global works without consulting metadata", MobileGraphicsSource.Global,
             null, null, MobileLaunchSettings.GlobalRegistryPath);
         VerifySelection(check, "explicit source overrides conflicting metadata without reading it", MobileGraphicsSource.Global,
-            new[] { "uapc=hkrpg_cn" }, ChinaApp, MobileLaunchSettings.GlobalRegistryPath);
+            new[] { "uapc=abc_cn" }, ChinaApp, MobileLaunchSettings.GlobalRegistryPath);
 
         VerifyRefusal(check, "missing identities are refused before registry reads", null, null);
         VerifyRefusal(check, "metadata without uapc is refused before registry reads", new[] { "[launcher]", "game_version=1" }, null);
         VerifyRefusal(check, "unknown uapc is refused even with recognized app.info", new[] { "uapc=unknown" }, ChinaApp);
-        VerifyRefusal(check, "malformed uapc JSON is refused before registry reads", new[] { "uapc={\"hkrpg_global\":" }, null);
-        VerifyRefusal(check, "unknown app.info is refused even with recognized uapc", new[] { "uapc=hkrpg_cn" }, new[] { "Unknown", "Star Rail" });
-        VerifyRefusal(check, "CN config and Global app.info conflict before registry reads", new[] { "uapc=hkrpg_cn" }, GlobalApp);
-        VerifyRefusal(check, "Global config and CN app.info conflict before registry reads", new[] { "uapc=hkrpg_global" }, ChinaApp);
+        VerifyRefusal(check, "malformed uapc JSON is refused before registry reads", new[] { "uapc={\"abc_global\":" }, null);
+        VerifyRefusal(check, "unknown app.info is refused even with recognized uapc", new[] { "uapc=abc_cn" }, new[] { "Unknown", "Nexus Anima" });
+        VerifyRefusal(check, "CN config and Global app.info conflict before registry reads", new[] { "uapc=abc_cn" }, GlobalApp);
+        VerifyRefusal(check, "Global config and CN app.info conflict before registry reads", new[] { "uapc=abc_global" }, ChinaApp);
         VerifyRefusal(check, "conflicting duplicate uapc fields are refused before registry reads",
-            new[] { "uapc=hkrpg_cn", "uapc=hkrpg_global" }, null);
+            new[] { "uapc=abc_cn", "uapc=abc_global" }, null);
         VerifyRefusal(check, "both channels in uapc JSON are refused before registry reads",
-            new[] { "uapc={\"hkrpg_cn\":{},\"hkrpg_global\":{}}" }, null);
+            new[] { "uapc={\"abc_cn\":{},\"abc_global\":{}}" }, null);
         VerifyRefusal(check, "extra app.info identity lines are refused before registry reads", null,
-            new[] { "miHoYo", "崩坏：星穹铁道", "unrecognized" });
+            new[] { "miHoYo", "ABC", "unrecognized" });
         VerifyRefusal(check, "invalid source enum is refused before metadata or registry reads", null, null,
             (MobileGraphicsSource)999);
 
@@ -81,7 +81,7 @@ internal static class MobileLaunchVerification
         {
             metadataReads++;
             if (path == Path.Combine(Path.GetDirectoryName(FixtureExecutable), "config.ini")) return ini;
-            if (path == Path.Combine(Path.GetDirectoryName(FixtureExecutable), "StarRail_Data", "app.info")) return app;
+            if (path == Path.Combine(Path.GetDirectoryName(FixtureExecutable), "NexusAnima_Data", "app.info")) return app;
             correctMetadataPaths = false;
             return null;
         }, (path, name) =>
@@ -92,9 +92,9 @@ internal static class MobileLaunchVerification
         check(correctMetadataPaths && metadataReads == (source == MobileGraphicsSource.Auto ? 2 : 0)
             && registryReads.Count == 1 && registryReads[0] == (expectedRegistry, MobileLaunchSettings.GraphicsValueName)
             && logs.Any(line => line.Contains("HKCU\\" + expectedRegistry, StringComparison.Ordinal)), description);
-        check(arguments.SequenceEqual(new[] { "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", ExpectedBase64 })
-            && Convert.FromBase64String(arguments[3]).SequenceEqual(original) && Graphics.SequenceEqual(original),
-            description + "; only the original two argument pairs preserve every byte and trailing NUL");
+        check(arguments.SequenceEqual(new[] { "-is_cloud", "1", "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", ExpectedBase64 })
+            && Convert.FromBase64String(arguments[5]).SequenceEqual(original) && Graphics.SequenceEqual(original),
+            description + "; cloud arguments preserve every byte and trailing NUL");
     }
 
     private static void VerifyRefusal(Action<bool, string> check, string description, string[] ini, string[] app,
@@ -102,38 +102,39 @@ internal static class MobileLaunchVerification
     {
         int registryReads = 0, metadataReads = 0;
         bool refused = false;
+        IReadOnlyList<string> fallback = null;
         try
         {
-            MobileLaunchSettings.BuildArguments(FixtureExecutable, source, path =>
+            if (Enum.IsDefined(source))
+            {
+                try { MobileLaunchSettings.ResolveSource(source, ini, app); }
+                catch (InvalidOperationException ex) { refused = !string.IsNullOrWhiteSpace(ex.Message); }
+            }
+            fallback = MobileLaunchSettings.BuildArguments(FixtureExecutable, source, path =>
             {
                 metadataReads++;
                 return Path.GetFileName(path) == "app.info" ? app : ini;
             }, (_, _) => { registryReads++; return Graphics; });
         }
         catch (InvalidOperationException ex) { refused = !string.IsNullOrWhiteSpace(ex.Message); }
-        check(refused && registryReads == 0 && (Enum.IsDefined(source) || metadataReads == 0), description);
+        bool fallbackOk = !Enum.IsDefined(source)
+            || (fallback != null && fallback.SequenceEqual(new[] { "-is_cloud", "1", "-platform_type", "CLOUD_WEB_TOUCH" }));
+        check(refused && fallbackOk && registryReads == 0 && (Enum.IsDefined(source) || metadataReads == 0), description);
     }
 
     private static void VerifyGraphicsRefusal(Action<bool, string> check, object value, string description)
     {
         int registryReads = 0;
-        bool refused = false;
         bool correctSelection = true;
-        try
-        {
-            MobileLaunchSettings.BuildArguments(FixtureExecutable, MobileGraphicsSource.Global,
-                _ => throw new InvalidOperationException("Manual source must not read metadata"), (path, name) =>
-                {
-                    registryReads++;
-                    correctSelection &= path == MobileLaunchSettings.GlobalRegistryPath && name == MobileLaunchSettings.GraphicsValueName;
-                    return value;
-                });
-        }
-        catch (InvalidOperationException ex)
-        {
-            refused = ex.Message.Contains("HKCU\\" + MobileLaunchSettings.GlobalRegistryPath, StringComparison.Ordinal);
-        }
-        check(refused && correctSelection && registryReads == 1, description);
+        IReadOnlyList<string> arguments = MobileLaunchSettings.BuildArguments(FixtureExecutable, MobileGraphicsSource.Global,
+            _ => throw new InvalidOperationException("Manual source must not read metadata"), (path, name) =>
+            {
+                registryReads++;
+                correctSelection &= path == MobileLaunchSettings.GlobalRegistryPath && name == MobileLaunchSettings.GraphicsValueName;
+                return value;
+            });
+        check(arguments.SequenceEqual(new[] { "-is_cloud", "1", "-platform_type", "CLOUD_WEB_TOUCH" })
+            && correctSelection && registryReads == 1, description);
     }
 
     private static void VerifyConfig(Action<bool, string> check)
@@ -172,16 +173,16 @@ internal static class MobileLaunchVerification
 
     private static void VerifyBoundedFiles(Action<bool, string> check)
     {
-        string directory = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "HSRUnlocker-mobile-verification-" + Guid.NewGuid().ToString("N")));
-        string dataDirectory = Path.Combine(directory, "StarRail_Data");
+        string directory = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "HNAUnlocker-mobile-verification-" + Guid.NewGuid().ToString("N")));
+        string dataDirectory = Path.Combine(directory, "NexusAnima_Data");
         string iniPath = Path.Combine(directory, "config.ini"), appPath = Path.Combine(dataDirectory, "app.info");
-        string executable = Path.Combine(directory, "StarRail.exe");
+        string executable = Path.Combine(directory, "NexusAnima.exe");
         Directory.CreateDirectory(dataDirectory);
         try
         {
             check(MobileLaunchSettings.ReadOptionalLines(iniPath) == null && MobileLaunchSettings.ReadOptionalLines(appPath) == null,
                 "missing metadata files remain optional without registry access");
-            File.WriteAllText(appPath, "miHoYo\r\n崩坏：星穹铁道\r\n", new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
+            File.WriteAllText(appPath, "miHoYo\r\nABC\r\n", new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
             int reads = 0;
             IReadOnlyList<string> args = MobileLaunchSettings.BuildArguments(executable, MobileGraphicsSource.Auto,
                 MobileLaunchSettings.ReadOptionalLines, (path, name) =>
@@ -191,9 +192,9 @@ internal static class MobileLaunchVerification
                         throw new InvalidOperationException("Unexpected graphics selection");
                     return Graphics;
                 });
-            check(reads == 1 && args[3] == ExpectedBase64,
+            check(reads == 1 && args[5] == ExpectedBase64,
                 "bounded UTF-8 BOM app.info file selects CN when config.ini is absent");
-            File.WriteAllText(iniPath, "[launcher]\r\nuapc={\"hkrpg_cn\":{}}\r\n", Encoding.Unicode);
+            File.WriteAllText(iniPath, "[launcher]\r\nuapc={\"abc_cn\":{}}\r\n", Encoding.Unicode);
             check(MobileLaunchSettings.ResolveSource(MobileGraphicsSource.Auto,
                 MobileLaunchSettings.ReadOptionalLines(iniPath), MobileLaunchSettings.ReadOptionalLines(appPath)) == MobileGraphicsSource.China,
                 "bounded metadata reader retains BOM-based encoding detection for config.ini");
@@ -201,10 +202,10 @@ internal static class MobileLaunchVerification
             check(MobileLaunchSettings.ReadOptionalLines(iniPath).Single().Length == MobileLaunchSettings.MaxConfigMetadataBytes,
                 "config.ini accepts the exact 64 KiB metadata limit");
             File.WriteAllBytes(iniPath, new byte[MobileLaunchSettings.MaxConfigMetadataBytes + 1]);
-            VerifyOversizeRefusal(check, executable, "config.ini", MobileLaunchSettings.MaxConfigMetadataBytes,
+            VerifyOversizeRefusal(check, executable, iniPath, "config.ini", MobileLaunchSettings.MaxConfigMetadataBytes,
                 "oversized config.ini is refused before registry reads");
             File.Delete(iniPath); // Exact, tool-created fixture path under the unique temporary directory.
-            byte[] identity = Encoding.UTF8.GetBytes("miHoYo\n崩坏：星穹铁道\n");
+            byte[] identity = Encoding.UTF8.GetBytes("miHoYo\nABC\n");
             byte[] exactApp = Enumerable.Repeat((byte)' ', MobileLaunchSettings.MaxAppInfoBytes).ToArray();
             identity.CopyTo(exactApp, 0);
             File.WriteAllBytes(appPath, exactApp);
@@ -212,18 +213,18 @@ internal static class MobileLaunchVerification
                 MobileLaunchSettings.ReadOptionalLines(appPath)) == MobileGraphicsSource.China,
                 "app.info accepts and parses the exact 4 KiB metadata limit");
             File.WriteAllBytes(appPath, new byte[MobileLaunchSettings.MaxAppInfoBytes + 1]);
-            VerifyOversizeRefusal(check, executable, "app.info", MobileLaunchSettings.MaxAppInfoBytes,
+            VerifyOversizeRefusal(check, executable, appPath, "app.info", MobileLaunchSettings.MaxAppInfoBytes,
                 "oversized app.info is refused before registry reads");
             reads = 0;
             args = MobileLaunchSettings.BuildArguments(executable, MobileGraphicsSource.China,
                 _ => throw new InvalidOperationException("Explicit choice must bypass even oversized metadata"), (_, _) => { reads++; return Graphics; });
-            check(reads == 1 && args[3] == ExpectedBase64, "explicit source bypasses oversized metadata without reading it");
+            check(reads == 1 && args[5] == ExpectedBase64, "explicit source bypasses oversized metadata without reading it");
         }
         finally
         {
             // No recursive deletion: remove only the two known fixture files and empty directories.
             if (!Path.GetFullPath(iniPath).Equals(Path.Combine(directory, "config.ini"), StringComparison.OrdinalIgnoreCase)
-                || !Path.GetFullPath(appPath).Equals(Path.Combine(directory, "StarRail_Data", "app.info"), StringComparison.OrdinalIgnoreCase))
+                || !Path.GetFullPath(appPath).Equals(Path.Combine(directory, "NexusAnima_Data", "app.info"), StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("Unexpected fixture cleanup path");
             File.Delete(iniPath);
             File.Delete(appPath);
@@ -232,21 +233,19 @@ internal static class MobileLaunchVerification
         }
     }
 
-    private static void VerifyOversizeRefusal(Action<bool, string> check, string executable, string fileName,
+    private static void VerifyOversizeRefusal(Action<bool, string> check, string executable, string oversizedPath, string fileName,
         int limit, string description)
     {
         int reads = 0;
         bool refused = false;
-        try
-        {
-            MobileLaunchSettings.BuildArguments(executable, MobileGraphicsSource.Auto,
-                MobileLaunchSettings.ReadOptionalLines, (_, _) => { reads++; return Graphics; });
-        }
+        try { MobileLaunchSettings.ReadOptionalLines(oversizedPath); }
         catch (InvalidOperationException ex)
         {
             refused = ex.Message.Contains(fileName, StringComparison.Ordinal)
                 && ex.Message.Contains(limit.ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
         }
-        check(refused && reads == 0, description);
+        IReadOnlyList<string> args = MobileLaunchSettings.BuildArguments(executable, MobileGraphicsSource.Auto,
+            MobileLaunchSettings.ReadOptionalLines, (_, _) => { reads++; return Graphics; });
+        check(refused && reads == 0 && args.SequenceEqual(new[] { "-is_cloud", "1", "-platform_type", "CLOUD_WEB_TOUCH" }), description);
     }
 }

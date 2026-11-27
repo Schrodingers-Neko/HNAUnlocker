@@ -54,7 +54,7 @@ function Read-InstallerRuntimeManifest {
 
 function Assert-FrameworkDependentPayload {
     param([string]$PublishDir)
-    $runtime = Read-InstallerJson (Join-Path $PublishDir 'HSRUnlocker.runtimeconfig.json')
+    $runtime = Read-InstallerJson (Join-Path $PublishDir 'HNAUnlocker.runtimeconfig.json')
     $framework = $runtime.runtimeOptions.framework
     if ($framework.name -cne 'Microsoft.NETCore.App' -or $framework.version -cne '8.0.0' -or
         $null -ne $runtime.runtimeOptions.frameworks -or $null -ne $runtime.runtimeOptions.includedFrameworks) {
@@ -101,7 +101,7 @@ function Get-LegacyRuntimeFiles {
         }
         $leaf = [IO.Path]::GetFileName($relative)
         if ($relative.StartsWith('Assets/', [StringComparison]::OrdinalIgnoreCase) -or
-            $leaf -match '^HSRUnlocker([.]|$)' -or
+            $leaf -match '^HNAUnlocker([.]|$)' -or
             $leaf -in @('settings.json', 'hsr_config.json', 'config.json', 'App.xbf', 'MainWindow.xbf') -or
             $relative -in @('README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md')) { throw 'Protected file in legacy runtime inventory.' }
         if (-not [string]::IsNullOrWhiteSpace($PublishDir) -and

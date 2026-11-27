@@ -139,14 +139,21 @@ namespace StarRailUnlocker.Core
 
         internal static string BuildCommandLine(System.Collections.Generic.IReadOnlyList<string> arguments)
         {
-            if (arguments == null || arguments.Count != 4 || arguments[0] != "-platform_type"
-                || arguments[1] != "CLOUD_WEB_TOUCH" || arguments[2] != "-graphics_setting")
+            if (arguments == null || (arguments.Count != 4 && arguments.Count != 6)
+                || arguments[0] != "-is_cloud" || arguments[1] != "1"
+                || arguments[2] != "-platform_type"
+                || (arguments[3] != "CLOUD_IOS" && arguments[3] != "CLOUD_ANDROID" && arguments[3] != "CLOUD_WEB_TOUCH"))
                 throw new ArgumentException(L10n.T("Runtime.MobileLauncher.UnverifiedArguments"), nameof(arguments));
-            byte[] decoded;
-            try { decoded = Convert.FromBase64String(arguments[3]); }
-            catch (FormatException ex) { throw new ArgumentException(L10n.T("Runtime.MobileLauncher.InvalidGraphics"), nameof(arguments), ex); }
-            if (decoded.Length == 0 || Convert.ToBase64String(decoded) != arguments[3])
-                throw new ArgumentException(L10n.T("Runtime.MobileLauncher.NonCanonicalGraphics"), nameof(arguments));
+            if (arguments.Count == 6)
+            {
+                if (arguments[4] != "-graphics_setting")
+                    throw new ArgumentException(L10n.T("Runtime.MobileLauncher.UnverifiedArguments"), nameof(arguments));
+                byte[] decoded;
+                try { decoded = Convert.FromBase64String(arguments[5]); }
+                catch (FormatException ex) { throw new ArgumentException(L10n.T("Runtime.MobileLauncher.InvalidGraphics"), nameof(arguments), ex); }
+                if (decoded.Length == 0 || Convert.ToBase64String(decoded) != arguments[5])
+                    throw new ArgumentException(L10n.T("Runtime.MobileLauncher.NonCanonicalGraphics"), nameof(arguments));
+            }
             return string.Join(" ", arguments);
         }
 

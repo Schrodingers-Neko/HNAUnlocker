@@ -18,8 +18,8 @@ namespace StarRailUnlocker.Core
     public static class MobileLaunchSettings
     {
         public const string GraphicsValueName = "GraphicsSettings_Model_h2986158309";
-        public const string ChinaRegistryPath = @"SOFTWARE\miHoYo\崩坏：星穹铁道";
-        public const string GlobalRegistryPath = @"SOFTWARE\Cognosphere\Star Rail";
+        public const string ChinaRegistryPath = @"SOFTWARE\miHoYo\ABC";
+        public const string GlobalRegistryPath = @"SOFTWARE\Cognosphere\Nexus Anima";
 
         public static IReadOnlyList<string> BuildArguments(string executable, MobileGraphicsSource source,
             Action<string> log = null) => BuildArguments(executable, source, ReadOptionalLines, ReadRegistryValue, log);
@@ -38,21 +38,33 @@ namespace StarRailUnlocker.Core
             {
                 string directory = Path.GetDirectoryName(executable) ?? string.Empty;
                 string dataDirectory = Path.GetFileNameWithoutExtension(executable) + "_Data";
-                resolved = ResolveSource(source, readLines(Path.Combine(directory, "config.ini")),
-                    readLines(Path.Combine(directory, dataDirectory, "app.info")));
+                try
+                {
+                    resolved = ResolveSource(source, readLines(Path.Combine(directory, "config.ini")),
+                        readLines(Path.Combine(directory, dataDirectory, "app.info")));
+                }
+                catch (InvalidOperationException)
+                {
+                    resolved = MobileGraphicsSource.Auto;
+                }
             }
 
-            string registryPath = RegistryPath(resolved);
-            log?.Invoke(L10n.T(source == MobileGraphicsSource.Auto
-                ? (resolved == MobileGraphicsSource.China ? "Runtime.MobileSettings.AutoChina" : "Runtime.MobileSettings.AutoGlobal")
-                : (resolved == MobileGraphicsSource.China ? "Runtime.MobileSettings.ManualChina" : "Runtime.MobileSettings.ManualGlobal"),
-                registryPath));
-            if (readRegistry(registryPath, GraphicsValueName) is not byte[] graphics || graphics.Length == 0)
-                throw new InvalidOperationException(L10n.T(resolved == MobileGraphicsSource.China
-                    ? "Runtime.MobileSettings.GraphicsMissingChina" : "Runtime.MobileSettings.GraphicsMissingGlobal", registryPath));
+            if (resolved != MobileGraphicsSource.Auto)
+            {
+                string registryPath = RegistryPath(resolved);
+                log?.Invoke(L10n.T(source == MobileGraphicsSource.Auto
+                    ? (resolved == MobileGraphicsSource.China ? "Runtime.MobileSettings.AutoChina" : "Runtime.MobileSettings.AutoGlobal")
+                    : (resolved == MobileGraphicsSource.China ? "Runtime.MobileSettings.ManualChina" : "Runtime.MobileSettings.ManualGlobal"),
+                    registryPath));
+                if (readRegistry(registryPath, GraphicsValueName) is byte[] graphics && graphics.Length > 0)
+                {
+                    log?.Invoke(L10n.T("Runtime.MobileSettings.Arguments", graphics.Length));
+                    return new[] { "-is_cloud", "1", "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", Convert.ToBase64String(graphics) };
+                }
+            }
 
-            log?.Invoke(L10n.T("Runtime.MobileSettings.Arguments", graphics.Length));
-            return new[] { "-platform_type", "CLOUD_WEB_TOUCH", "-graphics_setting", Convert.ToBase64String(graphics) };
+            log?.Invoke("Launching with -is_cloud 1 -platform_type CLOUD_WEB_TOUCH (no registry graphics blob).");
+            return new[] { "-is_cloud", "1", "-platform_type", "CLOUD_WEB_TOUCH" };
         }
 
         internal static MobileGraphicsSource ResolveSource(MobileGraphicsSource requested,
@@ -101,8 +113,8 @@ namespace StarRailUnlocker.Core
 
         private static MobileGraphicsSource ParseChannel(string value)
         {
-            if (value.Equals("hkrpg_cn", StringComparison.OrdinalIgnoreCase)) return MobileGraphicsSource.China;
-            if (value.Equals("hkrpg_global", StringComparison.OrdinalIgnoreCase)) return MobileGraphicsSource.Global;
+            if (value.Equals("abc_cn", StringComparison.OrdinalIgnoreCase)) return MobileGraphicsSource.China;
+            if (value.Equals("abc_global", StringComparison.OrdinalIgnoreCase)) return MobileGraphicsSource.Global;
             try
             {
                 using var document = JsonDocument.Parse(value);
@@ -111,8 +123,8 @@ namespace StarRailUnlocker.Core
                     bool china = false, global = false;
                     foreach (var property in document.RootElement.EnumerateObject())
                     {
-                        china |= property.Name.Equals("hkrpg_cn", StringComparison.OrdinalIgnoreCase);
-                        global |= property.Name.Equals("hkrpg_global", StringComparison.OrdinalIgnoreCase);
+                        china |= property.Name.Equals("abc_cn", StringComparison.OrdinalIgnoreCase);
+                        global |= property.Name.Equals("abc_global", StringComparison.OrdinalIgnoreCase);
                     }
                     if (china && global)
                         throw new InvalidOperationException(L10n.T("Runtime.MobileSettings.ChannelAmbiguous"));
@@ -139,10 +151,12 @@ namespace StarRailUnlocker.Core
             if (identity.Count == 0) return MobileGraphicsSource.Auto;
             if (identity.Count == 2)
             {
-                if (identity[0].Equals("miHoYo", StringComparison.OrdinalIgnoreCase) && identity[1] == "崩坏：星穹铁道")
+                if (identity[0].Equals("miHoYo", StringComparison.OrdinalIgnoreCase) &&
+                    identity[1].Equals("ABC", StringComparison.OrdinalIgnoreCase))
                     return MobileGraphicsSource.China;
                 if (identity[0].Equals("Cognosphere", StringComparison.OrdinalIgnoreCase) &&
-                    identity[1].Equals("Star Rail", StringComparison.OrdinalIgnoreCase))
+                    (identity[1].Equals("ABC", StringComparison.OrdinalIgnoreCase) ||
+                     identity[1].Equals("Nexus Anima", StringComparison.OrdinalIgnoreCase)))
                     return MobileGraphicsSource.Global;
             }
             throw new InvalidOperationException(L10n.T("Runtime.MobileSettings.AppIdentityUnknown"));
