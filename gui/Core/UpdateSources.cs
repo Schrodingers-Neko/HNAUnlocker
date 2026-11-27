@@ -10,11 +10,14 @@ namespace HNAUnlocker.Core
     internal static class UpdateSources
     {
         internal const string GitHubRoot = "https://github.com/Schrodingers-Neko/HNAUnlocker";
-        internal const string GiteeRoot = "https://gitee.com/Schrodingers-Neko/HNAUnlocker";
-        internal static readonly Uri GiteeReleases = new("https://gitee.com/api/v5/repos/Schrodingers-Neko/HNAUnlocker/releases?direction=desc&per_page=100");
+        // Gitee mirror disabled: update checks and downloads use GitHub only.
+        // internal const string GiteeRoot = "https://gitee.com/Schrodingers-Neko/HNAUnlocker";
+        // internal static readonly Uri GiteeReleases = new("https://gitee.com/api/v5/repos/Schrodingers-Neko/HNAUnlocker/releases?direction=desc&per_page=100");
 
-        internal static Uri FileUri(string tag, string fileName, bool gitee) =>
-            new((gitee ? GiteeRoot : GitHubRoot) + "/releases/download/" + tag + "/" + fileName);
+        // internal static Uri FileUri(string tag, string fileName, bool gitee) =>
+        //     new((gitee ? GiteeRoot : GitHubRoot) + "/releases/download/" + tag + "/" + fileName);
+        internal static Uri FileUri(string tag, string fileName) =>
+            new(GitHubRoot + "/releases/download/" + tag + "/" + fileName);
 
         internal static Uri[] DownloadLocations(UpdatePackage package)
         {
@@ -22,12 +25,15 @@ namespace HNAUnlocker.Core
                 throw new ArgumentException("The installer source preference is invalid.", nameof(package));
             foreach (string tag in new[] { "v" + package.Version, package.Version })
             {
-                Uri github = FileUri(tag, package.FileName, false);
-                Uri gitee = FileUri(tag, package.FileName, true);
-                if (package.DownloadUri.AbsoluteUri == github.AbsoluteUri && package.Preference != UpdateSourcePreference.Gitee)
-                    return package.Preference == UpdateSourcePreference.Auto ? new[] { github, gitee } : new[] { github };
-                if (package.DownloadUri.AbsoluteUri == gitee.AbsoluteUri && package.Preference != UpdateSourcePreference.GitHub)
-                    return package.Preference == UpdateSourcePreference.Auto ? new[] { gitee, github } : new[] { gitee };
+                Uri github = FileUri(tag, package.FileName);
+                if (package.DownloadUri.AbsoluteUri == github.AbsoluteUri)
+                    return new[] { github };
+                // Gitee mirror disabled: Auto no longer falls back between GitHub and Gitee.
+                // Uri gitee = FileUri(tag, package.FileName, true);
+                // if (package.DownloadUri.AbsoluteUri == github.AbsoluteUri && package.Preference != UpdateSourcePreference.Gitee)
+                //     return package.Preference == UpdateSourcePreference.Auto ? new[] { github, gitee } : new[] { github };
+                // if (package.DownloadUri.AbsoluteUri == gitee.AbsoluteUri && package.Preference != UpdateSourcePreference.GitHub)
+                //     return package.Preference == UpdateSourcePreference.Auto ? new[] { gitee, github } : new[] { gitee };
             }
             throw new ArgumentException("The installer package does not use an official release URL.", nameof(package));
         }
@@ -59,19 +65,22 @@ namespace HNAUnlocker.Core
         }
 
         internal static async Task<HttpResponseMessage> GetFileAsync(HttpClient client, Uri initial,
-            string fileName, bool gitee, CancellationToken token, string expectedTag = null)
+            string fileName, CancellationToken token, string expectedTag = null)
         {
             Uri uri = initial;
-            FileLocation previous = FileLocation.Release;
+            // Gitee mirror disabled: only Gitee needed the Release -> Attachment -> CDN transition check.
+            // FileLocation previous = FileLocation.Release;
             for (int redirects = 0; ; redirects++)
             {
-                FileLocation location = ValidateFileUri(uri, fileName, gitee, expectedTag);
-                if ((redirects == 0 && location != FileLocation.Release)
-                    || (gitee && redirects > 0
-                        && !((previous == FileLocation.Release && location == FileLocation.Attachment)
-                            || (previous == FileLocation.Attachment && location == FileLocation.Cdn))))
+                FileLocation location = ValidateFileUri(uri, fileName, expectedTag);
+                if (redirects == 0 && location != FileLocation.Release)
                     throw new InvalidDataException("The update redirect transition is not trusted.");
-                previous = location;
+                // if ((redirects == 0 && location != FileLocation.Release)
+                //     || (gitee && redirects > 0
+                //         && !((previous == FileLocation.Release && location == FileLocation.Attachment)
+                //             || (previous == FileLocation.Attachment && location == FileLocation.Cdn))))
+                //     throw new InvalidDataException("The update redirect transition is not trusted.");
+                // previous = location;
                 using var request = new HttpRequestMessage(HttpMethod.Get, uri);
                 request.Headers.UserAgent.ParseAdd("HNAUnlocker-Updater/1.3");
                 using var headersTimeout = CancellationTokenSource.CreateLinkedTokenSource(token);
@@ -127,20 +136,22 @@ namespace HNAUnlocker.Core
 
         private enum FileLocation { Release, Attachment, Cdn }
 
-        private static FileLocation ValidateFileUri(Uri uri, string fileName, bool gitee, string expectedTag)
+        private static FileLocation ValidateFileUri(Uri uri, string fileName, string expectedTag)
         {
             if (!uri.IsAbsoluteUri || uri.Scheme != Uri.UriSchemeHttps || uri.Port != 443
                 || uri.UserInfo.Length != 0 || uri.Fragment.Length != 0)
                 throw new InvalidDataException("The update location is not a trusted HTTPS endpoint.");
-            if (!gitee && uri.Host.Equals("release-assets.githubusercontent.com", StringComparison.OrdinalIgnoreCase)) return FileLocation.Cdn;
-            if (gitee && uri.Host.Equals("foruda.gitee.com", StringComparison.OrdinalIgnoreCase)
-                && AttachmentPath(uri.AbsolutePath, "/attach_file/", fileName, false)) return FileLocation.Cdn;
+            if (uri.Host.Equals("release-assets.githubusercontent.com", StringComparison.OrdinalIgnoreCase)) return FileLocation.Cdn;
+            // Gitee mirror disabled: foruda.gitee.com and gitee.com attachments are no longer trusted.
+            // if (gitee && uri.Host.Equals("foruda.gitee.com", StringComparison.OrdinalIgnoreCase)
+            //     && AttachmentPath(uri.AbsolutePath, "/attach_file/", fileName, false)) return FileLocation.Cdn;
 
-            string host = gitee ? "gitee.com" : "github.com";
+            // string host = gitee ? "gitee.com" : "github.com";
+            const string host = "github.com";
             if (uri.Host.Equals(host, StringComparison.OrdinalIgnoreCase) && uri.Query.Length == 0)
             {
                 string repository = "/Schrodingers-Neko/HNAUnlocker";
-                if (!gitee && expectedTag == null && fileName == "update.json"
+                if (expectedTag == null && fileName == "update.json"
                     && uri.AbsolutePath == repository + "/releases/latest/download/update.json") return FileLocation.Release;
                 string prefix = repository + "/releases/download/";
                 if (uri.AbsolutePath.StartsWith(prefix, StringComparison.Ordinal))
@@ -150,10 +161,13 @@ namespace HNAUnlocker.Core
                         && UpdateChecker.TryVersion(parts[0], out _)
                         && (expectedTag == null || parts[0] == expectedTag)) return FileLocation.Release;
                 }
-                if (gitee && AttachmentPath(uri.AbsolutePath, repository + "/attach_files/", fileName, true)) return FileLocation.Attachment;
+                // if (gitee && AttachmentPath(uri.AbsolutePath, repository + "/attach_files/", fileName, true)) return FileLocation.Attachment;
             }
             throw new InvalidDataException("The update location is outside the trusted repository endpoints.");
         }
+
+        // Gitee mirror disabled: attachment path validation was only used for Gitee downloads.
+        /*
 
         private static bool AttachmentPath(string path, string prefix, string fileName, bool downloadSegment)
         {
@@ -166,5 +180,6 @@ namespace HNAUnlocker.Core
                 && (parts[^1] == fileName
                     || (!downloadSegment && parts[^1] == fileName.ToLowerInvariant()));
         }
+        */
     }
 }

@@ -42,6 +42,7 @@ namespace HNAUnlocker.Core
         public MobileSafeAreaMode SafeAreaMode { get; set; } = MobileSafeAreaMode.Original;
         public double SafeAreaHorizontalPercent { get; set; } = SafeAreaHorizontalDefault;
         public string Language { get; set; } = "auto";
+        public AppThemePreference Theme { get; set; } = AppThemePreference.System;
 
         /// <summary>Directory owned by this tool for settings and diagnostics.</summary>
         public static string DataDirectory =>
@@ -83,6 +84,7 @@ namespace HNAUnlocker.Core
             if (!double.IsFinite(SafeAreaHorizontalPercent)) SafeAreaHorizontalPercent = SafeAreaHorizontalDefault;
             SafeAreaHorizontalPercent = Math.Clamp(SafeAreaHorizontalPercent, 0, SafeAreaMaxPercent);
             Language = L10n.NormalizePreference(Language);
+            if (!Enum.IsDefined(Theme)) Theme = AppThemePreference.System;
         }
 
         public UnlockConfig Clone() => new UnlockConfig
@@ -102,6 +104,7 @@ namespace HNAUnlocker.Core
             SafeAreaMode = SafeAreaMode,
             SafeAreaHorizontalPercent = SafeAreaHorizontalPercent,
             Language = Language,
+            Theme = Theme,
         };
 
         internal static void AppendLog(string stage, string message, Exception ex = null)

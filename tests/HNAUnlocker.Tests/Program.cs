@@ -53,7 +53,8 @@ internal static class Program
                     }
                 }
                 UpdateVerification.Run(CheckUpdate);
-                UpdateMirrorCheckVerification.Run(CheckUpdate);
+                // Gitee mirror disabled: mirror verifications are excluded (see UpdateMirror*Verification.cs).
+                // UpdateMirrorCheckVerification.Run(CheckUpdate);
                 Console.WriteLine($"UPDATE CHECK VERIFICATION: {Checks.Count} checks passed; {failures} failed; only fake HTTP metadata fixtures were used.");
                 return failures == 0 ? 0 : 1;
             }
@@ -70,8 +71,9 @@ internal static class Program
             GameClientPathsVerification.Run(Check);
             GameDiscoveryVerification.Run(Check);
             LocalizationVerification.Run(Check);
-            UpdateMirrorCheckVerification.Run(Check);
-            UpdateMirrorDownloadVerification.Run(Check);
+            // Gitee mirror disabled: mirror verifications are excluded (see UpdateMirror*Verification.cs).
+            // UpdateMirrorCheckVerification.Run(Check);
+            // UpdateMirrorDownloadVerification.Run(Check);
             UpdateVerification.Run(Check);
             UpdateNoticeVerification.Run(Check);
             UpdateInstallVerification.Run(Check);

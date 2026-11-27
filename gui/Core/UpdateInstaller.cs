@@ -174,10 +174,11 @@ namespace HNAUnlocker.Core
         private async Task DownloadAttemptAsync(StagedUpdate staged, Uri uri, Action<int> report, CancellationToken token)
         {
             UpdatePackage package = staged.Package;
-            bool gitee = uri.Host == "gitee.com";
+            // Gitee mirror disabled: every download location is a GitHub release URL.
+            // bool gitee = uri.Host == "gitee.com";
             string tag = uri.Segments[^2].TrimEnd('/');
             using HttpResponseMessage response = await ReadRemoteAsync(
-                readToken => UpdateSources.GetFileAsync(client, uri, package.FileName, gitee, readToken, tag), token).ConfigureAwait(false);
+                readToken => UpdateSources.GetFileAsync(client, uri, package.FileName, readToken, tag), token).ConfigureAwait(false);
             long? declaredLength = response.Content.Headers.ContentLength;
             if (declaredLength.HasValue && declaredLength.Value != package.Size)
                 throw new InvalidDataException("The installer response length does not match the release asset.");

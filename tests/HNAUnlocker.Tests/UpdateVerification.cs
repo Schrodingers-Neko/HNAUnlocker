@@ -254,6 +254,8 @@ internal static class UpdateVerification
                 "fallback tag binding: " + sample.Name);
         }
 
+        // Gitee mirror disabled: Auto no longer compares GitHub with an independent Gitee release.
+#if GITEE_MIRROR
         const string giteeList = "https://gitee.com/api/v5/repos/Schrodingers-Neko/HNAUnlocker/releases?direction=desc&per_page=100";
         const string giteeManifest = "https://gitee.com/Schrodingers-Neko/HNAUnlocker/releases/download/v1.2.3/update.json";
         foreach (bool validGitHub in new[] { false, true })
@@ -279,6 +281,24 @@ internal static class UpdateVerification
                 validGitHub ? "a matching GitHub fallback remains usable when Gitee is unavailable"
                     : "a mismatched GitHub fallback cannot outrank the independently verified Gitee release");
         }
+#else
+        {
+            var requests = new List<string>();
+            using var client = Client(request =>
+            {
+                string uri = request.RequestUri.AbsoluteUri;
+                requests.Add(uri);
+                if (uri == api) return Quota(HttpStatusCode.Forbidden);
+                if (uri == latest) return Redirect(tagged);
+                if (uri == tagged) return Json(Release("v1.2.3"));
+                throw new InvalidOperationException("Unexpected GitHub-only fixture request: " + uri);
+            });
+            UpdateCheckResult result = await new UpdateChecker(client).CheckAsync("1.1.0");
+            check(result.IsNewer && result.Version == "1.2.3" && result.ReleaseUri.Host == "github.com"
+                && requests.SequenceEqual(new[] { api, latest, tagged }),
+                "Auto uses only the GitHub fallback and never contacts a mirror");
+        }
+#endif
     }
 
     private static async Task VerifyRateLimitFallbackAsync(Action<bool, string> check)

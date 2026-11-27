@@ -5,6 +5,12 @@
     "ja-JP": "本ソフトウェアは MiSans フォントを使用しています。",
     "ko-KR": "이 소프트웨어는 MiSans 글꼴을 사용합니다."
   },
+  "Ui.MobileUiDisabledReason": {
+    "zh-CN": "暂不可用：当前 PC 测试版（0.75.x）缺少移动端界面所需的 CloudGame / CloudInput 模块，待游戏版本支持后开放。",
+    "en-US": "Unavailable: the current PC beta (0.75.x) lacks the CloudGame / CloudInput modules mobile UI needs. It will be enabled once a game build supports it.",
+    "ja-JP": "現在は利用できません：現在の PC ベータ版（0.75.x）には、モバイル UI に必要な CloudGame / CloudInput モジュールが含まれていません。対応するゲームバージョンで有効になります。",
+    "ko-KR": "현재 사용할 수 없음: 현재 PC 베타(0.75.x)에는 모바일 UI에 필요한 CloudGame / CloudInput 모듈이 없습니다. 게임 버전이 지원하면 활성화됩니다."
+  },
   "Ui.WindowTitle": {
     "zh-CN": "HNAUnlocker {0}",
     "en-US": "HNAUnlocker {0}",
@@ -928,5 +934,65 @@
     "en-US": "Exit",
     "ja-JP": "終了",
     "ko-KR": "종료"
+  },
+  "Ui.NavHome": {
+    "zh-CN": "主页",
+    "en-US": "Home",
+    "ja-JP": "ホーム",
+    "ko-KR": "홈"
+  },
+  "Ui.NavSettings": {
+    "zh-CN": "设置",
+    "en-US": "Settings",
+    "ja-JP": "設定",
+    "ko-KR": "설정"
+  },
+  "Ui.AppearanceSection": {
+    "zh-CN": "外观",
+    "en-US": "Appearance",
+    "ja-JP": "外観",
+    "ko-KR": "모양"
+  },
+  "Ui.AboutSection": {
+    "zh-CN": "关于",
+    "en-US": "About",
+    "ja-JP": "バージョン情報",
+    "ko-KR": "정보"
+  },
+  "Ui.Theme": {
+    "zh-CN": "应用主题",
+    "en-US": "App theme",
+    "ja-JP": "アプリのテーマ",
+    "ko-KR": "앱 테마"
+  },
+  "Ui.ThemeTip": {
+    "zh-CN": "选择浅色或深色，或跟随 Windows 设置。",
+    "en-US": "Choose light or dark, or follow your Windows setting.",
+    "ja-JP": "ライトまたはダークを選ぶか、Windows の設定に合わせます。",
+    "ko-KR": "밝게 또는 어둡게를 선택하거나 Windows 설정을 따릅니다."
+  },
+  "Ui.ThemeSystem": {
+    "zh-CN": "跟随系统",
+    "en-US": "Use system setting",
+    "ja-JP": "システム設定を使用",
+    "ko-KR": "시스템 설정 사용"
+  },
+  "Ui.ThemeLight": {
+    "zh-CN": "浅色",
+    "en-US": "Light",
+    "ja-JP": "ライト",
+    "ko-KR": "밝게"
+  },
+  "Ui.ThemeDark": {
+    "zh-CN": "深色",
+    "en-US": "Dark",
+    "ja-JP": "ダーク",
+    "ko-KR": "어둡게"
+  },
+  "Ui.AboutDescription": {
+    "zh-CN": "崩坏：因缘精灵帧率解锁工具，基于 GPL-3.0 开源。",
+    "en-US": "Frame rate unlocker for Honkai: Nexus Anima, open source under GPL-3.0.",
+    "ja-JP": "崩壊：ネクサスアニマ用のフレームレート解除ツール。GPL-3.0 のオープンソースです。",
+    "ko-KR": "붕괴: 넥서스 아니마용 프레임 제한 해제 도구이며 GPL-3.0 오픈 소스입니다."
   }
 }

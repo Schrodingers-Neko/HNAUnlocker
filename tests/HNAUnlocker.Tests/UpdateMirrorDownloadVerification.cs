@@ -1,3 +1,6 @@
+// Gitee mirror disabled: these fixtures exercise the Gitee mirror, which is commented out in
+// UpdateChecker/UpdateSources.  Define GITEE_MIRROR (and restore that code) to re-enable them.
+#if GITEE_MIRROR
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -588,3 +591,4 @@ internal static class UpdateMirrorDownloadVerification
         public void Report(double value) => Values.Add(value);
     }
 }
+#endif

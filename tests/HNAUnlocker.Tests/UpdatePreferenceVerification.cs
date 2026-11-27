@@ -14,7 +14,9 @@ internal static class UpdatePreferenceVerification
               !legacy.CheckForUpdates && legacy.Language == "ja-JP",
             "the legacy update-source default survives cloning without changing existing preferences");
 
-        foreach (int source in new[] { 0, 1, 2 })
+        // Gitee mirror disabled: 2 (Gitee) is no longer a defined source.
+        // foreach (int source in new[] { 0, 1, 2 })
+        foreach (int source in new[] { 0, 1 })
         {
             var original = JsonSerializer.Deserialize<UnlockConfig>(
                 $$"""{"UpdateSource":{{source}},"TargetFramerate":240,"Language":"ko-KR"}""");
@@ -31,7 +33,7 @@ internal static class UpdatePreferenceVerification
                 $"update source {source} survives independent cloning without changing other preferences");
         }
 
-        foreach (int source in new[] { -1, int.MinValue, 3, 999, int.MaxValue })
+        foreach (int source in new[] { -1, int.MinValue, 2, 3, 999, int.MaxValue })
         {
             var invalid = JsonSerializer.Deserialize<UnlockConfig>(
                 $$"""{"UpdateSource":{{source}}}""");
@@ -40,14 +42,16 @@ internal static class UpdatePreferenceVerification
                 $"undefined update source {source} normalizes to Auto before serialization and cloning");
         }
 
-        var selected = JsonSerializer.Deserialize<UnlockConfig>("""{"UpdateSource":2}""");
+        // Gitee mirror disabled: the clone-independence fixture now starts from GitHub instead of Gitee.
+        var selected = JsonSerializer.Deserialize<UnlockConfig>("""{"UpdateSource":1}""");
         selected.Normalize();
         var snapshot = selected.Clone();
         // Reflection keeps this fixture runnable before the new config member exists.
-        typeof(UnlockConfig).GetProperty("UpdateSource")?.SetValue(selected, UpdateSourcePreference.GitHub);
-        check(HasSource(selected, 1) && HasSource(snapshot, 2),
-            "changing the original update source does not mutate the cloned Gitee choice");
+        typeof(UnlockConfig).GetProperty("UpdateSource")?.SetValue(selected, UpdateSourcePreference.Auto);
+        check(HasSource(selected, 0) && HasSource(snapshot, 1),
+            "changing the original update source does not mutate the cloned GitHub choice");
         typeof(UnlockConfig).GetProperty("UpdateSource")?.SetValue(snapshot, UpdateSourcePreference.Auto);
+        typeof(UnlockConfig).GetProperty("UpdateSource")?.SetValue(selected, UpdateSourcePreference.GitHub);
         check(HasSource(selected, 1) && HasSource(snapshot, 0),
             "changing the cloned update source does not mutate the original GitHub choice");
 
@@ -68,7 +72,8 @@ internal static class UpdatePreferenceVerification
                 L10n.SetLanguage(sample.Language);
                 check(L10n.T("Updates.SourceAuto") == sample.Auto &&
                       L10n.T("Updates.SourceGitHub") == "GitHub" &&
-                      L10n.T("Updates.SourceGitee") == "Gitee" &&
+                      // Gitee mirror disabled: Updates.SourceGitee was removed.
+                      // L10n.T("Updates.SourceGitee") == "Gitee" &&
                       !string.IsNullOrWhiteSpace(L10n.T("Updates.Source")) &&
                       L10n.T("Updates.Source") != "Updates.Source" &&
                       !string.IsNullOrWhiteSpace(L10n.T("Updates.SourceTip")) &&

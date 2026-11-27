@@ -89,56 +89,65 @@ namespace HNAUnlocker.Core
                 throw new ArgumentException("The current version must be a stable numeric version.", nameof(currentVersion));
 
             using var pending = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            Task<SourceResult> github = preference != UpdateSourcePreference.Gitee
-                ? CheckSourceAsync(false, current, preference, cancellationToken, pending.Token) : null;
-            Task<SourceResult> gitee = preference != UpdateSourcePreference.GitHub
-                ? CheckSourceAsync(true, current, preference, cancellationToken, pending.Token) : null;
+            Task<SourceResult> github = CheckSourceAsync(current, preference, cancellationToken, pending.Token);
+            // Gitee mirror disabled: Auto and GitHub both check GitHub only.
+            // Task<SourceResult> github = preference != UpdateSourcePreference.Gitee
+            //     ? CheckSourceAsync(false, current, preference, cancellationToken, pending.Token) : null;
+            // Task<SourceResult> gitee = preference != UpdateSourcePreference.GitHub
+            //     ? CheckSourceAsync(true, current, preference, cancellationToken, pending.Token) : null;
             UpdateCheckResult selected;
             try
             {
-                if (github == null || gitee == null)
-                {
-                    SourceResult single = await (github ?? gitee).ConfigureAwait(false);
-                    selected = Select(single, null);
-                }
-                else
-                {
-                    Task<SourceResult> first = await Task.WhenAny(github, gitee).ConfigureAwait(false);
-                    Task<SourceResult> other = first == github ? gitee : github;
-                    SourceResult completed = await first.ConfigureAwait(false);
-                    if (completed.Result == null)
-                        selected = Select(completed, await other.ConfigureAwait(false));
-                    else
-                    {
-                        using var collection = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                        Task window = Task.Delay(TimeSpan.FromSeconds(1), collection.Token);
-                        await Task.WhenAny(other, window).ConfigureAwait(false);
-                        collection.Cancel();
-                        selected = Select(completed, other.IsCompleted ? await other.ConfigureAwait(false) : null);
-                    }
-                }
+                selected = Select(await github.ConfigureAwait(false), null);
+                // Gitee mirror disabled: Auto used to race GitHub and Gitee and compare the results.
+                // if (github == null || gitee == null)
+                // {
+                //     SourceResult single = await (github ?? gitee).ConfigureAwait(false);
+                //     selected = Select(single, null);
+                // }
+                // else
+                // {
+                //     Task<SourceResult> first = await Task.WhenAny(github, gitee).ConfigureAwait(false);
+                //     Task<SourceResult> other = first == github ? gitee : github;
+                //     SourceResult completed = await first.ConfigureAwait(false);
+                //     if (completed.Result == null)
+                //         selected = Select(completed, await other.ConfigureAwait(false));
+                //     else
+                //     {
+                //         using var collection = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                //         Task window = Task.Delay(TimeSpan.FromSeconds(1), collection.Token);
+                //         await Task.WhenAny(other, window).ConfigureAwait(false);
+                //         collection.Cancel();
+                //         selected = Select(completed, other.IsCompleted ? await other.ConfigureAwait(false) : null);
+                //     }
+                // }
             }
             finally
             {
                 pending.Cancel();
-                if (github != null && gitee != null) await Task.WhenAll(github, gitee).ConfigureAwait(false);
-                else await (github ?? gitee).ConfigureAwait(false);
+                // if (github != null && gitee != null) await Task.WhenAll(github, gitee).ConfigureAwait(false);
+                // else await (github ?? gitee).ConfigureAwait(false);
+                await github.ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
             }
             cancellationToken.ThrowIfCancellationRequested();
             return selected;
         }
 
-        private async Task<SourceResult> CheckSourceAsync(bool gitee, Version current, UpdateSourcePreference preference,
+        private async Task<SourceResult> CheckSourceAsync(Version current, UpdateSourcePreference preference,
             CancellationToken callerToken, CancellationToken pendingToken)
         {
             using var deadline = CancellationTokenSource.CreateLinkedTokenSource(pendingToken);
-            deadline.CancelAfter(TimeSpan.FromSeconds(gitee ? 8 : 5));
+            // Gitee mirror disabled: the 8 second Gitee deadline is no longer needed.
+            // deadline.CancelAfter(TimeSpan.FromSeconds(gitee ? 8 : 5));
+            deadline.CancelAfter(TimeSpan.FromSeconds(5));
             try
             {
-                UpdateCheckResult result = gitee
-                    ? await ReadGiteeAsync(current, deadline.Token, preference).ConfigureAwait(false)
-                    : await ReadGitHubAsync(current, callerToken, deadline.Token, preference).ConfigureAwait(false);
+                // UpdateCheckResult result = gitee
+                //     ? await ReadGiteeAsync(current, deadline.Token, preference).ConfigureAwait(false)
+                //     : await ReadGitHubAsync(current, callerToken, deadline.Token, preference).ConfigureAwait(false);
+                UpdateCheckResult result = await ReadGitHubAsync(current, callerToken, deadline.Token, preference)
+                    .ConfigureAwait(false);
                 return new SourceResult(result, null);
             }
             catch (Exception error) when (error is HttpRequestException || error is IOException || error is InvalidDataException
@@ -200,6 +209,8 @@ namespace HNAUnlocker.Core
             return await ReadFallbackAsync(current, limited, cancellationToken, token, preference).ConfigureAwait(false);
         }
 
+        // Gitee mirror disabled: the Gitee release list is no longer queried.
+        /*
         private async Task<UpdateCheckResult> ReadGiteeAsync(Version current, CancellationToken token,
             UpdateSourcePreference preference)
         {
@@ -240,6 +251,7 @@ namespace HNAUnlocker.Core
                 UpdateSources.FileUri(tag, "update.json", true), "update.json", true, token, tag).ConfigureAwait(false);
             return await ReadReleaseAsync(manifest, current, token, true, tag, preference).ConfigureAwait(false);
         }
+        */
 
         private async Task<UpdateCheckResult> ReadFallbackAsync(Version current, RateLimitState limited,
             CancellationToken callerToken, CancellationToken token, UpdateSourcePreference preference)
@@ -392,7 +404,7 @@ namespace HNAUnlocker.Core
         }
 
         private static async Task<UpdateCheckResult> ReadReleaseAsync(HttpResponseMessage response, Version current,
-            CancellationToken token, bool gitee = false, string expectedTag = null,
+            CancellationToken token, string expectedTag = null,
             UpdateSourcePreference preference = UpdateSourcePreference.Auto)
         {
             using JsonDocument document = await ReadDocumentAsync(response, token).ConfigureAwait(false);
@@ -409,13 +421,15 @@ namespace HNAUnlocker.Core
                     throw new InvalidDataException("The release tag is not a stable numeric version.");
                 token.ThrowIfCancellationRequested();
                 string displayVersion = tag[0] == 'v' ? tag.Substring(1) : tag;
-                UpdatePackage installer = ReadInstaller(root, tag, displayVersion, gitee, preference);
+                UpdatePackage installer = ReadInstaller(root, tag, displayVersion, preference);
+                // Gitee mirror disabled: release pages always point at GitHub.
+                // new Uri((gitee ? UpdateSources.GiteeRoot : UpdateSources.GitHubRoot) + "/releases/tag/" + tag)
                 return new UpdateCheckResult(displayVersion,
-                    latest > current, new Uri((gitee ? UpdateSources.GiteeRoot : UpdateSources.GitHubRoot) + "/releases/tag/" + tag), installer);
+                    latest > current, new Uri(UpdateSources.GitHubRoot + "/releases/tag/" + tag), installer);
             }
         }
 
-        private static UpdatePackage ReadInstaller(JsonElement root, string tag, string version, bool gitee,
+        private static UpdatePackage ReadInstaller(JsonElement root, string tag, string version,
             UpdateSourcePreference preference)
         {
             if (!root.TryGetProperty("assets", out JsonElement assets)) return null;
@@ -437,7 +451,7 @@ namespace HNAUnlocker.Core
                 if (hash == null || !Regex.IsMatch(hash, @"\Asha256:[a-fA-F0-9]{64}\z", RegexOptions.CultureInvariant))
                     throw new InvalidDataException("The installer requires a valid SHA256 digest.");
                 installer = new UpdatePackage(version, fileName,
-                    UpdateSources.FileUri(tag, fileName, gitee),
+                    UpdateSources.FileUri(tag, fileName),
                     bytes, hash.Substring(7).ToLowerInvariant(), preference);
             }
             return installer;

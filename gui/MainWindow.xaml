@@ -5,12 +5,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="HNAUnlocker">
 
-    <Grid x:Name="LayoutRoot" SizeChanged="OnLayoutSizeChanged"
-          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <!-- The background is cleared in code when Mica is available; Windows 10 keeps this solid brush. -->
+    <Grid x:Name="LayoutRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.Resources>
-            <Style x:Key="SectionTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource AppTextBlockStyle}">
-                <Setter Property="FontSize" Value="16" />
+            <Style x:Key="PageTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource AppTextBlockStyle}">
+                <Setter Property="FontSize" Value="28" />
                 <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="TextWrapping" Value="Wrap" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="SectionTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource AppTextBlockStyle}">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="TextWrapping" Value="Wrap" />
+                <Setter Property="Margin" Value="2,24,0,6" />
+            </Style>
+            <Style x:Key="CardTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource AppTextBlockStyle}">
+                <Setter Property="FontSize" Value="14" />
                 <Setter Property="TextWrapping" Value="Wrap" />
             </Style>
             <Style x:Key="SecondaryTextStyle" TargetType="TextBlock" BasedOn="{StaticResource AppTextBlockStyle}">
@@ -18,13 +29,30 @@
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
                 <Setter Property="TextWrapping" Value="Wrap" />
             </Style>
-            <Style x:Key="ToolButtonStyle" TargetType="Button">
+            <Style x:Key="CardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16,14" />
+                <Setter Property="MinHeight" Value="68" />
+            </Style>
+            <Style x:Key="CardIconStyle" TargetType="FontIcon">
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="Width" Value="24" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+            </Style>
+            <Style x:Key="CardTextPanelStyle" TargetType="StackPanel">
+                <Setter Property="Spacing" Value="2" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="ToolButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
                 <Setter Property="Width" Value="36" />
                 <Setter Property="Height" Value="36" />
                 <Setter Property="Padding" Value="6" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="CornerRadius" Value="6" />
             </Style>
             <Style x:Key="CompactSwitchStyle" TargetType="ToggleSwitch">
                 <Setter Property="MinWidth" Value="0" />
@@ -33,427 +61,645 @@
                 <Setter Property="HorizontalAlignment" Value="Right" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
+            <Style x:Key="CardComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+                <Setter Property="MinWidth" Value="200" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="StatusBadgeStyle" TargetType="Border">
+                <Setter Property="CornerRadius" Value="24" />
+                <Setter Property="Width" Value="48" />
+                <Setter Property="Height" Value="48" />
+            </Style>
+            <Style x:Key="PageContentStyle" TargetType="StackPanel">
+                <Setter Property="MaxWidth" Value="1000" />
+                <Setter Property="Padding" Value="32,24,32,32" />
+                <Setter Property="Spacing" Value="4" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+            </Style>
         </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="48" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Padding="24,18,24,16" ColumnSpacing="12">
+        <!-- Title bar: drawn by the app so it follows the selected theme. -->
+        <Grid x:Name="AppTitleBar" Height="48" Padding="16,0,0,0" ColumnSpacing="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="CaptionButtonsColumn" Width="140" />
             </Grid.ColumnDefinitions>
-            <Image Source="Assets/AppIcon.png" Width="40" Height="40"
-                   AutomationProperties.Name="HNAUnlocker" />
-            <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
-                <TextBlock Text="HNAUnlocker" FontSize="22" FontWeight="SemiBold" />
-                <TextBlock x:Name="VersionText" Style="{StaticResource SecondaryTextStyle}" />
-            </StackPanel>
-            <Button Grid.Column="2" x:Name="SaveButton" Style="{StaticResource ToolButtonStyle}"
-                    Click="OnSaveClick">
-                <Viewbox Width="16" Height="16"><SymbolIcon Symbol="Save" /></Viewbox>
-            </Button>
+            <Image Source="Assets/AppIcon.png" Width="18" Height="18" VerticalAlignment="Center"
+                   AutomationProperties.AccessibilityView="Raw" />
+            <TextBlock Grid.Column="1" x:Name="TitleBarText" Text="HNAUnlocker" FontSize="12"
+                       VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" x:Name="VersionText" FontSize="12" VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
         </Grid>
 
-        <Border Grid.Row="1" Padding="24,12" BorderThickness="0,1,0,1"
-                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                Background="{ThemeResource LayerFillColorAltBrush}">
-            <Grid ColumnSpacing="12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="24" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+        <NavigationView Grid.Row="1" x:Name="NavView"
+                        PaneDisplayMode="Auto" CompactModeThresholdWidth="0" ExpandedModeThresholdWidth="900"
+                        OpenPaneLength="240" IsBackButtonVisible="Collapsed" IsSettingsVisible="False"
+                        IsTitleBarAutoPaddingEnabled="False"
+                        SelectionChanged="OnNavigationSelectionChanged"
+                        AutomationProperties.AutomationId="NavView">
+            <NavigationView.MenuItems>
+                <NavigationViewItem x:Name="NavHomeItem" Tag="home" IsSelected="True"
+                                    AutomationProperties.AutomationId="NavHomeItem">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE80F;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="NavLogItem" Tag="log"
+                                    AutomationProperties.AutomationId="NavLogItem">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE9D9;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem x:Name="NavSettingsItem" Tag="settings"
+                                    AutomationProperties.AutomationId="NavSettingsItem">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE713;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
+
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <FontIcon x:Name="StatusIcon" Glyph="&#xE930;" FontSize="18" VerticalAlignment="Center"
-                          Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                    <TextBlock x:Name="StateTitle" FontWeight="SemiBold" TextWrapping="Wrap" />
-                    <TextBlock x:Name="StatusText" Style="{StaticResource SecondaryTextStyle}" />
-                </StackPanel>
-                <InfoBar Grid.Row="1" Grid.ColumnSpan="2" x:Name="SessionFailureInfoBar" Margin="0,10,0,0"
-                         IsOpen="False" Visibility="Collapsed" Severity="Error" IsClosable="True"
-                         Closed="OnSessionFailureNoticeClosed"
-                         AutomationProperties.AutomationId="SessionFailureInfoBar">
-                    <InfoBar.Content>
-                        <StackPanel Spacing="6" Margin="0,4,12,12">
-                            <TextBlock x:Name="SessionFailureReason"
-                                       TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxLines="2"
-                                       AutomationProperties.AutomationId="SessionFailureReason"
-                                       AutomationProperties.LiveSetting="Polite" />
-                            <Grid ColumnSpacing="8">
+
+                <InfoBar x:Name="StartupUpdateNotice" MaxWidth="936" Margin="32,16,32,0"
+                         Severity="Informational" IsOpen="False" Closed="OnUpdateNoticeClosed"
+                         AutomationProperties.AutomationId="StartupUpdateNotice">
+                    <InfoBar.ActionButton>
+                        <Button x:Name="ReviewUpdateNoticeButton" Click="OnReviewUpdateNotice" />
+                    </InfoBar.ActionButton>
+                </InfoBar>
+
+                <!-- ======================================================== Home -->
+                <ScrollViewer Grid.Row="1" x:Name="HomePage" VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Style="{StaticResource PageContentStyle}">
+                        <Grid ColumnSpacing="12" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="HomePageTitle" Style="{StaticResource PageTitleStyle}" />
+                            <Button Grid.Column="1" x:Name="SaveButton" Click="OnSaveClick" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE74E;" FontSize="14" />
+                                    <TextBlock x:Name="SaveButtonText" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Session status and primary actions -->
+                        <Border Style="{StaticResource CardStyle}" Padding="20">
+                            <StackPanel>
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw">
+                                        <Border x:Name="BadgeNeutral" Style="{StaticResource StatusBadgeStyle}"
+                                                Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                                            <FontIcon x:Name="StatusIcon" Glyph="&#xE930;" FontSize="22"
+                                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                        </Border>
+                                        <Border x:Name="BadgeSuccess" Style="{StaticResource StatusBadgeStyle}" Visibility="Collapsed"
+                                                Background="{ThemeResource SystemFillColorSuccessBackgroundBrush}">
+                                            <FontIcon Glyph="&#xE73E;" FontSize="22"
+                                                      Foreground="{ThemeResource SystemFillColorSuccessBrush}" />
+                                        </Border>
+                                        <Border x:Name="BadgeCritical" Style="{StaticResource StatusBadgeStyle}" Visibility="Collapsed"
+                                                Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}">
+                                            <FontIcon Glyph="&#xE783;" FontSize="22"
+                                                      Foreground="{ThemeResource SystemFillColorCriticalBrush}" />
+                                        </Border>
+                                        <Border x:Name="BadgeBusy" Style="{StaticResource StatusBadgeStyle}" Visibility="Collapsed"
+                                                Background="{ThemeResource SystemFillColorAttentionBackgroundBrush}">
+                                            <ProgressRing x:Name="StatusProgress" Width="24" Height="24" IsActive="False" />
+                                        </Border>
+                                    </Grid>
+                                    <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                        <TextBlock x:Name="StateTitle" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                   AutomationProperties.LiveSetting="Polite" />
+                                        <TextBlock x:Name="StatusText" Style="{StaticResource SecondaryTextStyle}" FontSize="13" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid Margin="0,20,0,0" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="StartButton" Click="OnStartClick" HorizontalAlignment="Stretch"
+                                            MinWidth="0" MinHeight="40" Padding="12,8"
+                                            Style="{StaticResource AccentButtonStyle}">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon Glyph="&#xE768;" FontSize="16" />
+                                            <TextBlock x:Name="StartButtonText" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Grid.Column="1" x:Name="AttachButton" Click="OnAttachClick" HorizontalAlignment="Stretch"
+                                            MinWidth="0" MinHeight="40" Padding="12,8">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon Glyph="&#xE71B;" FontSize="16" />
+                                            <TextBlock x:Name="AttachButtonText" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Grid.ColumnSpan="2" x:Name="StopButton" Click="OnStopClick" HorizontalAlignment="Stretch"
+                                            MinWidth="0" MinHeight="40" Padding="12,8"
+                                            Style="{StaticResource AccentButtonStyle}" Visibility="Collapsed" IsEnabled="False">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon Glyph="&#xE71A;" FontSize="16" />
+                                            <TextBlock x:Name="StopButtonText" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+
+                                <InfoBar x:Name="SessionFailureInfoBar" Margin="0,16,0,0"
+                                         IsOpen="False" Visibility="Collapsed" Severity="Error" IsClosable="True"
+                                         Closed="OnSessionFailureNoticeClosed"
+                                         AutomationProperties.AutomationId="SessionFailureInfoBar">
+                                    <InfoBar.Content>
+                                        <StackPanel Spacing="6" Margin="0,4,12,12">
+                                            <TextBlock x:Name="SessionFailureReason"
+                                                       TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxLines="2"
+                                                       AutomationProperties.AutomationId="SessionFailureReason"
+                                                       AutomationProperties.LiveSetting="Polite" />
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <Button x:Name="SessionFailureExportButton" Click="OnExportDiagnosticsClick"
+                                                        IsEnabled="False"
+                                                        AutomationProperties.AutomationId="SessionFailureExportButton" />
+                                                <HyperlinkButton x:Name="SessionFailureReportLink"
+                                                                 NavigateUri="https://github.com/Schrodingers-Neko/HNAUnlocker/issues/new"
+                                                                 MinWidth="0" AutomationProperties.AutomationId="SessionFailureReportLink" />
+                                            </StackPanel>
+                                            <TextBlock x:Name="SessionFailureReportHint" Style="{StaticResource SecondaryTextStyle}" />
+                                            <TextBlock x:Name="SessionFailureExportStatus" Visibility="Collapsed"
+                                                       Style="{StaticResource SecondaryTextStyle}"
+                                                       AutomationProperties.AutomationId="SessionFailureExportStatus"
+                                                       AutomationProperties.LiveSetting="Polite" />
+                                        </StackPanel>
+                                    </InfoBar.Content>
+                                </InfoBar>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Game client -->
+                        <Border Style="{StaticResource CardStyle}" Margin="0,4,0,0">
+                            <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Button x:Name="SessionFailureExportButton" Click="OnExportDiagnosticsClick"
-                                        IsEnabled="False"
-                                        AutomationProperties.AutomationId="SessionFailureExportButton" />
-                                <HyperlinkButton Grid.Column="1" x:Name="SessionFailureReportLink"
-                                                 NavigateUri="https://github.com/Schrodingers-Neko/HNAUnlocker/issues/new"
-                                                 MinWidth="0" AutomationProperties.AutomationId="SessionFailureReportLink" />
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <FontIcon Glyph="&#xE7FC;" Style="{StaticResource CardIconStyle}" />
+                                <TextBlock Grid.Column="1" x:Name="PathLabel" Style="{StaticResource CardTitleStyle}"
+                                           VerticalAlignment="Center" />
+                                <Grid Grid.Row="1" Grid.Column="1" Margin="0,10,0,0" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="ClientPathBox" MinWidth="0" MinHeight="36"
+                                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                              MaxDropDownHeight="320" SelectionChanged="OnGameClientChanged"
+                                              AutomationProperties.AutomationId="ClientPathBox">
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="MaxWidth" Value="1000" />
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"
+                                                           ToolTipService.ToolTip="{Binding}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <Button Grid.Column="1" x:Name="ScanGamesButton" Click="OnScanGamesClick"
+                                            AutomationProperties.AutomationId="ScanGamesButton"
+                                            Style="{StaticResource ToolButtonStyle}">
+                                        <FontIcon Glyph="&#xE721;" FontSize="16" />
+                                    </Button>
+                                    <Button Grid.Column="2" x:Name="BrowseButton" Click="OnBrowseClick"
+                                            Style="{StaticResource ToolButtonStyle}">
+                                        <FontIcon Glyph="&#xE838;" FontSize="16" />
+                                    </Button>
+                                </Grid>
+                                <Grid Grid.Row="2" Grid.Column="1" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ProgressRing x:Name="ClientScanProgress" Width="16" Height="16" Margin="0,8,0,0"
+                                                  IsActive="False" Visibility="Collapsed" />
+                                    <TextBlock Grid.Column="1" x:Name="ClientScanStatus" Style="{StaticResource SecondaryTextStyle}"
+                                               Margin="0,8,0,0" Visibility="Collapsed" AutomationProperties.LiveSetting="Polite" />
+                                </Grid>
                             </Grid>
-                            <TextBlock x:Name="SessionFailureReportHint" Style="{StaticResource SecondaryTextStyle}" />
-                            <TextBlock x:Name="SessionFailureExportStatus" Visibility="Collapsed"
-                                       Style="{StaticResource SecondaryTextStyle}"
-                                       AutomationProperties.AutomationId="SessionFailureExportStatus"
-                                       AutomationProperties.LiveSetting="Polite" />
-                        </StackPanel>
-                    </InfoBar.Content>
-                </InfoBar>
-            </Grid>
-        </Border>
+                        </Border>
 
-        <InfoBar Grid.Row="2" x:Name="StartupUpdateNotice" Margin="24,8,24,0"
-                 Severity="Informational" IsOpen="False" Closed="OnUpdateNoticeClosed"
-                 AutomationProperties.AutomationId="StartupUpdateNotice">
-            <InfoBar.ActionButton>
-                <Button x:Name="ReviewUpdateNoticeButton" Click="OnReviewUpdateNotice" />
-            </InfoBar.ActionButton>
-        </InfoBar>
+                        <!-- Display and camera -->
+                        <TextBlock x:Name="DisplaySectionTitle" Style="{StaticResource SectionTitleStyle}" />
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <FontIcon Glyph="&#xEC4A;" Style="{StaticResource CardIconStyle}" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="FpsLabel" Style="{StaticResource CardTitleStyle}" />
+                                    <TextBlock x:Name="FpsStateText" Style="{StaticResource SecondaryTextStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <NumberBox x:Name="FpsBox" Width="140" SpinButtonPlacementMode="Inline"
+                                               ValueChanged="OnFpsBoxChanged" />
+                                    <TextBlock x:Name="FpsUnitText" Style="{StaticResource SecondaryTextStyle}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                                <Slider Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="FpsSlider"
+                                        Margin="0,8,0,0" ValueChanged="OnFpsSliderChanged" />
+                                <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" x:Name="PresetPanel"
+                                      Margin="0,4,0,0" ColumnSpacing="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <FontIcon Glyph="&#xE890;" Style="{StaticResource CardIconStyle}" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="FovLabel" Style="{StaticResource CardTitleStyle}" />
+                                    <TextBlock x:Name="FovStateText" Style="{StaticResource SecondaryTextStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <Button x:Name="ResetFovButton" Click="OnResetFovClick"
+                                            Style="{StaticResource ToolButtonStyle}">
+                                        <FontIcon Glyph="&#xE777;" FontSize="14" />
+                                    </Button>
+                                    <NumberBox x:Name="FovBox" Width="140" ValueChanged="OnFovBoxChanged"
+                                               SpinButtonPlacementMode="Inline" />
+                                </StackPanel>
+                                <Slider Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="FovSlider"
+                                        Margin="0,8,0,0" ValueChanged="OnFovSliderChanged" />
+                            </Grid>
+                        </Border>
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE7B3;" Style="{StaticResource CardIconStyle}" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="AntiFadeLabel" Style="{StaticResource CardTitleStyle}" />
+                                    <TextBlock x:Name="AntiFadeStateText" Style="{StaticResource SecondaryTextStyle}" />
+                                </StackPanel>
+                                <ToggleSwitch Grid.Column="2" x:Name="AntiFadeToggle" Toggled="OnAntiFadeToggled"
+                                              Style="{StaticResource CompactSwitchStyle}" />
+                            </Grid>
+                        </Border>
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <FontIcon Glyph="&#xE8EA;" Style="{StaticResource CardIconStyle}" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="MobileUiLabel" Style="{StaticResource CardTitleStyle}" />
+                                    <TextBlock x:Name="MobileUiHint" Style="{StaticResource SecondaryTextStyle}" />
+                                    <Grid Margin="0,4,0,0" ColumnSpacing="6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <FontIcon Glyph="&#xE946;" FontSize="12" VerticalAlignment="Top" Margin="0,2,0,0"
+                                                  Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                                                  AutomationProperties.AccessibilityView="Raw" />
+                                        <TextBlock Grid.Column="1" x:Name="MobileUiDisabledReason"
+                                                   Style="{StaticResource SecondaryTextStyle}"
+                                                   AutomationProperties.AutomationId="MobileUiDisabledReason" />
+                                    </Grid>
+                                </StackPanel>
+                                <ToggleSwitch Grid.Column="2" x:Name="MobileUiToggle" Toggled="OnMobileUiToggled"
+                                              Style="{StaticResource CompactSwitchStyle}" />
+                                <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                                    <ComboBox x:Name="GraphicsSourceBox" HorizontalAlignment="Stretch" Margin="0,12,0,0"
+                                              IsEnabled="False" SelectionChanged="OnGraphicsSourceChanged">
+                                        <ComboBoxItem x:Name="GraphicsAutoItem" />
+                                        <ComboBoxItem x:Name="GraphicsChinaItem" />
+                                        <ComboBoxItem x:Name="GraphicsGlobalItem" />
+                                    </ComboBox>
+                                    <ComboBox x:Name="SafeAreaModeBox" HorizontalAlignment="Stretch" MinWidth="0" Margin="0,12,0,0"
+                                              IsEnabled="False" SelectionChanged="OnSafeAreaModeChanged"
+                                              AutomationProperties.AutomationId="SafeAreaModeBox">
+                                        <ComboBoxItem x:Name="SafeAreaOriginalItem" />
+                                        <ComboBoxItem x:Name="SafeAreaCustomItem" />
+                                    </ComboBox>
+                                    <StackPanel x:Name="SafeAreaInsetsPanel" Margin="0,12,0,0" Visibility="Collapsed">
+                                        <NumberBox x:Name="SafeAreaHorizontalBox" HorizontalAlignment="Stretch" MinWidth="0"
+                                                   IsEnabled="False" SpinButtonPlacementMode="Inline"
+                                                   ValueChanged="OnSafeAreaHorizontalChanged"
+                                                   AutomationProperties.AutomationId="SafeAreaHorizontalBox" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
 
-        <ScrollViewer Grid.Row="3" x:Name="SettingsScroll" VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
-            <StackPanel MaxWidth="1100" Padding="24,20,24,16" Spacing="24"
-                        HorizontalAlignment="Stretch">
-                <StackPanel Spacing="8">
-                    <TextBlock x:Name="PathLabel" FontWeight="SemiBold" TextWrapping="Wrap" />
-                    <Grid ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <ComboBox x:Name="ClientPathBox" MinWidth="0" MinHeight="36"
-                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                                  MaxDropDownHeight="320" SelectionChanged="OnGameClientChanged"
-                                  AutomationProperties.AutomationId="ClientPathBox">
-                            <ComboBox.ItemContainerStyle>
-                                <Style TargetType="ComboBoxItem">
-                                    <Setter Property="MaxWidth" Value="1100" />
-                                </Style>
-                            </ComboBox.ItemContainerStyle>
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"
-                                               ToolTipService.ToolTip="{Binding}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <Button Grid.Column="1" x:Name="ScanGamesButton" Click="OnScanGamesClick"
-                                AutomationProperties.AutomationId="ScanGamesButton"
-                                Style="{StaticResource ToolButtonStyle}">
-                            <Viewbox Width="16" Height="16"><SymbolIcon Symbol="Find" /></Viewbox>
-                        </Button>
-                        <Button Grid.Column="2" x:Name="BrowseButton" Click="OnBrowseClick"
-                                Style="{StaticResource ToolButtonStyle}">
-                            <Viewbox Width="16" Height="16"><SymbolIcon Symbol="OpenFile" /></Viewbox>
-                        </Button>
-                    </Grid>
-                    <Grid ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ProgressRing x:Name="ClientScanProgress" Width="16" Height="16"
-                                      IsActive="False" Visibility="Collapsed" />
-                        <TextBlock Grid.Column="1" x:Name="ClientScanStatus" Style="{StaticResource SecondaryTextStyle}"
-                                   Visibility="Collapsed" AutomationProperties.LiveSetting="Polite" />
-                    </Grid>
-                </StackPanel>
-
-                <Grid ColumnSpacing="0" RowSpacing="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="40" />
-                        <ColumnDefinition Width="0.8*" />
-                    </Grid.ColumnDefinitions>
+                <!-- ======================================================== Activity log -->
+                <Grid Grid.Row="1" x:Name="LogPage" Visibility="Collapsed" MaxWidth="1000"
+                      Padding="32,24,32,32" RowSpacing="12" HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-
-                    <StackPanel x:Name="DisplaySettings" Grid.ColumnSpan="3" Spacing="20">
-                        <TextBlock x:Name="DisplaySectionTitle" Style="{StaticResource SectionTitleStyle}" />
-                        <StackPanel Spacing="8">
-                            <Grid ColumnSpacing="8">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="FpsLabel" TextWrapping="Wrap" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="1" x:Name="FpsUnitText" Style="{StaticResource SecondaryTextStyle}"
-                                           VerticalAlignment="Center" />
-                            </Grid>
-                            <Grid ColumnSpacing="14">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="200" />
-                                </Grid.ColumnDefinitions>
-                                <Slider x:Name="FpsSlider" ValueChanged="OnFpsSliderChanged" />
-                                <NumberBox Grid.Column="1" x:Name="FpsBox" SpinButtonPlacementMode="Inline"
-                                           ValueChanged="OnFpsBoxChanged" />
-                            </Grid>
-                            <Grid x:Name="PresetPanel" ColumnSpacing="6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                            </Grid>
-                            <TextBlock x:Name="FpsStateText" Style="{StaticResource SecondaryTextStyle}" />
-                        </StackPanel>
-                        <Border Height="1" Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
-                        <StackPanel Spacing="8">
-                            <Grid ColumnSpacing="8">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="FovLabel" TextWrapping="Wrap" VerticalAlignment="Center" />
-                                <Button Grid.Column="1" x:Name="ResetFovButton" Click="OnResetFovClick"
-                                        Padding="4" Width="28" Height="28">
-                                    <FontIcon Glyph="&#xE777;" FontSize="14" />
-                                </Button>
-                            </Grid>
-                            <Grid ColumnSpacing="14">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="200" />
-                                </Grid.ColumnDefinitions>
-                                <Slider x:Name="FovSlider" ValueChanged="OnFovSliderChanged" />
-                                <NumberBox Grid.Column="1" x:Name="FovBox" ValueChanged="OnFovBoxChanged"
-                                           SpinButtonPlacementMode="Inline" />
-                            </Grid>
-                            <TextBlock x:Name="FovStateText" Style="{StaticResource SecondaryTextStyle}" />
-                        </StackPanel>
-                        <Border Height="1" Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
-                        <Grid ColumnSpacing="16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="4" VerticalAlignment="Center">
-                                <TextBlock x:Name="AntiFadeLabel" TextWrapping="Wrap" />
-                                <TextBlock x:Name="AntiFadeStateText" Style="{StaticResource SecondaryTextStyle}" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1" x:Name="AntiFadeToggle" Toggled="OnAntiFadeToggled"
-                                          Style="{StaticResource CompactSwitchStyle}" />
-                        </Grid>
-                    </StackPanel>
-                    <Border x:Name="SettingsDivider" Grid.Column="1" Width="1" Visibility="Collapsed"
-                            Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
-                    <StackPanel x:Name="StartupSettings" Grid.Row="1" Grid.ColumnSpan="3"
-                                Margin="0,28,0,0" Spacing="20">
-                        <TextBlock x:Name="StartupSectionTitle" Style="{StaticResource SectionTitleStyle}" />
-                        <StackPanel Spacing="12">
-                            <Grid ColumnSpacing="16" MinHeight="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Spacing="3" VerticalAlignment="Center">
-                                    <TextBlock x:Name="MobileUiLabel" TextWrapping="Wrap" />
-                                    <TextBlock x:Name="MobileUiHint" Style="{StaticResource SecondaryTextStyle}" />
-                                </StackPanel>
-                                <ToggleSwitch Grid.Column="1" x:Name="MobileUiToggle" Toggled="OnMobileUiToggled"
-                                              Style="{StaticResource CompactSwitchStyle}" />
-                            </Grid>
-                            <ComboBox x:Name="GraphicsSourceBox" HorizontalAlignment="Stretch"
-                                      IsEnabled="False" SelectionChanged="OnGraphicsSourceChanged">
-                                <ComboBoxItem x:Name="GraphicsAutoItem" />
-                                <ComboBoxItem x:Name="GraphicsChinaItem" />
-                                <ComboBoxItem x:Name="GraphicsGlobalItem" />
-                            </ComboBox>
-                            <ComboBox x:Name="SafeAreaModeBox" HorizontalAlignment="Stretch" MinWidth="0"
-                                      IsEnabled="False" SelectionChanged="OnSafeAreaModeChanged"
-                                      AutomationProperties.AutomationId="SafeAreaModeBox">
-                                <ComboBoxItem x:Name="SafeAreaOriginalItem" />
-                                <ComboBoxItem x:Name="SafeAreaCustomItem" />
-                            </ComboBox>
-                            <StackPanel x:Name="SafeAreaInsetsPanel" Spacing="12" Visibility="Collapsed">
-                                <NumberBox x:Name="SafeAreaHorizontalBox" HorizontalAlignment="Stretch" MinWidth="0"
-                                           IsEnabled="False" SpinButtonPlacementMode="Inline"
-                                           ValueChanged="OnSafeAreaHorizontalChanged"
-                                           AutomationProperties.AutomationId="SafeAreaHorizontalBox" />
-                            </StackPanel>
-                        </StackPanel>
-                        <Border Height="1" Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
-                        <Grid ColumnSpacing="16" MinHeight="40">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="AutoStartLabel" TextWrapping="Wrap" VerticalAlignment="Center" />
-                            <ToggleSwitch Grid.Column="1" x:Name="AutoStartToggle"
-                                          Style="{StaticResource CompactSwitchStyle}" />
-                        </Grid>
-                        <Grid ColumnSpacing="16" MinHeight="40">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="StartMinimizedLabel" TextWrapping="Wrap" VerticalAlignment="Center" />
-                            <ToggleSwitch Grid.Column="1" x:Name="StartMinimizedToggle"
-                                          Style="{StaticResource CompactSwitchStyle}" />
-                        </Grid>
-                        <Grid ColumnSpacing="16" MinHeight="40">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="ExitWithGameLabel" TextWrapping="Wrap" VerticalAlignment="Center" />
-                            <ToggleSwitch Grid.Column="1" x:Name="ExitWithGameToggle"
-                                          AutomationProperties.AutomationId="ExitWithGameToggle"
-                                          Toggled="OnExitWithGameToggled"
-                                          Style="{StaticResource CompactSwitchStyle}" />
-                        </Grid>
-                        <ComboBox x:Name="LanguageBox" AutomationProperties.AutomationId="LanguageBox"
-                                  HorizontalAlignment="Stretch"
-                                  SelectionChanged="OnLanguageChanged">
-                            <ComboBoxItem x:Name="LanguageAutoItem" Tag="auto" />
-                            <ComboBoxItem Tag="zh-CN" Content="简体中文" />
-                            <ComboBoxItem Tag="en-US" Content="English" />
-                            <ComboBoxItem Tag="ja-JP" Content="日本語" />
-                            <ComboBoxItem Tag="ko-KR" Content="한국어" />
-                        </ComboBox>
-                        <TextBlock x:Name="FontCreditText" Style="{StaticResource SecondaryTextStyle}" />
-                    </StackPanel>
-                </Grid>
-                <StackPanel x:Name="UpdatesSection" Spacing="12">
-                    <TextBlock x:Name="UpdatesSectionTitle" Style="{StaticResource SectionTitleStyle}" />
-                    <TextBlock x:Name="UpdateVersionText" Style="{StaticResource SecondaryTextStyle}" />
-                    <ComboBox x:Name="UpdateSourceBox" HorizontalAlignment="Stretch" MinWidth="0"
-                              SelectionChanged="OnUpdateSourceChanged"
-                              AutomationProperties.AutomationId="UpdateSourceBox">
-                        <ComboBoxItem x:Name="UpdateSourceAutoItem" />
-                        <ComboBoxItem x:Name="UpdateSourceGitHubItem" />
-                        <ComboBoxItem x:Name="UpdateSourceGiteeItem" />
-                    </ComboBox>
-                    <Grid ColumnSpacing="16" MinHeight="40">
+                    <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="CheckForUpdatesLabel" TextWrapping="Wrap" VerticalAlignment="Center" />
-                        <ToggleSwitch Grid.Column="1" x:Name="CheckForUpdatesToggle"
-                                      AutomationProperties.AutomationId="CheckForUpdatesToggle"
-                                      Toggled="OnCheckForUpdatesToggled"
-                                      Style="{StaticResource CompactSwitchStyle}" />
-                    </Grid>
-                    <TextBlock x:Name="UpdateStatusText" Style="{StaticResource SecondaryTextStyle}"
-                               AutomationProperties.LiveSetting="Polite" />
-                    <TextBlock x:Name="UpdateInstallHint" Style="{StaticResource SecondaryTextStyle}"
-                               Visibility="Collapsed" />
-                    <StackPanel Spacing="8">
-                        <Button x:Name="CheckUpdatesButton" Click="OnCheckUpdatesClick"
-                                AutomationProperties.AutomationId="CheckUpdatesButton" />
-                        <Button x:Name="ApplyUpdateButton" Click="OnApplyUpdateClick"
-                                AutomationProperties.AutomationId="ApplyUpdateButton"
-                                Visibility="Collapsed" Style="{StaticResource AccentButtonStyle}" />
-                        <Button x:Name="CancelUpdateButton" Click="OnCancelUpdateClick"
-                                AutomationProperties.AutomationId="CancelUpdateButton" Visibility="Collapsed" />
-                        <HyperlinkButton x:Name="OpenReleaseButton" Click="OnOpenReleaseClick"
-                                         AutomationProperties.AutomationId="OpenReleaseButton" Visibility="Collapsed" />
-                    </StackPanel>
-                    <ProgressBar x:Name="UpdateProgressBar" Minimum="0" Maximum="100"
-                                 Visibility="Collapsed" AutomationProperties.AutomationId="UpdateProgressBar" />
-                </StackPanel>
-                <Expander x:Name="LogExpander" HorizontalAlignment="Stretch"
-                          HorizontalContentAlignment="Stretch" IsExpanded="False" Expanding="OnLogExpanding">
-                    <Grid RowSpacing="8">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="180" />
-                        </Grid.RowDefinitions>
-                        <Grid ColumnSpacing="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="LogPageTitle" Style="{StaticResource PageTitleStyle}" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <Button x:Name="ExportDiagnosticsButton" Click="OnExportDiagnosticsClick"
                                     IsEnabled="False" MinHeight="36"
                                     AutomationProperties.AutomationId="ExportDiagnosticsButton" />
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
-                                <Button x:Name="CopyLogButton" Click="OnCopyLogClick" Style="{StaticResource ToolButtonStyle}">
-                                    <Viewbox Width="16" Height="16"><SymbolIcon Symbol="Copy" /></Viewbox>
-                                </Button>
-                                <Button x:Name="ClearLogButton" Click="OnClearLogClick" Style="{StaticResource ToolButtonStyle}">
-                                    <Viewbox Width="16" Height="16"><SymbolIcon Symbol="Clear" /></Viewbox>
-                                </Button>
-                            </StackPanel>
-                        </Grid>
-                        <TextBlock Grid.Row="1" x:Name="DiagnosticsExportStatus" Visibility="Collapsed"
-                                   Style="{StaticResource SecondaryTextStyle}"
-                                   AutomationProperties.AutomationId="DiagnosticsExportStatus"
-                                   AutomationProperties.LiveSetting="Polite" />
-                        <ScrollViewer Grid.Row="2" x:Name="LogScroll" VerticalScrollBarVisibility="Auto">
-                            <TextBlock x:Name="LogText" FontSize="12"
+                            <Button x:Name="CopyLogButton" Click="OnCopyLogClick" Style="{StaticResource ToolButtonStyle}">
+                                <FontIcon Glyph="&#xE8C8;" FontSize="16" />
+                            </Button>
+                            <Button x:Name="ClearLogButton" Click="OnClearLogClick" Style="{StaticResource ToolButtonStyle}">
+                                <FontIcon Glyph="&#xE74D;" FontSize="16" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                    <TextBlock Grid.Row="1" x:Name="DiagnosticsExportStatus" Visibility="Collapsed"
+                               Style="{StaticResource SecondaryTextStyle}"
+                               AutomationProperties.AutomationId="DiagnosticsExportStatus"
+                               AutomationProperties.LiveSetting="Polite" />
+                    <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="0">
+                        <ScrollViewer x:Name="LogScroll" VerticalScrollBarVisibility="Auto" Padding="16,12">
+                            <TextBlock x:Name="LogText" FontSize="12" FontFamily="Cascadia Mono, Consolas"
                                        TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </ScrollViewer>
-                    </Grid>
-                </Expander>
-            </StackPanel>
-        </ScrollViewer>
-        <Border Grid.Row="4" BorderThickness="0,1,0,0" Padding="24,14"
-                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                Background="{ThemeResource LayerFillColorAltBrush}">
-            <Grid MaxWidth="1052" ColumnSpacing="8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button x:Name="StartButton" Click="OnStartClick" HorizontalAlignment="Stretch"
-                        MinWidth="0" HorizontalContentAlignment="Stretch" Padding="12,10"
-                        Style="{StaticResource AccentButtonStyle}">
-                    <Grid ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Viewbox Width="16" Height="16"><SymbolIcon Symbol="Play" /></Viewbox>
-                        <TextBlock Grid.Column="1" x:Name="StartButtonText" TextWrapping="Wrap"
-                                   TextAlignment="Center" VerticalAlignment="Center" />
-                    </Grid>
-                </Button>
-                <Button Grid.Column="1" x:Name="AttachButton" Click="OnAttachClick" HorizontalAlignment="Stretch"
-                        MinWidth="0" HorizontalContentAlignment="Stretch" Padding="12,10">
-                    <Grid ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE71B;" FontSize="16" />
-                        <TextBlock Grid.Column="1" x:Name="AttachButtonText" TextWrapping="Wrap"
-                                   TextAlignment="Center" VerticalAlignment="Center" />
-                    </Grid>
-                </Button>
-                <Button x:Name="StopButton" Click="OnStopClick" HorizontalAlignment="Stretch"
-                        MinWidth="0" HorizontalContentAlignment="Stretch" Padding="12,10"
-                        Style="{StaticResource AccentButtonStyle}" Visibility="Collapsed" IsEnabled="False">
-                    <Grid ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Viewbox Width="16" Height="16"><SymbolIcon Symbol="Stop" /></Viewbox>
-                        <TextBlock Grid.Column="1" x:Name="StopButtonText" TextWrapping="Wrap"
-                                   TextAlignment="Center" VerticalAlignment="Center" />
-                    </Grid>
-                </Button>
+                    </Border>
+                </Grid>
+
+                <!-- ======================================================== Settings -->
+                <ScrollViewer Grid.Row="1" x:Name="SettingsPage" Visibility="Collapsed"
+                              VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Style="{StaticResource PageContentStyle}">
+                        <TextBlock x:Name="SettingsPageTitle" Style="{StaticResource PageTitleStyle}" Margin="0,0,0,-12" />
+
+                        <!-- Appearance -->
+                        <TextBlock x:Name="AppearanceSectionTitle" Style="{StaticResource SectionTitleStyle}" />
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE790;" Style="{StaticResource CardIconStyle}" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="ThemeLabel" Style="{StaticResource CardTitleStyle}" />
+                                    <TextBlock x:Name="ThemeHint" Style="{StaticResource SecondaryTextStyle}" />
+                                </StackPanel>
+                                <ComboBox Grid.Column="2" x:Name="ThemeBox" Style="{StaticResource CardComboBoxStyle}"
+                                          SelectionChanged="OnThemeChanged"
+                                          AutomationProperties.AutomationId="ThemeBox">
+                                    <ComboBoxItem x:Name="ThemeSystemItem" />
+                                    <ComboBoxItem x:Name="ThemeLightItem" />
+                                    <ComboBoxItem x:Name="ThemeDarkItem" />
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE774;" Style="{StaticResource CardIconStyle}" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="LanguageLabel" Style="{StaticResource CardTitleStyle}" />
+                                    <TextBlock x:Name="LanguageHint" Style="{StaticResource SecondaryTextStyle}" />
+                                </StackPanel>
+                                <ComboBox Grid.Column="2" x:Name="LanguageBox" Style="{StaticResource CardComboBoxStyle}"
+                                          AutomationProperties.AutomationId="LanguageBox"
+                                          SelectionChanged="OnLanguageChanged">
+                                    <ComboBoxItem x:Name="LanguageAutoItem" Tag="auto" />
+                                    <ComboBoxItem Tag="zh-CN" Content="简体中文" />
+                                    <ComboBoxItem Tag="en-US" Content="English" />
+                                    <ComboBoxItem Tag="ja-JP" Content="日本語" />
+                                    <ComboBoxItem Tag="ko-KR" Content="한국어" />
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <!-- Startup -->
+                        <TextBlock x:Name="StartupSectionTitle" Style="{StaticResource SectionTitleStyle}" />
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE768;" Style="{StaticResource CardIconStyle}" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="AutoStartLabel" Style="{StaticResource CardTitleStyle}" />
+                                    <TextBlock x:Name="AutoStartHint" Style="{StaticResource SecondaryTextStyle}" />
+                                </StackPanel>
+                                <ToggleSwitch Grid.Column="2" x:Name="AutoStartToggle"
+                                              Style="{StaticResource CompactSwitchStyle}" />
+                            </Grid>
+                        </Border>
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE921;" Style="{StaticResource CardIconStyle}" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="StartMinimizedLabel" Style="{StaticResource CardTitleStyle}" />
+                                    <TextBlock x:Name="StartMinimizedHint" Style="{StaticResource SecondaryTextStyle}" />
+                                </StackPanel>
+                                <ToggleSwitch Grid.Column="2" x:Name="StartMinimizedToggle"
+                                              Style="{StaticResource CompactSwitchStyle}" />
+                            </Grid>
+                        </Border>
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE7E8;" Style="{StaticResource CardIconStyle}" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="ExitWithGameLabel" Style="{StaticResource CardTitleStyle}" />
+                                    <TextBlock x:Name="ExitWithGameHint" Style="{StaticResource SecondaryTextStyle}" />
+                                </StackPanel>
+                                <ToggleSwitch Grid.Column="2" x:Name="ExitWithGameToggle"
+                                              AutomationProperties.AutomationId="ExitWithGameToggle"
+                                              Toggled="OnExitWithGameToggled"
+                                              Style="{StaticResource CompactSwitchStyle}" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Updates -->
+                        <StackPanel x:Name="UpdatesSection" Spacing="4">
+                            <TextBlock x:Name="UpdatesSectionTitle" Style="{StaticResource SectionTitleStyle}" />
+                            <Border Style="{StaticResource CardStyle}">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <FontIcon Glyph="&#xE895;" Style="{StaticResource CardIconStyle}" />
+                                    <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                        <TextBlock x:Name="UpdateVersionText" Style="{StaticResource CardTitleStyle}" />
+                                        <TextBlock x:Name="UpdateStatusText" Style="{StaticResource SecondaryTextStyle}"
+                                                   AutomationProperties.LiveSetting="Polite" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <HyperlinkButton x:Name="OpenReleaseButton" Click="OnOpenReleaseClick"
+                                                         AutomationProperties.AutomationId="OpenReleaseButton" Visibility="Collapsed" />
+                                        <Button x:Name="CancelUpdateButton" Click="OnCancelUpdateClick"
+                                                AutomationProperties.AutomationId="CancelUpdateButton" Visibility="Collapsed" />
+                                        <Button x:Name="ApplyUpdateButton" Click="OnApplyUpdateClick"
+                                                AutomationProperties.AutomationId="ApplyUpdateButton"
+                                                Visibility="Collapsed" Style="{StaticResource AccentButtonStyle}" />
+                                        <Button x:Name="CheckUpdatesButton" Click="OnCheckUpdatesClick"
+                                                AutomationProperties.AutomationId="CheckUpdatesButton" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                                        <ProgressBar x:Name="UpdateProgressBar" Minimum="0" Maximum="100" Margin="0,12,0,0"
+                                                     Visibility="Collapsed" AutomationProperties.AutomationId="UpdateProgressBar" />
+                                        <TextBlock x:Name="UpdateInstallHint" Style="{StaticResource SecondaryTextStyle}"
+                                                   Margin="0,8,0,0" Visibility="Collapsed" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource CardStyle}">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Glyph="&#xE753;" Style="{StaticResource CardIconStyle}" />
+                                    <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                        <TextBlock x:Name="UpdateSourceLabel" Style="{StaticResource CardTitleStyle}" />
+                                        <TextBlock x:Name="UpdateSourceHint" Style="{StaticResource SecondaryTextStyle}" />
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="2" x:Name="UpdateSourceBox" Style="{StaticResource CardComboBoxStyle}"
+                                              SelectionChanged="OnUpdateSourceChanged"
+                                              AutomationProperties.AutomationId="UpdateSourceBox">
+                                        <ComboBoxItem x:Name="UpdateSourceAutoItem" />
+                                        <ComboBoxItem x:Name="UpdateSourceGitHubItem" />
+                                        <!-- Gitee mirror disabled: releases are published on GitHub only.
+                                        <ComboBoxItem x:Name="UpdateSourceGiteeItem" />
+                                        -->
+                                    </ComboBox>
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource CardStyle}">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Glyph="&#xE7C3;" Style="{StaticResource CardIconStyle}" />
+                                    <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                        <TextBlock x:Name="CheckForUpdatesLabel" Style="{StaticResource CardTitleStyle}" />
+                                        <TextBlock x:Name="CheckForUpdatesHint" Style="{StaticResource SecondaryTextStyle}" />
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="2" x:Name="CheckForUpdatesToggle"
+                                                  AutomationProperties.AutomationId="CheckForUpdatesToggle"
+                                                  Toggled="OnCheckForUpdatesToggled"
+                                                  Style="{StaticResource CompactSwitchStyle}" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- About -->
+                        <TextBlock x:Name="AboutSectionTitle" Style="{StaticResource SectionTitleStyle}" />
+                        <Border Style="{StaticResource CardStyle}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Image Source="Assets/AppIcon.png" Width="32" Height="32" VerticalAlignment="Center"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                                <StackPanel Grid.Column="1" Style="{StaticResource CardTextPanelStyle}">
+                                    <TextBlock x:Name="AboutTitle" Style="{StaticResource CardTitleStyle}" FontWeight="SemiBold" />
+                                    <TextBlock x:Name="AboutDescription" Style="{StaticResource SecondaryTextStyle}" />
+                                    <TextBlock x:Name="FontCreditText" Style="{StaticResource SecondaryTextStyle}" />
+                                </StackPanel>
+                                <HyperlinkButton Grid.Column="2" x:Name="RepositoryLink" Content="GitHub"
+                                                 VerticalAlignment="Center"
+                                                 NavigateUri="https://github.com/Schrodingers-Neko/HNAUnlocker"
+                                                 AutomationProperties.AutomationId="RepositoryLink" />
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
-        </Border>
+        </NavigationView>
     </Grid>
 </Window>

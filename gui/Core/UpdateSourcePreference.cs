@@ -4,6 +4,8 @@ namespace HNAUnlocker.Core
     {
         Auto = 0,
         GitHub = 1,
-        Gitee = 2
+        // Gitee mirror disabled: releases are published on GitHub only.  A saved value of 2
+        // is no longer defined, so UnlockConfig.Normalize() resets it to Auto.
+        // Gitee = 2
     }
 }

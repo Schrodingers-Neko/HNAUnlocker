@@ -90,9 +90,11 @@ namespace HNAUnlocker
                 ExitWithGameToggle.IsOn = _config.ExitWithGame;
                 CheckForUpdatesToggle.IsOn = _config.CheckForUpdates;
                 UpdateSourceBox.SelectedIndex = (int)_config.UpdateSource;
+                ThemeBox.SelectedIndex = (int)_config.Theme;
 
                 Log(L10n.T("Ui.LogConfigPath", UnlockConfig.DefaultPath));
                 ConfigureWindow();
+                ConfigureChrome();
                 RefreshPresentation();
             }
             catch (Exception ex)
@@ -119,8 +121,9 @@ namespace HNAUnlocker
             };
             Activated += (_, args) =>
             {
-                if (args.WindowActivationState != WindowActivationState.Deactivated)
-                    RefreshUpdatePresentation();
+                bool active = args.WindowActivationState != WindowActivationState.Deactivated;
+                if (!_closed) UpdateTitleBarActivation(active);
+                if (active) RefreshUpdatePresentation();
             };
             Closed += (_, __) =>
             {
@@ -612,6 +615,7 @@ namespace HNAUnlocker
                     XamlRoot = _dialogRoot, Title = L10n.T("Ui.ChooseRunningGameTitle"), Content = list,
                     PrimaryButtonText = L10n.T("Ui.Attach"), CloseButtonText = L10n.T("Ui.Cancel"), IsPrimaryButtonEnabled = false
                 };
+                ApplyDialogTheme(dialog);
                 list.SelectionChanged += (_, __) => dialog.IsPrimaryButtonEnabled = list.SelectedIndex >= 0;
                 var result = await dialog.ShowAsync();
                 return result == ContentDialogResult.Primary && list.SelectedIndex >= 0

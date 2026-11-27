@@ -143,7 +143,9 @@ internal static class UpdateInstallVerification
                     new UpdatePackage(package.Version, "../evil.exe", package.DownloadUri, package.Size, package.Sha256),
                     new UpdatePackage(package.Version, package.FileName, new Uri("https://attacker.invalid/setup.exe"), package.Size, package.Sha256),
                     new UpdatePackage(package.Version, package.FileName, package.DownloadUri, package.Size, package.Sha256, (UpdateSourcePreference)123),
-                    new UpdatePackage(package.Version, package.FileName, package.DownloadUri, package.Size, package.Sha256, UpdateSourcePreference.Gitee),
+                    // Gitee mirror disabled: UpdateSourcePreference.Gitee no longer exists; 2 is now undefined.
+                    // new UpdatePackage(package.Version, package.FileName, package.DownloadUri, package.Size, package.Sha256, UpdateSourcePreference.Gitee),
+                    new UpdatePackage(package.Version, package.FileName, package.DownloadUri, package.Size, package.Sha256, (UpdateSourcePreference)2),
                     new UpdatePackage(package.Version, package.FileName, package.DownloadUri, 0, package.Sha256),
                     new UpdatePackage(package.Version, package.FileName, package.DownloadUri, package.Size, "invalid")
                 })

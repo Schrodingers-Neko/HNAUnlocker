@@ -34,7 +34,9 @@ namespace HNAUnlocker
         {
             if (_initializing || _updatingLanguage || _closed || _closePending ||
                 _checkingForUpdates || _openingRelease || _downloadingUpdate || _preparedUpdate != null ||
-                !UpdateSourceBox.IsEnabled || UpdateSourceBox.SelectedIndex is < 0 or > 2)
+                // Gitee mirror disabled: index 2 (Gitee) is no longer offered.
+                // !UpdateSourceBox.IsEnabled || UpdateSourceBox.SelectedIndex is < 0 or > 2)
+                !UpdateSourceBox.IsEnabled || UpdateSourceBox.SelectedIndex is < 0 or > 1)
                 return;
             var preference = (UpdateSourcePreference)UpdateSourceBox.SelectedIndex;
             if (_config.UpdateSource == preference) return;
@@ -106,11 +108,13 @@ namespace HNAUnlocker
         {
             _updateNotice.Dismiss();
             RefreshUpdatePresentation();
-            UpdatesSection.StartBringIntoView();
-            if (ApplyUpdateButton.IsEnabled && ApplyUpdateButton.Visibility == Visibility.Visible)
-                ApplyUpdateButton.Focus(FocusState.Programmatic);
-            else
-                CheckUpdatesButton.Focus(FocusState.Programmatic);
+            NavigateToUpdates(() =>
+            {
+                if (ApplyUpdateButton.IsEnabled && ApplyUpdateButton.Visibility == Visibility.Visible)
+                    ApplyUpdateButton.Focus(FocusState.Programmatic);
+                else
+                    CheckUpdatesButton.Focus(FocusState.Programmatic);
+            });
         }
 
         private void OnUpdateNoticeClosed(InfoBar sender, InfoBarClosedEventArgs args)

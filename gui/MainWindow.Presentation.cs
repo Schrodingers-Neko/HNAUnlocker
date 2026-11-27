@@ -22,21 +22,6 @@ namespace HNAUnlocker
         private string _diagnosticsExportStatusKey;
         private bool _logDirty;
         private bool _exportingDiagnostics;
-        private bool? _wideLayout;
-
-        private void OnLayoutSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (DisplaySettings == null || StartupSettings == null) return;
-            bool wide = e.NewSize.Width >= 840;
-            if (_wideLayout == wide) return;
-            _wideLayout = wide;
-            Grid.SetColumnSpan(DisplaySettings, wide ? 1 : 3);
-            Grid.SetRow(StartupSettings, wide ? 0 : 1);
-            Grid.SetColumn(StartupSettings, wide ? 2 : 0);
-            Grid.SetColumnSpan(StartupSettings, wide ? 1 : 3);
-            StartupSettings.Margin = wide ? new Thickness(0) : new Thickness(0, 28, 0, 0);
-            SettingsDivider.Visibility = wide ? Visibility.Visible : Visibility.Collapsed;
-        }
 
         private void ConfigureWindow()
         {
@@ -101,7 +86,7 @@ namespace HNAUnlocker
                 StatusText.Text = restoring || _closePending
                     ? L10n.T("Ui.StatusRestoring")
                     : L10n.T("Ui.StatusEndingPreviousSession");
-                StatusIcon.Glyph = "\uE895";
+                SetStatusBadge("\uE895");
             }
             else
             {
@@ -129,13 +114,13 @@ namespace HNAUnlocker
                         session.OriginalValue > 0 ? L10n.T("Ui.StatusRestoredFps", session.OriginalValue) :
                         L10n.T("Ui.StatusRestored")
                 };
-                StatusIcon.Glyph = state switch
+                SetStatusBadge(state switch
                 {
                     SessionState.Active => "\uE73E",
                     SessionState.Failed => "\uE783",
                     SessionState.WaitingForGame or SessionState.Patching => "\uE895",
                     _ => _localErrorKey == null ? "\uE930" : "\uE783"
-                };
+                });
             }
 
             FpsStateText.Text = session?.State == SessionState.Active && !restoring
@@ -182,7 +167,7 @@ namespace HNAUnlocker
         {
             if (LogText == null) return;
             CopyLogButton.IsEnabled = ClearLogButton.IsEnabled = _logLines.Count > 0;
-            if (!_logDirty || (!LogExpander.IsExpanded && !forceFollow)) return;
+            if (!_logDirty || (!LogPageVisible && !forceFollow)) return;
             bool follow = forceFollow || LogScroll.ScrollableHeight - LogScroll.VerticalOffset < 24;
             LogText.Text = string.Join(Environment.NewLine, _logLines);
             _logDirty = false;
@@ -194,8 +179,6 @@ namespace HNAUnlocker
                     LogScroll.ChangeView(null, LogScroll.ScrollableHeight, null, true);
                 });
         }
-
-        private void OnLogExpanding(Expander sender, ExpanderExpandingEventArgs args) => RenderLog(forceFollow: true);
 
         private void OnClearLogClick(object sender, RoutedEventArgs e)
         {

@@ -30,10 +30,10 @@
     "ko-KR": "업데이트 소스"
   },
   "Updates.SourceTip": {
-    "zh-CN": "选择检查和下载更新的来源。自动模式同时检查 GitHub 和 Gitee。",
-    "en-US": "Choose where to check for and download updates. Auto checks GitHub and Gitee together.",
-    "ja-JP": "更新の確認とダウンロードに使用する配信元を選択します。自動では GitHub と Gitee を同時に確認します。",
-    "ko-KR": "업데이트를 확인하고 다운로드할 소스를 선택합니다. 자동 모드에서는 GitHub와 Gitee를 동시에 확인합니다."
+    "zh-CN": "选择检查和下载更新的来源。",
+    "en-US": "Choose where to check for and download updates.",
+    "ja-JP": "更新の確認とダウンロードに使用する配信元を選択します。",
+    "ko-KR": "업데이트를 확인하고 다운로드할 소스를 선택합니다."
   },
   "Updates.SourceAuto": {
     "zh-CN": "自动",
@@ -46,12 +46,6 @@
     "en-US": "GitHub",
     "ja-JP": "GitHub",
     "ko-KR": "GitHub"
-  },
-  "Updates.SourceGitee": {
-    "zh-CN": "Gitee",
-    "en-US": "Gitee",
-    "ja-JP": "Gitee",
-    "ko-KR": "Gitee"
   },
   "Updates.CheckOnStartup": {
     "zh-CN": "启动时检查更新",

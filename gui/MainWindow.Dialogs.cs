@@ -18,6 +18,7 @@ namespace HNAUnlocker
             try
             {
                 var dialog = CreateSetupDialog(_dialogRoot, _detectedGamePaths, out ListView list);
+                ApplyDialogTheme(dialog);
                 if (_detectedGamePaths.Count == 0) Log(L10n.T("Ui.LogNoAutoDetectedGame"));
                 var result = await dialog.ShowAsync();
                 if (_closed || _closePending) return;
