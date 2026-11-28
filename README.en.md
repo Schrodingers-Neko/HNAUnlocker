@@ -21,6 +21,7 @@ Download the latest `HNAUnlocker-version-win-x64-Setup.exe` from [GitHub Release
 
 - **Frame rate & camera**: 10–480 FPS cap, FOV delta, and anti-fade (prevents character dithering at low camera angles and close distances), resolved dynamically without hardcoded version offsets.
 - **Mobile UI (disabled)**: Launch support is retained for future game builds, with the UI toggle disabled while the `0.75.x` PC beta lacks `CloudGame` / `CloudInput`.
+- **Command line & desktop shortcuts**: Start the tool with options such as `HNAUnlocker.exe --launch --fps 144 --anti-fade on`. Values apply to that run only and never change saved settings; `--help` lists every option, and anything after `--` is passed to `NexusAnima.exe` when the tool launches it. If the tool is already open, the options are handed to that window. **Create desktop shortcut** on Home saves the current frame rate, FOV and anti-fade as a shortcut and skips it if an identical one exists; each shortcut launch asks for administrator permission.
 - **Updates & diagnostics**: Built-in update checks via GitHub Releases; export a sanitized TXT diagnostic report (without paths or PIDs) from **Activity log** or error notices when filing [GitHub Issues](https://github.com/Schrodingers-Neko/HNAUnlocker/issues) (see [SECURITY.md](SECURITY.md) for security reports).
 
 ## Development

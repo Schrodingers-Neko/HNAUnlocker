@@ -144,13 +144,18 @@ namespace HNAUnlocker.Core
                         }
                     }
                     else pid = TargetProcess.FindProcessId("NexusAnima.exe");
+                    bool launched = false;
                     if (pid == 0 && launchRequested)
                     {
                         pid = GameLauncher.Launch(launchConfig, Log, token);
+                        launched = true;
                         Log(L10n.T(launchConfig.UseMobileUI ? "Runtime.Session.GameStartedMobile" : "Runtime.Session.GameStarted", pid));
                     }
                     else if (pid != 0 && launchConfig.UseMobileUI)
                         Log(L10n.T("Runtime.Session.MobileAttachOnly"));
+                    // Extra game arguments only reach a game this session starts itself.
+                    if (!launched && launchConfig.GameArguments is { Length: > 0 })
+                        Log(L10n.T("Runtime.Session.GameArgumentsIgnoredRunning"));
                     var deadline = DateTime.UtcNow.AddMinutes(10);
                     while (pid == 0 && DateTime.UtcNow < deadline)
                     {

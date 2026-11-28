@@ -9,11 +9,16 @@ namespace HNAUnlocker
     internal sealed class TrayIcon : IDisposable
     {
         private const uint Callback = 0x8000 + 51;
+        private const uint CopyData = 0x004A;
+        // Marks a WM_COPYDATA payload as a forwarded HNAUnlocker command line ("HNA1").
+        private const nuint CommandLinePayload = 0x31414E48;
+        private const int MaxCommandLineBytes = 64 * 1024;
         private const nuint Id = 1;
         private const string WindowProperty = "HNAUnlocker.MainWindow.61134DCF-DF8D-461B-B785-3F546EE26AA7";
         private readonly IntPtr _window;
         private readonly SubclassProc _callback;
         private readonly Action _restore, _stop, _exit;
+        private readonly Action<string[]> _commandLine;
         private bool _added, _disposed;
         private IntPtr _icon;
         private readonly bool _ownsIcon;
@@ -40,6 +45,7 @@ namespace HNAUnlocker
             public IntPtr BalloonIcon;
         }
         [StructLayout(LayoutKind.Sequential)] private struct Point { public int X, Y; }
+        [StructLayout(LayoutKind.Sequential)] private struct CopyDataStruct { public nuint Data; public uint Size; public IntPtr Buffer; }
         [DllImport("comctl32.dll")] private static extern bool SetWindowSubclass(IntPtr hwnd, SubclassProc callback, nuint id, nuint data);
         [DllImport("comctl32.dll")] private static extern bool RemoveWindowSubclass(IntPtr hwnd, SubclassProc callback, nuint id);
         [DllImport("comctl32.dll")] private static extern IntPtr DefSubclassProc(IntPtr hwnd, uint message, nuint wparam, nint lparam);
@@ -61,7 +67,9 @@ namespace HNAUnlocker
         [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr RemovePropW(IntPtr hwnd, string name);
 
         [DllImport("user32.dll", SetLastError = true)] private static extern IntPtr SendMessageTimeoutW(IntPtr hwnd, uint message, nuint wparam, nint lparam, uint flags, uint timeout, out nuint result);
-        internal static void RestoreExisting()
+        [DllImport("user32.dll", EntryPoint = "SendMessageTimeoutW", SetLastError = true)] private static extern IntPtr SendCopyDataTimeout(IntPtr hwnd, uint message, nuint wparam, ref CopyDataStruct data, uint flags, uint timeout, out nuint result);
+        /// <summary>Brings the running copy forward, first handing it this copy's command line, if any.</summary>
+        internal static void RestoreExisting(System.Collections.Generic.IReadOnlyList<string> args = null)
         {
             IntPtr hwnd = IntPtr.Zero;
             EnumWindows((candidate, _) =>
@@ -71,14 +79,28 @@ namespace HNAUnlocker
                 return false;
             }, IntPtr.Zero);
             if (hwnd == IntPtr.Zero) return;
+            if (args != null && args.Count > 0) ForwardCommandLine(hwnd, args);
             SendMessageTimeoutW(hwnd, Callback, 0, (nint)((1 << 16) | 0x400), 2, 1000, out _);
             ShowWindow(hwnd, 9);
             SetForegroundWindow(hwnd);
         }
 
-        public TrayIcon(IntPtr window, Action restore, Action stop, Action exit)
+        private static void ForwardCommandLine(IntPtr hwnd, System.Collections.Generic.IReadOnlyList<string> args)
         {
-            _window = window; _restore = restore; _stop = stop; _exit = exit;
+            string text = string.Join("\0", args);
+            if ((long)text.Length * 2 > MaxCommandLineBytes) return;
+            IntPtr buffer = Marshal.StringToHGlobalUni(text);
+            try
+            {
+                var data = new CopyDataStruct { Data = CommandLinePayload, Size = (uint)(text.Length * 2), Buffer = buffer };
+                SendCopyDataTimeout(hwnd, CopyData, 0, ref data, 2 /* SMTO_ABORTIFHUNG */, 2000, out _);
+            }
+            finally { Marshal.FreeHGlobal(buffer); }
+        }
+
+        public TrayIcon(IntPtr window, Action restore, Action stop, Action exit, Action<string[]> commandLine = null)
+        {
+            _window = window; _restore = restore; _stop = stop; _exit = exit; _commandLine = commandLine;
             _callback = OnMessage;
             _taskbarCreated = RegisterWindowMessageW("TaskbarCreated");
             if (!SetWindowSubclass(window, _callback, Id, 0))
@@ -158,6 +180,21 @@ namespace HNAUnlocker
             try
             {
                 if (message == _taskbarCreated && _added) { _added = false; Add(); }
+                if (message == CopyData && lparam != 0)
+                {
+                    var copy = Marshal.PtrToStructure<CopyDataStruct>(lparam);
+                    if (copy.Data == CommandLinePayload)
+                    {
+                        if (_commandLine != null && copy.Buffer != IntPtr.Zero && copy.Size % 2 == 0
+                            && copy.Size <= MaxCommandLineBytes)
+                        {
+                            // Copy now: the sender frees the buffer as soon as this message returns.
+                            string text = copy.Size == 0 ? string.Empty : Marshal.PtrToStringUni(copy.Buffer, (int)(copy.Size / 2));
+                            _commandLine(text.Length == 0 ? Array.Empty<string>() : text.Split('\0'));
+                        }
+                        return (IntPtr)1;
+                    }
+                }
                 if (message == Callback)
                 {
                     uint notification = (uint)(lparam.ToInt64() & 0xFFFF);

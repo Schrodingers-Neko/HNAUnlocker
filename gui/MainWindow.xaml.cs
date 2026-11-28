@@ -43,7 +43,7 @@ namespace HNAUnlocker
             public string Path;
         }
 
-        public MainWindow()
+        public MainWindow(string[] commandLine = null)
         {
             // XAML wires ValueChanged handlers while InitializeComponent runs.  Keep the
             // loaded settings immutable until all controls have their supported ranges and
@@ -54,6 +54,7 @@ namespace HNAUnlocker
             _config.Normalize();
             L10n.SetLanguage(_config.Language);
             App.WriteLog("Startup", L10n.T("App.Starting", AppVersion));
+            ReadStartupCommandLine(commandLine);
 
             try
             {
@@ -91,6 +92,11 @@ namespace HNAUnlocker
                 CheckForUpdatesToggle.IsOn = _config.CheckForUpdates;
                 UpdateSourceBox.SelectedIndex = (int)_config.UpdateSource;
                 ThemeBox.SelectedIndex = (int)_config.Theme;
+                if (_startupOptions != null && !_startupOptions.IsEmpty)
+                {
+                    Log(L10n.T("Cli.LogApplied", CommandLineOptions.Join(commandLine)));
+                    ApplyCommandLineValues(_startupOptions, startup: true);
+                }
 
                 Log(L10n.T("Ui.LogConfigPath", UnlockConfig.DefaultPath));
                 ConfigureWindow();
@@ -130,7 +136,7 @@ namespace HNAUnlocker
                 _closed = true;
                 _saveTimer?.Stop(); _refreshTimer?.Stop(); _exitTimer?.Stop();
                 DisposeUpdateCheck();
-                SyncConfig(); _config.Save();
+                SyncConfig(); SaveConfig(logFailure: false);
                 _tray?.Dispose();
                 _windowLayout?.Dispose();
             };
@@ -150,12 +156,12 @@ namespace HNAUnlocker
                     _inTray = false;
                     Activate();
                     RefreshUpdatePresentation();
-                }, RequestStop, BeginCloseAsync);
+                }, RequestStop, BeginCloseAsync, OnForwardedCommandLine);
                 if (!_tray.Add()) Log(L10n.T("Ui.LogTrayInitializationFailed"));
             }
             catch (Exception ex) { App.WriteLog("Tray initialization", ex); }
             _saveTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
-            _saveTimer.Tick += (_, __) => { if (!_closed) { SyncConfig(); _config.Save(); } };
+            _saveTimer.Tick += (_, __) => { if (!_closed) { SyncConfig(); SaveConfig(); } };
             _saveTimer.Start();
             _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
             _refreshTimer.Tick += (_, __) => RefreshPresentation();
@@ -253,6 +259,7 @@ namespace HNAUnlocker
         private void OnAntiFadeToggled(object sender, RoutedEventArgs e)
         {
             if (_initializing || _closed || _closePending) return;
+            ClearRunOnly(RunOnlyAntiFade);
             _config.DisableCameraFade = AntiFadeToggle.IsOn;
             _session?.ApplyAntiFade();
             RefreshPresentation();
@@ -289,11 +296,12 @@ namespace HNAUnlocker
         private void OnExitWithGameToggled(object sender, RoutedEventArgs e)
         {
             if (_initializing || _closed || _closePending) return;
+            ClearRunOnly(RunOnlyExitWithGame);
             _config.ExitWithGame = ExitWithGameToggle.IsOn;
             CancelGameExitClose();
             if (_config.ExitWithGame && _session?.State == SessionState.GameExited)
                 ScheduleGameExitClose(_session);
-            if (!_config.Save()) Log(L10n.T("Ui.LogConfigSaveFailed", UnlockConfig.LogPath));
+            SaveConfig();
             RefreshPresentation();
         }
 
@@ -425,12 +433,14 @@ namespace HNAUnlocker
             Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             if (_initializing || _syncingFps || !double.IsFinite(e.NewValue)) return;
+            ClearRunOnly(RunOnlyFps);
             ApplyFps((int)Math.Round(Math.Clamp(e.NewValue, FpsMin, FpsMax)));
         }
 
         private void OnFpsBoxChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
             if (_initializing || _syncingFps || !double.IsFinite(args.NewValue)) return;
+            ClearRunOnly(RunOnlyFps);
             ApplyFps((int)Math.Round(Math.Clamp(args.NewValue, FpsMin, FpsMax)));
         }
 
@@ -441,12 +451,14 @@ namespace HNAUnlocker
         private void OnFovSliderChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             if (_initializing || _syncingFov || !double.IsFinite(e.NewValue)) return;
+            ClearRunOnly(RunOnlyFov);
             ApplyFovValue(e.NewValue);
         }
 
         private void OnFovBoxChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
             if (_initializing || _syncingFov || !double.IsFinite(args.NewValue)) return;
+            ClearRunOnly(RunOnlyFov);
             ApplyFovValue(args.NewValue);
         }
 
@@ -466,12 +478,19 @@ namespace HNAUnlocker
             RefreshPresentation();
         }
 
-        private void OnResetFovClick(object sender, RoutedEventArgs e) => ApplyFovValue(0);
+        private void OnResetFovClick(object sender, RoutedEventArgs e)
+        {
+            ClearRunOnly(RunOnlyFov);
+            ApplyFovValue(0);
+        }
 
         private void OnFpsPresetClick(object sender, RoutedEventArgs e)
         {
             if (sender is Microsoft.UI.Xaml.Controls.Primitives.ToggleButton button && button.Tag is int value)
+            {
+                ClearRunOnly(RunOnlyFps);
                 ApplyFps(value);
+            }
         }
 
         // ------------------------------------------------------------------ buttons
@@ -535,12 +554,18 @@ namespace HNAUnlocker
                 if (!IsValidGamePath(_config.ProcessPath)) await ShowSetupAsync();
                 if (_closed || _closePending) return;
                 _setupInProgress = false;
-                if (_config.AutoStart)
+                if (_startupError != null) ShowCommandLineError(_startupError);
+                if (_startupOptions?.ShowHelp == true) await ShowCommandLineHelpAsync();
+                if (_closed || _closePending) return;
+                // A command-line action replaces the saved auto-start choice for this run.
+                if (_startupOptions != null && _startupOptions.Action != CommandLineAction.None)
+                    await RunCommandLineActionAsync(_startupOptions.Action);
+                else if (_config.AutoStart)
                 {
                     if (IsValidGamePath(_config.ProcessPath)) LaunchSession(0, launchIfMissing: true);
                     else Log(L10n.T("Ui.LogAutoStartNeedsPath"));
                 }
-                if (_config.StartMinimized) HideToTray(force: true);
+                if (_config.StartMinimized || _startupOptions?.Minimized == true) HideToTray(force: true);
             }
             catch (Exception ex) { App.WriteLog("Startup dialogs", ex); }
             finally
@@ -554,7 +579,7 @@ namespace HNAUnlocker
         private void OnSaveClick(object sender, RoutedEventArgs e)
         {
             SyncConfig();
-            if (_config.Save())
+            if (SaveConfig(logFailure: false))
             {
                 Log(L10n.T("Ui.LogConfigSaved", UnlockConfig.DefaultPath));
             }
@@ -582,6 +607,11 @@ namespace HNAUnlocker
         {
             if (!CanChangeGameClient) return;
             SyncConfig();
+            await AttachToRunningGameAsync();
+        }
+
+        private async System.Threading.Tasks.Task AttachToRunningGameAsync()
+        {
             var games = FindRunningGames();
             if (games.Count == 0)
             {
@@ -644,7 +674,7 @@ namespace HNAUnlocker
             _updateCancellation.Cancel();
             RefreshPresentation();
             _saveTimer?.Stop(); _refreshTimer?.Stop(); CancelGameExitClose();
-            SyncConfig(); _config.Save();
+            SyncConfig(); SaveConfig(logFailure: false);
             var session = _session;
             if (session != null && _sessionHandler != null) session.Changed -= _sessionHandler;
             try

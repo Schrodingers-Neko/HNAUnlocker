@@ -24,15 +24,22 @@ namespace HNAUnlocker.Core
             using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
             if (!new System.Security.Principal.WindowsPrincipal(identity).IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
                 throw new InvalidOperationException(L10n.T("Runtime.Launcher.AdminRequired"));
+            string[] extra = config.GameArguments ?? Array.Empty<string>();
             if (config.UseMobileUI)
+            {
+                // Mobile launch builds and verifies its own argument list; extra arguments are not mixed in.
+                if (extra.Length > 0) log?.Invoke(L10n.T("Runtime.Launcher.GameArgumentsIgnoredMobile"));
                 return MobileGameLauncher.Launch(config.ProcessPath,
                     MobileArguments(config.ProcessPath, config.GraphicsSource, log), log, cancellationToken,
                     config.SafeAreaMode, config.SafeAreaHorizontalPercent);
+            }
             var start = new ProcessStartInfo(config.ProcessPath)
             {
                 WorkingDirectory = Path.GetDirectoryName(config.ProcessPath),
                 UseShellExecute = false,
             };
+            foreach (string argument in extra) start.ArgumentList.Add(argument);
+            if (extra.Length > 0) log?.Invoke(L10n.T("Runtime.Launcher.GameArguments", CommandLineOptions.Join(extra)));
             cancellationToken.ThrowIfCancellationRequested();
             using var process = Process.Start(start) ?? throw new InvalidOperationException(L10n.T("Runtime.Launcher.StartFailed"));
             return checked((uint)process.Id);

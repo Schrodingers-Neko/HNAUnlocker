@@ -46,6 +46,8 @@ namespace HNAUnlocker
                 LogPageTitle.Text = L10n.T("Ui.RuntimeLog");
                 SettingsPageTitle.Text = L10n.T("Ui.NavSettings");
                 SaveButtonText.Text = L10n.T("Ui.SaveConfig");
+                CreateShortcutButtonText.Text = L10n.T("Cli.CreateShortcut");
+                LocalizeControl(CreateShortcutButton, "Cli.CreateShortcut", "Cli.CreateShortcutTip");
                 AppearanceSectionTitle.Text = L10n.T("Ui.AppearanceSection");
                 ThemeLabel.Text = L10n.T("Ui.Theme");
                 ThemeHint.Text = L10n.T("Ui.ThemeTip");
@@ -209,7 +211,7 @@ namespace HNAUnlocker
             L10n.SetLanguage(preference);
             ApplyLocalization();
             RefreshPresentation();
-            if (!_config.Save()) Log(L10n.T("Ui.LogConfigSaveFailed", UnlockConfig.LogPath));
+            SaveConfig();
         }
 
         private static string SessionStateText(SessionState state) => L10n.T(state switch

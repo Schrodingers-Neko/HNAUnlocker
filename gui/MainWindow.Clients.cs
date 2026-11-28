@@ -48,11 +48,12 @@ namespace HNAUnlocker
                 RefreshGameClients();
                 return false;
             }
+            ClearRunOnly(RunOnlyGame);
             _config.ProcessPath = path;
             _localErrorKey = null;
             _clientScanStatusKey = null;
             RefreshGameClients();
-            if (!_config.Save()) Log(L10n.T("Ui.LogConfigSaveFailed", UnlockConfig.LogPath));
+            SaveConfig();
             Log(L10n.T("Ui.LogGamePathSet", path));
             RefreshPresentation();
             return true;
@@ -92,7 +93,7 @@ namespace HNAUnlocker
                 paths.AddRange(FindRunningGames().Select(game => game.Path));
                 RefreshGameClients(paths);
                 _clientScanStatusKey = _availableClientCount == 0 ? "Ui.NoClientsFound" : "Ui.AvailableClients";
-                if (!_config.Save()) Log(L10n.T("Ui.LogConfigSaveFailed", UnlockConfig.LogPath));
+                SaveConfig();
             }
             catch (Exception ex)
             {

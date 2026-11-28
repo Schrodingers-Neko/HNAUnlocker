@@ -1,0 +1,236 @@
+{
+  "Cli.TooLong": {
+    "zh-CN": "命令行过长。",
+    "en-US": "The command line is too long.",
+    "ja-JP": "コマンドラインが長すぎます。",
+    "ko-KR": "명령줄이 너무 깁니다."
+  },
+  "Cli.InvalidCharacter": {
+    "zh-CN": "命令行包含无效字符。",
+    "en-US": "The command line contains an invalid character.",
+    "ja-JP": "コマンドラインに無効な文字が含まれています。",
+    "ko-KR": "명령줄에 잘못된 문자가 있습니다."
+  },
+  "Cli.GameArgumentsTooLong": {
+    "zh-CN": "-- 之后的游戏参数过多或过长。",
+    "en-US": "Too many or too long game arguments after --.",
+    "ja-JP": "-- 以降のゲーム引数が多すぎるか長すぎます。",
+    "ko-KR": "-- 뒤의 게임 인수가 너무 많거나 깁니다."
+  },
+  "Cli.UnknownOption": {
+    "zh-CN": "未知选项：{0}",
+    "en-US": "Unknown option: {0}",
+    "ja-JP": "不明なオプション：{0}",
+    "ko-KR": "알 수 없는 옵션: {0}"
+  },
+  "Cli.DuplicateOption": {
+    "zh-CN": "选项重复：{0}",
+    "en-US": "Option given more than once: {0}",
+    "ja-JP": "オプションが重複しています：{0}",
+    "ko-KR": "옵션이 중복되었습니다: {0}"
+  },
+  "Cli.UnexpectedValue": {
+    "zh-CN": "选项 {0} 不接受值。",
+    "en-US": "Option {0} does not take a value.",
+    "ja-JP": "オプション {0} は値を取りません。",
+    "ko-KR": "옵션 {0}에는 값을 지정할 수 없습니다."
+  },
+  "Cli.MissingValue": {
+    "zh-CN": "选项 {0} 缺少值。",
+    "en-US": "Option {0} needs a value.",
+    "ja-JP": "オプション {0} には値が必要です。",
+    "ko-KR": "옵션 {0}에 값이 필요합니다."
+  },
+  "Cli.InvalidFps": {
+    "zh-CN": "--fps 必须是 10 到 480 之间的整数，而不是 {0}。",
+    "en-US": "--fps must be a whole number from 10 to 480, not {0}.",
+    "ja-JP": "--fps には 10～480 の整数を指定してください（指定値：{0}）。",
+    "ko-KR": "--fps는 10~480 사이의 정수여야 합니다(입력값: {0})."
+  },
+  "Cli.InvalidFov": {
+    "zh-CN": "--fov 必须是 -60 到 60 之间的数字，而不是 {0}。",
+    "en-US": "--fov must be a number from -60 to 60, not {0}.",
+    "ja-JP": "--fov には -60～60 の数値を指定してください（指定値：{0}）。",
+    "ko-KR": "--fov는 -60~60 사이의 숫자여야 합니다(입력값: {0})."
+  },
+  "Cli.InvalidSwitch": {
+    "zh-CN": "{0} 的值必须是 on 或 off。",
+    "en-US": "{0} must be on or off.",
+    "ja-JP": "{0} には on または off を指定してください。",
+    "ko-KR": "{0}에는 on 또는 off를 지정하세요."
+  },
+  "Cli.InvalidGamePath": {
+    "zh-CN": "--game 必须是 NexusAnima.exe 的完整路径：{0}",
+    "en-US": "--game must be a full path to NexusAnima.exe: {0}",
+    "ja-JP": "--game には NexusAnima.exe のフルパスを指定してください：{0}",
+    "ko-KR": "--game에는 NexusAnima.exe의 전체 경로를 지정하세요: {0}"
+  },
+  "Cli.ConflictingActions": {
+    "zh-CN": "--launch 和 --attach 不能同时使用。",
+    "en-US": "--launch and --attach cannot be used together.",
+    "ja-JP": "--launch と --attach は同時に使用できません。",
+    "ko-KR": "--launch와 --attach는 함께 사용할 수 없습니다."
+  },
+  "Cli.GameArgumentsNeedLaunch": {
+    "zh-CN": "游戏参数（-- 之后）只能与启动一起使用，不能与 --attach 一起使用。",
+    "en-US": "Game arguments after -- only apply when launching, not with --attach.",
+    "ja-JP": "-- 以降のゲーム引数は起動時のみ有効で、--attach とは併用できません。",
+    "ko-KR": "-- 뒤의 게임 인수는 실행할 때만 적용되며 --attach와 함께 사용할 수 없습니다."
+  },
+  "Cli.GameNotFound": {
+    "zh-CN": "找不到 --game 指定的游戏：{0}",
+    "en-US": "The game given with --game was not found: {0}",
+    "ja-JP": "--game で指定したゲームが見つかりません：{0}",
+    "ko-KR": "--game으로 지정한 게임을 찾을 수 없습니다: {0}"
+  },
+  "Cli.LogGamePath": {
+    "zh-CN": "本次运行使用命令行指定的游戏：{0}",
+    "en-US": "Using the game from the command line for this run: {0}",
+    "ja-JP": "今回の実行ではコマンドラインで指定したゲームを使用します：{0}",
+    "ko-KR": "이번 실행에는 명령줄에서 지정한 게임을 사용합니다: {0}"
+  },
+  "Cli.LogActionIgnored": {
+    "zh-CN": "会话已在运行或工具正忙，已忽略命令行中的启动或连接操作。",
+    "en-US": "Ignored the command-line launch or connect: a session is already running or the tool is busy.",
+    "ja-JP": "セッション実行中またはツールが処理中のため、コマンドラインの起動・接続を無視しました。",
+    "ko-KR": "세션이 이미 실행 중이거나 도구가 작업 중이라 명령줄의 실행/연결을 무시했습니다."
+  },
+  "Cli.LogForwarded": {
+    "zh-CN": "收到另一个启动实例的命令行：{0}",
+    "en-US": "Received a command line from another launch: {0}",
+    "ja-JP": "別の起動からコマンドラインを受け取りました：{0}",
+    "ko-KR": "다른 실행에서 명령줄을 받았습니다: {0}"
+  },
+  "Cli.LogRejected": {
+    "zh-CN": "已拒绝命令行：{0}",
+    "en-US": "Command line rejected: {0}",
+    "ja-JP": "コマンドラインを拒否しました：{0}",
+    "ko-KR": "명령줄을 거부했습니다: {0}"
+  },
+  "Cli.LogApplied": {
+    "zh-CN": "本次运行使用命令行值：{0}",
+    "en-US": "Using command-line values for this run: {0}",
+    "ja-JP": "今回の実行ではコマンドラインの値を使用します：{0}",
+    "ko-KR": "이번 실행에는 명령줄 값을 사용합니다: {0}"
+  },
+  "Cli.ErrorTitle": {
+    "zh-CN": "命令行无效",
+    "en-US": "Command line not applied",
+    "ja-JP": "コマンドラインは適用されませんでした",
+    "ko-KR": "명령줄이 적용되지 않았습니다"
+  },
+  "Cli.SeeHelp": {
+    "zh-CN": "使用 --help 查看可用选项。",
+    "en-US": "Run with --help to see the available options.",
+    "ja-JP": "使用できるオプションは --help で確認できます。",
+    "ko-KR": "사용 가능한 옵션은 --help로 확인하세요."
+  },
+  "Cli.HelpTitle": {
+    "zh-CN": "命令行选项",
+    "en-US": "Command-line options",
+    "ja-JP": "コマンドラインオプション",
+    "ko-KR": "명령줄 옵션"
+  },
+  "Cli.HelpText": {
+    "zh-CN": "用法：HNAUnlocker.exe [选项] [-- 游戏参数]\n\n  --launch                 启动游戏并解锁（游戏已运行时直接连接）\n  --attach                 连接到正在运行的游戏\n  --fps <10-480>           帧率上限\n  --fov <-60-60>           视野调整（度）\n  --anti-fade on|off       防止角色淡出\n  --game <路径>            要使用的 NexusAnima.exe 完整路径\n  --minimized              启动时最小化到系统托盘\n  --exit-with-game on|off  游戏退出时关闭工具\n  --help                   显示此帮助\n  -- <参数>                -- 之后的所有内容会在工具启动游戏时传给 NexusAnima.exe\n\n这些值仅对本次运行有效，不会更改已保存的设置。\n示例：HNAUnlocker.exe --launch --fps 144 --anti-fade on",
+    "en-US": "Usage: HNAUnlocker.exe [options] [-- game arguments]\n\n  --launch                 Launch the game and unlock it (connects if it is already running)\n  --attach                 Connect to a running game\n  --fps <10-480>           Frame rate cap\n  --fov <-60-60>           FOV adjustment in degrees\n  --anti-fade on|off       Prevent character fading\n  --game <path>            Full path to NexusAnima.exe to use\n  --minimized              Start in the system tray\n  --exit-with-game on|off  Close the tool when the game exits\n  --help                   Show this help\n  -- <arguments>           Everything after -- is passed to NexusAnima.exe when the tool launches it\n\nValues apply to this run only and do not change your saved settings.\nExample: HNAUnlocker.exe --launch --fps 144 --anti-fade on",
+    "ja-JP": "使い方：HNAUnlocker.exe [オプション] [-- ゲーム引数]\n\n  --launch                 ゲームを起動して解除する（起動中なら接続）\n  --attach                 起動中のゲームに接続する\n  --fps <10-480>           フレームレート上限\n  --fov <-60-60>           視野角の調整（度）\n  --anti-fade on|off       キャラクターのフェードを防ぐ\n  --game <パス>            使用する NexusAnima.exe のフルパス\n  --minimized              システムトレイで起動する\n  --exit-with-game on|off  ゲーム終了時にツールを閉じる\n  --help                   このヘルプを表示する\n  -- <引数>                -- 以降はツールがゲームを起動するときに NexusAnima.exe へ渡される\n\n値は今回の実行にのみ適用され、保存された設定は変わりません。\n例：HNAUnlocker.exe --launch --fps 144 --anti-fade on",
+    "ko-KR": "사용법: HNAUnlocker.exe [옵션] [-- 게임 인수]\n\n  --launch                 게임을 실행하고 제한 해제 (이미 실행 중이면 연결)\n  --attach                 실행 중인 게임에 연결\n  --fps <10-480>           프레임 제한\n  --fov <-60-60>           시야각 조정(도)\n  --anti-fade on|off       캐릭터 페이드 방지\n  --game <경로>            사용할 NexusAnima.exe 전체 경로\n  --minimized              시스템 트레이에서 시작\n  --exit-with-game on|off  게임 종료 시 도구 닫기\n  --help                   이 도움말 표시\n  -- <인수>                -- 뒤의 모든 내용은 도구가 게임을 실행할 때 NexusAnima.exe에 전달됨\n\n값은 이번 실행에만 적용되며 저장된 설정은 바뀌지 않습니다.\n예: HNAUnlocker.exe --launch --fps 144 --anti-fade on"
+  },
+  "Cli.Close": {
+    "zh-CN": "关闭",
+    "en-US": "Close",
+    "ja-JP": "閉じる",
+    "ko-KR": "닫기"
+  },
+  "Cli.CreateShortcut": {
+    "zh-CN": "创建桌面快捷方式",
+    "en-US": "Create desktop shortcut",
+    "ja-JP": "デスクトップにショートカットを作成",
+    "ko-KR": "바탕 화면 바로 가기 만들기"
+  },
+  "Cli.CreateShortcutTip": {
+    "zh-CN": "在桌面创建一个快捷方式，以当前的帧率、视野和防淡出设置启动游戏。已有相同快捷方式时不会重复创建。",
+    "en-US": "Create a desktop shortcut that launches the game with the current frame rate, FOV, and anti-fade values. Nothing is created if an identical shortcut already exists.",
+    "ja-JP": "現在のフレームレート、視野角、フェード防止の値でゲームを起動するショートカットをデスクトップに作成します。同じショートカットが既にある場合は作成しません。",
+    "ko-KR": "현재 프레임 제한, 시야각, 페이드 방지 값으로 게임을 실행하는 바로 가기를 바탕 화면에 만듭니다. 같은 바로 가기가 이미 있으면 만들지 않습니다."
+  },
+  "Cli.ShortcutName": {
+    "zh-CN": "HNAUnlocker {0} FPS",
+    "en-US": "HNAUnlocker {0} FPS",
+    "ja-JP": "HNAUnlocker {0} FPS",
+    "ko-KR": "HNAUnlocker {0} FPS"
+  },
+  "Cli.ShortcutDescription": {
+    "zh-CN": "使用以下参数启动 HNAUnlocker：{0}",
+    "en-US": "Start HNAUnlocker with: {0}",
+    "ja-JP": "次の引数で HNAUnlocker を起動：{0}",
+    "ko-KR": "다음 인수로 HNAUnlocker 실행: {0}"
+  },
+  "Cli.ShortcutCreatedTitle": {
+    "zh-CN": "已创建快捷方式",
+    "en-US": "Shortcut created",
+    "ja-JP": "ショートカットを作成しました",
+    "ko-KR": "바로 가기를 만들었습니다"
+  },
+  "Cli.ShortcutExistsTitle": {
+    "zh-CN": "快捷方式已存在",
+    "en-US": "Shortcut already exists",
+    "ja-JP": "ショートカットは既にあります",
+    "ko-KR": "바로 가기가 이미 있습니다"
+  },
+  "Cli.ShortcutCreated": {
+    "zh-CN": "桌面上的“{0}”将使用 {1} 启动。每次启动都会请求管理员权限。",
+    "en-US": "“{0}” on your desktop starts with {1}. Windows asks for administrator permission each time.",
+    "ja-JP": "デスクトップの「{0}」は {1} で起動します。起動のたびに管理者の許可を求められます。",
+    "ko-KR": "바탕 화면의 '{0}'은(는) {1}(으)로 실행됩니다. 실행할 때마다 관리자 권한을 요청합니다."
+  },
+  "Cli.ShortcutExists": {
+    "zh-CN": "桌面上已有使用 {1} 启动的“{0}”，未创建新的快捷方式。",
+    "en-US": "“{0}” already starts with {1}, so no new shortcut was created.",
+    "ja-JP": "{1} で起動する「{0}」が既にあるため、新しいショートカットは作成しませんでした。",
+    "ko-KR": "{1}(으)로 실행되는 '{0}'이(가) 이미 있어 새 바로 가기를 만들지 않았습니다."
+  },
+  "Cli.LogShortcutCreated": {
+    "zh-CN": "已创建桌面快捷方式：{0}",
+    "en-US": "Created desktop shortcut: {0}",
+    "ja-JP": "デスクトップショートカットを作成しました：{0}",
+    "ko-KR": "바탕 화면 바로 가기를 만들었습니다: {0}"
+  },
+  "Cli.LogShortcutExists": {
+    "zh-CN": "已有相同的快捷方式：{0}",
+    "en-US": "An identical shortcut already exists: {0}",
+    "ja-JP": "同じショートカットが既にあります：{0}",
+    "ko-KR": "같은 바로 가기가 이미 있습니다: {0}"
+  },
+  "Cli.ShortcutFailedTitle": {
+    "zh-CN": "无法创建快捷方式",
+    "en-US": "Could not create the shortcut",
+    "ja-JP": "ショートカットを作成できませんでした",
+    "ko-KR": "바로 가기를 만들 수 없습니다"
+  },
+  "Cli.ShortcutFailed": {
+    "zh-CN": "写入桌面快捷方式失败。详情已记录在诊断日志中。",
+    "en-US": "Writing the desktop shortcut failed. Details are in the diagnostic log.",
+    "ja-JP": "デスクトップショートカットの書き込みに失敗しました。詳細は診断ログに記録されています。",
+    "ko-KR": "바탕 화면 바로 가기를 쓰지 못했습니다. 자세한 내용은 진단 로그에 있습니다."
+  },
+  "Runtime.Launcher.GameArguments": {
+    "zh-CN": "启动游戏时附加参数：{0}",
+    "en-US": "Launching the game with extra arguments: {0}",
+    "ja-JP": "追加の引数でゲームを起動します：{0}",
+    "ko-KR": "추가 인수로 게임을 실행합니다: {0}"
+  },
+  "Runtime.Launcher.GameArgumentsIgnoredMobile": {
+    "zh-CN": "移动端界面启动不使用额外的游戏参数。",
+    "en-US": "Extra game arguments are not used for a mobile UI launch.",
+    "ja-JP": "モバイル UI での起動では追加のゲーム引数は使用されません。",
+    "ko-KR": "모바일 UI 실행에는 추가 게임 인수를 사용하지 않습니다."
+  },
+  "Runtime.Session.GameArgumentsIgnoredRunning": {
+    "zh-CN": "游戏不是由本工具启动的，额外的游戏参数未生效。",
+    "en-US": "The game was not started by this tool, so the extra game arguments were not used.",
+    "ja-JP": "ゲームはこのツールから起動されていないため、追加のゲーム引数は使用されませんでした。",
+    "ko-KR": "게임이 이 도구로 실행되지 않아 추가 게임 인수가 사용되지 않았습니다."
+  }
+}

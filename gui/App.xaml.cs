@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml;
 using HNAUnlocker.Core;
@@ -30,7 +31,9 @@ namespace HNAUnlocker
         {
             try
             {
-                if (!_ownsInstance) { TrayIcon.RestoreExisting(); _instanceGuard.Dispose(); Exit(); return; }
+                // WinUI's LaunchActivatedEventArgs.Arguments is unreliable for unpackaged apps.
+                string[] commandLine = Environment.GetCommandLineArgs().Skip(1).ToArray();
+                if (!_ownsInstance) { TrayIcon.RestoreExisting(commandLine); _instanceGuard.Dispose(); Exit(); return; }
                 if (_window != null) { _window.Activate(); return; }
                 try { _installerRunningGuard = new InstallerRunningGuard(); }
                 catch (Exception)
@@ -41,7 +44,7 @@ namespace HNAUnlocker
                     throw;
                 }
                 AppDomain.CurrentDomain.ProcessExit += (_, __) => _installerRunningGuard.Dispose();
-                var window = new MainWindow();
+                var window = new MainWindow(commandLine);
                 window.Closed += (_, __) => { if (_ownsInstance) { _instanceGuard.ReleaseMutex(); _ownsInstance = false; _instanceGuard.Dispose(); } };
                 _window = window;
                 window.Activate();

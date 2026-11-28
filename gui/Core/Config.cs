@@ -44,6 +44,10 @@ namespace HNAUnlocker.Core
         public string Language { get; set; } = "auto";
         public AppThemePreference Theme { get; set; } = AppThemePreference.System;
 
+        /// <summary>Extra NexusAnima.exe arguments from the command line (after --); never saved.</summary>
+        [JsonIgnore]
+        public string[] GameArguments { get; set; } = Array.Empty<string>();
+
         /// <summary>Directory owned by this tool for settings and diagnostics.</summary>
         public static string DataDirectory =>
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -105,6 +109,7 @@ namespace HNAUnlocker.Core
             SafeAreaHorizontalPercent = SafeAreaHorizontalPercent,
             Language = Language,
             Theme = Theme,
+            GameArguments = GameArguments?.ToArray() ?? Array.Empty<string>(),
         };
 
         internal static void AppendLog(string stage, string message, Exception ex = null)

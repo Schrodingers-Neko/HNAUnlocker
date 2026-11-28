@@ -44,7 +44,7 @@ namespace HNAUnlocker
             _updateResult = null;
             _updateStatusKey = "Updates.NotChecked";
             _updateNotice.Offer(null, background: false);
-            if (!_config.Save()) Log(L10n.T("Ui.LogConfigSaveFailed", UnlockConfig.LogPath));
+            SaveConfig();
             RefreshUpdatePresentation();
         }
 
@@ -53,7 +53,7 @@ namespace HNAUnlocker
             if (_initializing || _closed || _closePending) return;
             _config.CheckForUpdates = CheckForUpdatesToggle.IsOn;
             if (!_config.CheckForUpdates) _updateNotice.Offer(null, background: false);
-            if (!_config.Save()) Log(L10n.T("Ui.LogConfigSaveFailed", UnlockConfig.LogPath));
+            SaveConfig();
             RefreshUpdatePresentation();
         }
 

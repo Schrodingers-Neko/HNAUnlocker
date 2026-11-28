@@ -62,6 +62,7 @@ namespace HNAUnlocker
             StopButton.IsEnabled = !blocked && running && !restoring;
             RefreshClientPresentation();
             SaveButton.IsEnabled = !blocked;
+            CreateShortcutButton.IsEnabled = !_closePending;
             FpsSlider.IsEnabled = FpsBox.IsEnabled = FovSlider.IsEnabled = FovBox.IsEnabled =
                 ResetFovButton.IsEnabled = AntiFadeToggle.IsEnabled = !blocked && !restoring;
             foreach (var child in PresetPanel.Children)

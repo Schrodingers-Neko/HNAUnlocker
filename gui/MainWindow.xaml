@@ -147,13 +147,27 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="HomePageTitle" Style="{StaticResource PageTitleStyle}" />
-                            <Button Grid.Column="1" x:Name="SaveButton" Click="OnSaveClick" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon Glyph="&#xE74E;" FontSize="14" />
-                                    <TextBlock x:Name="SaveButtonText" />
-                                </StackPanel>
-                            </Button>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <Button x:Name="CreateShortcutButton" Click="OnCreateShortcutClick"
+                                        AutomationProperties.AutomationId="CreateShortcutButton">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <FontIcon Glyph="&#xE71B;" FontSize="14" />
+                                        <TextBlock x:Name="CreateShortcutButtonText" />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="SaveButton" Click="OnSaveClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <FontIcon Glyph="&#xE74E;" FontSize="14" />
+                                        <TextBlock x:Name="SaveButtonText" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
                         </Grid>
+
+                        <InfoBar x:Name="CommandLineInfoBar" Margin="0,0,0,8" Severity="Error" IsOpen="False"
+                                 AutomationProperties.AutomationId="CommandLineInfoBar" />
+                        <InfoBar x:Name="ShortcutInfoBar" Margin="0,0,0,8" Severity="Success" IsOpen="False"
+                                 AutomationProperties.AutomationId="ShortcutInfoBar" />
 
                         <!-- Session status and primary actions -->
                         <Border Style="{StaticResource CardStyle}" Padding="20">

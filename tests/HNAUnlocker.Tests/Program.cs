@@ -71,6 +71,8 @@ internal static class Program
             GameClientPathsVerification.Run(Check);
             GameDiscoveryVerification.Run(Check);
             LocalizationVerification.Run(Check);
+            CommandLineVerification.Run(Check);
+            ShortcutVerification.Run(Check);
             // Gitee mirror disabled: mirror verifications are excluded (see UpdateMirror*Verification.cs).
             // UpdateMirrorCheckVerification.Run(Check);
             // UpdateMirrorDownloadVerification.Run(Check);

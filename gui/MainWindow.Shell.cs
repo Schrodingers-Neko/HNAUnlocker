@@ -90,7 +90,7 @@ namespace HNAUnlocker
             if (_config.Theme == theme) return;
             _config.Theme = theme;
             ApplyTheme();
-            if (!_config.Save()) Log(L10n.T("Ui.LogConfigSaveFailed", UnlockConfig.LogPath));
+            SaveConfig();
         }
 
         /// <summary>ContentDialogs live in the popup layer and do not inherit the root's requested theme.</summary>
